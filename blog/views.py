@@ -175,7 +175,7 @@ def schedule(request, pk):
     l = []
     for line in file.readlines()[2:]:
         line = line.replace("\n", "")
-        if line.count('-') > 0:
+        if line.count('----------') > 0:
             com_1.append(l)
             l = []
         else:
