@@ -1,0 +1,55 @@
+from django.urls import path
+from .views import (
+    PostListView,
+    PostDetailView,
+    PostCreateView,
+    PostUpdateView,
+    PostDeleteView,
+    UserPostListView
+
+)
+from . import views
+
+urlpatterns = [
+    path('', views.home, name='blog-home'),
+    path('my/', views.my_home, name='blog-my-home'),
+    path('user/<str:username>', UserPostListView.as_view(), name='user-posts'),
+    path('rating/', views.rating, name='rating'),
+    path('post/<int:pk>/', PostDetailView.as_view(), name='post-detail'),
+    path('post/new/', PostCreateView.as_view(), name='post-create'),
+    path('post/<int:pk>/update/', PostUpdateView.as_view(), name='post-update'),
+    path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post-delete'),
+    path('post/<int:pk>/schedule', views.schedule, name='post-schedule'),
+    # not render
+    path('save_tour_1/', views.save_tour_1, name='save-tour-1'),
+    path('save_tour_2/', views.save_tour_2, name='save-tour-2'),
+    path('save_tour_3/', views.save_tour_3, name='save-tour-3'),
+    path('save_tour_4/', views.save_tour_4, name='save-tour-4'),
+    path('save_tour_5/', views.save_tour_5, name='save-tour-5'),
+    path('save_tour_6/', views.save_tour_6, name='save-tour-6'),
+    path('save_tour_7/', views.save_tour_7, name='save-tour-7'),
+    path('save_tour_8/', views.save_tour_8, name='save-tour-8'),
+    path('reset_1/', views.reset_1, name='reset-1'),
+    path('reset_2/', views.reset_2, name='reset-2'),
+    path('reset_3/', views.reset_3, name='reset-3'),
+    path('reset_4/', views.reset_4, name='reset-4'),
+    path('reset_5/', views.reset_5, name='reset-5'),
+    path('reset_6/', views.reset_6, name='reset-6'),
+    path('reset_7/', views.reset_7, name='reset-7'),
+    path('reset_8/', views.reset_8, name='reset-8'),
+    path('new_files/', views.new_files, name='new-files'),
+    path('del_dir_of_game/', views.del_dir_of_game, name='del_dir_of_game'),
+    path('download_1/<str:game>', views.download_1, name='download_1'),
+    path('download_2/<str:game>', views.download_2, name='download_2'),
+    path('download_3/<str:game>', views.download_3, name='download_3'),
+    path('download_4/<str:game>', views.download_4, name='download_4'),
+    path('download_5/<str:game>', views.download_5, name='download_5'),
+    path('download_6/<str:game>', views.download_6, name='download_6'),
+    path('download_7/<str:game>', views.download_7, name='download_7'),
+    path('download_8/<str:game>', views.download_8, name='download_8'),
+    path('download_9/<str:game>', views.download_9, name='download_9'),
+    path('download_10/<str:game>', views.download_10, name='download_10'),
+    path('download_11/<str:game>', views.download_11, name='download_11'),
+    path('download_12/<str:game>', views.download_12, name='download_12'),
+    path('download_13/<str:game>', views.download_13, name='download_13'),
+]

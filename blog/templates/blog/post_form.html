@@ -1,0 +1,40 @@
+{% extends "blog/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <div class="content-section">
+        <form method="POST" id="post_form">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Введите дисциплину и команды</legend>
+                {{ form|crispy }}
+            </fieldset>
+            <div class="form-group">
+                <button class="btn btn-outline-info" onclick="create_files();" type="submit">Сохранить</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function create_files() {
+            let name = document.getElementById("id_title").value;
+
+            $.ajax({
+                url: '/new_files/',
+                type: 'GET',
+                dataType: 'json',
+                data: {'name': name},
+                success: function (response) {
+                    console.log(response);
+                },
+                error: function (error) {
+                    console.error('Ошибка:', error);
+                }
+            })
+        }
+
+        window.addEventListener('load', () => {
+             document.getElementsByClassName(" requiredField")[0].firstChild.nodeValue = "Дисциплина. Комбинация из: (CSGO/Dota2/FIFA22/Fortnite/JUSTDANCE/LOL/PUBG/Standoff/Valorant) и 5-8/9-11/college/Восток/Запад Пример: FIFA22 9-11. Не создавать похожие дисциплины";
+             document.getElementsByClassName(" requiredField")[1].firstChild.nodeValue = "Команды(1 строка - 1 команда!)";
+        });
+    </script>
+{% endblock content %}

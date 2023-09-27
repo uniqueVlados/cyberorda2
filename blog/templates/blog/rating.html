@@ -1,0 +1,100 @@
+﻿{% extends "blog/base.html" %}
+{% block content %}
+
+        <select class="form-select form-select-lg mb-5 my_select" aria-label=".form-select-lg example" id="game">
+          <option selected>Дисциплина</option>
+          <option value="CSGO">CSGO</option>
+          <option value="Dota2">Dota2</option>
+          <option value="LOL">LOL</option>
+          <option value="Standoff">Standoff</option>
+          <option value="Valorant">Valorant</option>
+          <option value="MLBB">MLBB</option>
+        </select>
+
+        <select class="form-select form-select-lg mb-5 my_select" aria-label=".form-select-lg example" id="div">
+          <option selected>Дивизион</option>
+          <option value="Восток">Восток</option>
+          <option value="Запад">Запад</option>
+        </select>
+
+        <select class="form-select form-select-lg mb-5 my_select" aria-label=".form-select-lg example" onChange="history(window.location='/rating/);" id="tour">
+          <option selected>Тур</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+        </select>
+
+        <select class="form-select form-select-lg mb-5 my_select" aria-label=".form-select-lg example" id="sort">
+          <option selected>Сортировать</option>
+          <option value="По убыванию">По убыванию</option>
+          <option value="По возрастанию">По возрастанию</option>
+        </select>
+
+        <a class="btn btn-primary btn-sm mt-1 mb-1" href="#" onclick="reload_filter()">Обновить</a>
+
+      <table class="table table-sm">
+          <thead>
+            <tr class="table-active">
+              <th scope="col">№</th>
+              <th scope="col">Команда</th>
+              <th scope="col">Win</th>
+              <th scope="col">Lose</th>
+              <th scope="col">PST</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for command in commands %}
+            <tr class="table-primary">
+                <th scope="row">{{command.0}}</th>
+                <td>{{command.1}}</td>
+                <td>{{command.2}}</td>
+                <td>{{command.3}}</td>
+                <td>{{command.4}}%</td>
+            </tr>
+          {% endfor %}
+
+
+<!--            <tr class="table-primary">-->
+<!--              <th scope="row">1</th>-->
+<!--              <td>Школа 1</td>-->
+<!--              <td>8</td>-->
+<!--              <td>2</td>-->
+<!--              <td>80%</td>-->
+<!--            </tr>-->
+<!--            <tr class="table-primary">-->
+<!--              <th scope="row">2</th>-->
+<!--              <td>Школа 2</td>-->
+<!--              <td>7</td>-->
+<!--              <td>3</td>-->
+<!--              <td>70%</td>-->
+<!--            </tr>-->
+<!--            <tr class="table-primary">-->
+<!--              <th scope="row">3</th>-->
+<!--              <td>Школа 3</td>-->
+<!--              <td>6</td>-->
+<!--              <td>4</td>-->
+<!--              <td>60%</td>-->
+<!--            </tr>-->
+          </tbody>
+      </table>
+
+
+
+<script>
+    function reload_filter(){
+        const game = document.getElementById('game').value;
+        const div = document.getElementById('div').value;
+        const tour = document.getElementById('tour').value;
+        const sort = document.getElementById('sort').value;
+
+        window.location.reload();
+    }
+</script>
+
+{% endblock content %}
