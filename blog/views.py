@@ -4024,7 +4024,11 @@ def new_files(request):
                 file_res = open(f"{name}/результат_{i}_{name}.txt", "w", encoding="utf-8")
                 file.close()
                 file_res.close()
-            fp = open(f"{name}/пересечение_команд_{name}.json", "w", encoding="utf-8")
+            with open(f"{name}/пересечение_команд_{name}.json", "w", encoding="utf-8") as fp:
+                commands_dict = {}
+                s = json.dumps(commands_dict, ensure_ascii=False)
+                fp.write(s)
+
             fp.close()
         data = {"message": "ok"}
         return JsonResponse(data)
