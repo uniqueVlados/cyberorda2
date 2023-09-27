@@ -4024,6 +4024,8 @@ def new_files(request):
                 file_res = open(f"{name}/результат_{i}_{name}.txt", "w", encoding="utf-8")
                 file.close()
                 file_res.close()
+            fp = open(f"{name}/пересечение_команд_{name}.json", "w", encoding="utf-8")
+            fp.close()
         data = {"message": "ok"}
         return JsonResponse(data)
 
