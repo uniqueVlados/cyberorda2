@@ -827,6 +827,7 @@
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_2" onclick="reset2();">Сбросить</a>
                  {% if count_tour == 2 %}
                  <a id="show2" class="btn btn-primary btn-sm mt-1 mb-1" onclick="viewdiv_2(show2);">Добавить</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_2" onclick="download_shedule_2();">Расписание</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_save_2" onclick="save2();">Сохранить</a>
                  {% endif %}
                  {% if count_tour != 2 %}
@@ -1544,9 +1545,15 @@
             location.href = window.location.href;
         }
 
+
+        function download_shedule_2() {
+            let game = document.getElementById('game').textContent;
+            location.href = "http://31.129.102.195:8000/download_shedule_2/" + game;
+        }
+
         function download_1(){
             let game = document.getElementById('game').textContent;
-            location.href = "http://127.0.0.1:8000/download_1/" + game;
+            location.href = "http://31.129.102.195:8000/download_1/" + game;
         }
 
         function download_2(){

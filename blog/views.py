@@ -2375,9 +2375,14 @@ def schedule(request, pk):
                         break
 
 
-
             if len(com_d[0]) % 2 != 0:
                 com2_2.append([com_d[0][-1], "Пустышка"])
+
+            if len(com_d[1]) % 2 != 0:
+                com2_1.append([com_d[1][-1], "Пустышка"])
+
+            shuffle(com2_1)
+            shuffle(com2_2)
 
             file = open(f"{posts[0].title}/{posts[0].title}_тур2.txt", "r", encoding="utf-8")
             if len(file.read()) == 0:
@@ -2419,6 +2424,63 @@ def schedule(request, pk):
             with open(f"{posts[0].title}/пересечение_команд_{posts[0].title}.json", "w", encoding="utf-8") as fp:
                 s = json.dumps(commands_dict, ensure_ascii=False)
                 fp.write(s)
+
+                # tour_shedule
+                font_ = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 40)
+                font_c = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 35)
+                game_name = posts[0].title.split()[0]
+                div_name = posts[0].title.split()[1]
+
+                base_img = Image.open('shedule/shedule.png')
+                div = Image.open(f'shedule/{div_name}.png').resize((250, 278))
+                Image.Image.paste(base_img, div, (1570, 76), mask=div)
+                game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
+                Image.Image.paste(base_img, game_, (1274, 90), mask=game_)
+                drawer = ImageDraw.Draw(base_img)
+                tour_ = 2
+                drawer.text((55, 65), str(tour_) + " ТУР", font=font_, fill='white')
+                drawer.text((55, 98), "", font=font_, fill='white')
+
+                height = 415
+
+                file = open(f"{posts[0].title}/{posts[0].title}_тур2.txt", "r", encoding="utf-8")
+                file.seek(0)
+                c = ((len(file.readlines()) - 2) // 3)
+                count_photo = 0
+                while c > 0:
+                    count_photo += 1
+                    c -= 5
+
+                file.seek(0)
+                other = 0
+                for line in file.readlines():
+                    if line.count("----------------------------------") > 0:
+                        other += 1
+                file.seek(0)
+                file.seek(0)
+                file.readline()
+                file.readline()
+
+                base_img.save(f'{posts[0].title}/tour_shedule_2.png', quality=100)
+
+
+                for i in range(1, count_photo + 1):
+                    base_img_copy = Image.open(f'{posts[0].title}/tour_shedule_2.png')
+                    drawer = ImageDraw.Draw(base_img_copy)
+                    for _ in range(5):
+                        line = file.readline()
+                        team_1 = line[:45].strip()
+                        total_1 = line[45:].strip()
+                        line = file.readline()
+                        team_2 = line[:45].strip()
+                        total_2 = line[45:].strip()
+                        file.readline()
+                        drawer.text((150, height), team_1, font=font_c, fill='white')
+                        drawer.text((1210, height), team_2, font=font_c, fill='white')
+                        height += 134
+                    base_img_copy.save(f'{posts[0].title}/tour_shedule_2_{i}.png', quality=100)
+                    height = 415
+                # ------ end ------
 
             return render(request, 'blog/sсhedule.html',
                           {'title': 'Орда', 'name': posts[0].title, 'count_tour': int(count_tour),
@@ -2462,66 +2524,66 @@ def save_tour_1(request):
         checkbox = list(request.GET.get("data"))
         com_add = request.GET.get("com").split("\n")
 
-        # file = open(f"{game}/{game}_счёт_1.txt", "w", encoding="utf-8")
-        # file.write(" ".join(checkbox))
-        # file.close()
-        # file = open(f"{game}/{game}_тур1.txt", "r", encoding="utf-8")
-        # file_list = []
-        # i = 0
-        #
-        # for line in file.readlines():
-        #     if line.count("КОМАНДЫ") or line.count("---------------") or line.count(" ") > 40:
-        #         file_list.append(line)
-        #     else:
-        #         new_line = line.replace("\n", "")
-        #         # l1 = new_line[:len(line) // 2]
-        #         # l2 = new_line[len(line) // 2:].replace("1", "").replace("0", "")
-        #         l1 = new_line[:45]
-        #         new_line = l1 + " " * 20 + checkbox[i] + "\n"
-        #         file_list.append(new_line)
-        #         i += 1
-        #
-        # file.close()
-        # file = open(f"{game}/{game}_тур1.txt", "w", encoding="utf-8")
-        # for el in file_list:
-        #     file.write(el)
-        # file.close()
-        #
-        # # init dict with commands
-        # commands_file = open(f"{game}/команды_{game}.txt", "r", encoding="utf-8")
-        # com_dict = {}
-        # for com in commands_file.readlines():
-        #     com_dict[com.replace("\n", "")] = 0
-        #
-        # com_dict["Пустышка"] = 0
-        # # count win
-        # for el in file_list[1:]:
-        #     if el.count("-") < 5:
-        #         com = el[:45].strip()
-        #         score = el[45:].strip()
-        #         com_dict[com] += int(score)
+        file = open(f"{game}/{game}_счёт_1.txt", "w", encoding="utf-8")
+        file.write(" ".join(checkbox))
+        file.close()
+        file = open(f"{game}/{game}_тур1.txt", "r", encoding="utf-8")
+        file_list = []
+        i = 0
+
+        for line in file.readlines():
+            if line.count("КОМАНДЫ") or line.count("---------------") or line.count(" ") > 40:
+                file_list.append(line)
+            else:
+                new_line = line.replace("\n", "")
+                # l1 = new_line[:len(line) // 2]
+                # l2 = new_line[len(line) // 2:].replace("1", "").replace("0", "")
+                l1 = new_line[:45]
+                new_line = l1 + " " * 20 + checkbox[i] + "\n"
+                file_list.append(new_line)
+                i += 1
+
+        file.close()
+        file = open(f"{game}/{game}_тур1.txt", "w", encoding="utf-8")
+        for el in file_list:
+            file.write(el)
+        file.close()
+
+        # init dict with commands
+        commands_file = open(f"{game}/команды_{game}.txt", "r", encoding="utf-8")
+        com_dict = {}
+        for com in commands_file.readlines():
+            com_dict[com.replace("\n", "")] = 0
+
+        com_dict["Пустышка"] = 0
+        # count win
+        for el in file_list[1:]:
+            if el.count("-") < 5:
+                com = el[:45].strip()
+                score = el[45:].strip()
+                com_dict[com] += int(score)
 
         # save results from 1 tour
-        # res = open(f"{game}/результат_1_{game}.txt", "w", encoding="utf-8")
-        # com_file = open(f"{game}/команды_{game}.txt", "a", encoding="utf-8")
-        # for i in range(0, 10):
-        #     k = 0
-        #     for pair in com_dict.items():
-        #         if pair[1] == i and pair[0] != "Пустышка":
-        #             res.write(pair[0] + ": " + str(i) + "\n")
-        #             k += 1
-        #     if k % 2 != 0 and i != 0:
-        #         res.write("Пустышка" + ": " + str(i) + "\n")
-        #     res.write("\n")
-        #
-        # fp = open(f"{game}/пересечение_команд_{game}.json", "r", encoding="utf-8")
-        # commands_dict = json.load(fp)
-        #
-        # commands_dict["Пустышка"] = []
-        #
-        # add_com_file = open(f"{game}/{game}_1_доб.txt", "w", encoding="utf-8")
+        res = open(f"{game}/результат_1_{game}.txt", "w", encoding="utf-8")
+        com_file = open(f"{game}/команды_{game}.txt", "a", encoding="utf-8")
+        for i in range(0, 10):
+            k = 0
+            for pair in com_dict.items():
+                if pair[1] == i and pair[0] != "Пустышка":
+                    res.write(pair[0] + ": " + str(i) + "\n")
+                    k += 1
+            if k % 2 != 0 and i != 0:
+                res.write("Пустышка" + ": " + str(i) + "\n")
+            res.write("\n")
 
-        # if com_add[0] != "":
+        fp = open(f"{game}/пересечение_команд_{game}.json", "r", encoding="utf-8")
+        commands_dict = json.load(fp)
+
+        commands_dict["Пустышка"] = []
+
+        add_com_file = open(f"{game}/{game}_1_доб.txt", "w", encoding="utf-8")
+
+        if com_add[0] != "":
             # for c in com_add:
             #     if list(c).count(" ") < 3:
             #         res.write(f"{c}: 0\n")
@@ -2530,26 +2592,26 @@ def save_tour_1(request):
             #         add_com_file.write(c + "\n")
 
             # ADD NEW
-        #     com_file_list = []
-        #     for i in range(0, len(com_add), 2):
-        #             com_1 = com_add[i][:len(com_add[i])-2].strip()
-        #             count_1 = int(com_add[i][len(com_add[i])-2:].strip())
-        #             com_2 = com_add[i+1][:len(com_add[i+1]) - 2].strip()
-        #             count_2 = int(com_add[i+1][len(com_add[i+1]) - 2:].strip())
-        #             res.write(f"{com_1}: {count_1}\n")
-        #             res.write(f"{com_2}: {count_2}\n")
-        #             com_file_list.append(com_1)
-        #             com_file_list.append(com_2)
-        #             commands_dict[com_1] = [com_2]
-        #             commands_dict[com_2] = [com_1]
-        #             add_com_file.write(com_1 + "\n")
-        #             add_com_file.write(com_2 + "\n")
-        #     com_file.write("\n".join(com_file_list))
-        # with open(f"{game}/пересечение_команд_{game}.json", "w", encoding="utf-8") as fp:
-        #         s = json.dumps(commands_dict, ensure_ascii=False)
-        #         fp.write(s)
-        #
-        # res.close()
+            com_file_list = []
+            for i in range(0, len(com_add), 2):
+                    com_1 = com_add[i][:len(com_add[i])-2].strip()
+                    count_1 = int(com_add[i][len(com_add[i])-2:].strip())
+                    com_2 = com_add[i+1][:len(com_add[i+1]) - 2].strip()
+                    count_2 = int(com_add[i+1][len(com_add[i+1]) - 2:].strip())
+                    res.write(f"{com_1}: {count_1}\n")
+                    res.write(f"{com_2}: {count_2}\n")
+                    com_file_list.append(com_1)
+                    com_file_list.append(com_2)
+                    commands_dict[com_1] = [com_2]
+                    commands_dict[com_2] = [com_1]
+                    add_com_file.write(com_1 + "\n")
+                    add_com_file.write(com_2 + "\n")
+            com_file.write("\n".join(com_file_list))
+        with open(f"{game}/пересечение_команд_{game}.json", "w", encoding="utf-8") as fp:
+                s = json.dumps(commands_dict, ensure_ascii=False)
+                fp.write(s)
+
+        res.close()
         # new tour
         file_count = open(f"{game}/{game}_туры.txt", "w", encoding="utf-8")
         file_count.write("2")
@@ -2575,15 +2637,7 @@ def save_tour_1(request):
                 else:
                     file_list.append(line.replace("\n", "").strip())
 
-            print(file_list)
-            print(len(file_list))
             shuffle(file_list)
-            print()
-            print()
-            print()
-            print()
-            print(file_list)
-            print(len(file_list))
 
             file = open(f"{game}/{game}_тур1.txt", "w", encoding="utf-8")
             num = 1
@@ -2628,8 +2682,6 @@ def save_tour_1(request):
 
             base_img.save(f'{game}/shedule_1.png', quality=100)
 
-            print(count_photo)
-
             for i in range(1, count_photo + 1):
                 height = 65
                 base_img_copy = Image.open('shedule/back2.png')
@@ -2645,8 +2697,6 @@ def save_tour_1(request):
                     height += 90.5
                 base_img_copy.save(f'{game}/shedule_1_{i}.png', quality=100)
                 height = 63
-
-
 
         else:
             base_img = Image.open('shedule/base.png')
@@ -2700,6 +2750,9 @@ def save_tour_1(request):
                 base_img_copy.save(f'{game}/shedule_1_{i}.png', quality=100)
                 height = 415
             # ------ end ------
+
+
+
 
         data = {"message": "ok"}
         return JsonResponse(data)
@@ -4137,21 +4190,50 @@ def del_dir_of_game(request):
         return JsonResponse(data)
 
 
+def download_shedule_2(request, game):
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    filename = 'tour_shedule_2.zip'
+
+    file = open(f"{game}/{game}_тур2.txt", "r", encoding="utf-8")
+    file.seek(0)
+    c = ((len(file.readlines()) - 2) // 3)
+    count_photo = 0
+    while c > 0:
+        count_photo += 1
+        c -= 5
+
+
+    with ZipFile(BASE_DIR + "/" + game + "/" + filename, "w") as myzip:
+        # myzip.write(f"{game}/tour_shedule_2.png")
+        for i in range(1, count_photo + 1):
+            myzip.write(f"{game}/tour_shedule_2_{i}.png")
+
+    filepath = BASE_DIR + "/" + game + "/" + filename
+    path = open(filepath, 'rb')
+    mime_type, _ = mimetypes.guess_type(filepath)
+
+    response = HttpResponse(path, content_type=mime_type)
+
+    response['Content-Disposition'] = "attachment; filename=%s" % filename
+
+    return response
+
+
 def download_1(request, game):
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     filename = 'shedule_1.zip'
 
     file = open(f"{game}/{game}_тур1.txt", "r", encoding="utf-8")
     file.seek(0)
-    c = ((len(file.readlines()) - 23) // 3)
+    c = ((len(file.readlines()) - 2) // 3)
     count_photo = 0
     while c > 0:
         count_photo += 1
-        c -= 11
+        c -= 5
 
 
     with ZipFile(BASE_DIR + "/" + game + "/" + filename, "w") as myzip:
-        myzip.write(f"{game}/shedule_1.png")
+        # myzip.write(f"{game}/shedule_1.png")
         for i in range(1, count_photo + 1):
             myzip.write(f"{game}/shedule_1_{i}.png")
 
