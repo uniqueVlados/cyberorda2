@@ -881,6 +881,7 @@
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="reset_1" onclick="reset1();">Сбросить</a>
                  {% if count_tour == 1 %}
                  <a id="show1" class="btn btn-primary btn-sm mt-1 mb-1" onclick="viewdiv_1(show1);">Добавить</a>
+                 <a id="del_show1" class="btn btn-primary btn-sm mt-1 mb-1" onclick="del_viewdiv_1(del_show1);">Кикнуть</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_1" onclick="download_shedule_1();">Расписание</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_save_1" onclick="save1();">Сохранить</a>
                  {% endif %}
@@ -893,6 +894,11 @@
          <form name="add1" id="add_com1" style="display:none;" method="post">
              <p class="black" id="p1">Команды для нового тура<Br>
              <textarea id="com1" name="commands1" cols="40" rows="3"></textarea></p>
+           </form>
+
+        <form name="del_add1" id="del_add_com1" style="display:none;" method="post">
+             <p class="black" id="p1">Команды для удаления<Br>
+             <textarea id="del_com1" name="del_commands1" cols="40" rows="3"></textarea></p>
            </form>
 
 
@@ -952,6 +958,17 @@
 
     <script>
 
+        function del_viewdiv_1(id) {
+            var el = document.getElementById("del_add_com1");
+            var link = document.getElementById(id);
+            if (el.style.display == "block") {
+                el.style.display = "none";
+                link.innerText = link.getAttribute('data-text-hide');
+            } else {
+                el.style.display = "block";
+                link.innerText = link.getAttribute('data-text-show');
+            }
+         }
 
         function viewdiv_1(id) {
             var el = document.getElementById("add_com1");
@@ -1061,6 +1078,7 @@
             let arr = ""
             const ch = document.querySelectorAll('input[name="tour_1"]');
             com = document.getElementById('com1').value;
+            del = document.getElementById('del_com1').value;
             let count_1 = 0
             let count_0 = 0
             for (const f of ch) {
@@ -1078,7 +1096,7 @@
                     url: '/save_tour_1/',
                     type: 'GET',
                     dataType: 'json',
-                    data: {'data': arr, 'name': game, 'com': com},
+                    data: {'data': arr, 'name': game, 'com': com, 'del': del},
                     success: function(response) {
                         console.log(response);
                     },
