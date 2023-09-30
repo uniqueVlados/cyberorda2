@@ -2381,8 +2381,8 @@ def schedule(request, pk):
             if len(com_d[1]) % 2 != 0:
                 com2_1.append([com_d[1][-1], "Пустышка"])
 
-            shuffle(com2_1)
-            shuffle(com2_2)
+            # shuffle(com2_1)
+            # shuffle(com2_2)
 
             file = open(f"{posts[0].title}/{posts[0].title}_тур2.txt", "r", encoding="utf-8")
             if len(file.read()) == 0:
@@ -2447,7 +2447,7 @@ def schedule(request, pk):
                         else:
                             file_list.append(line.replace("\n", "").strip())
 
-                    shuffle(file_list)
+                    # shuffle(file_list)
 
                     file = open(f"{posts[0].title}/{posts[0].title}_тур2.txt", "w", encoding="utf-8")
                     num = 1
