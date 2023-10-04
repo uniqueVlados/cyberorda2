@@ -670,7 +670,7 @@
                 {% endfor %}
             </div>
         </div>
-        {% if tour4_1 %}
+        {% if tour4_1 or tour4_2 or tour4_3 or tour4_4%}
              <div class="col-md-12">
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_4" onclick="reset4();">Сбросить</a>
                  {% if count_tour == 4 %}
@@ -757,7 +757,7 @@
                 {% endfor %}
             </div>
 
-        {% if tour3_1 %}
+        {% if tour3_1 or tour3_2 or tour3_3%}
              <div class="col-md-12">
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_3" onclick="reset3();">Сбросить</a>
                  {% if count_tour == 3 %}
