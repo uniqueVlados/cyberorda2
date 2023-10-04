@@ -2354,6 +2354,141 @@ def schedule(request, pk):
                 s = json.dumps(commands_dict, ensure_ascii=False)
                 fp.write(s)
 
+            # tour_shedule
+            font_ = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 40)
+            font_c = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 35)
+            game_name = posts[0].title.split()[0]
+            div_name = posts[0].title.split()[1]
+
+            if posts[0].title.split()[1] == "МСКЛ":
+                base_img = Image.open('shedule/back1.png')
+                game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
+                Image.Image.paste(base_img, game_, (1650, 90), mask=game_)
+                drawer = ImageDraw.Draw(base_img)
+
+                height = 402
+
+                file = open(f"{posts[0].title}/{posts[0].title}_тур3.txt", "r", encoding="utf-8")
+                file_list = []
+                for line in file.readlines()[2:]:
+                    if line.count("----------"):
+                        pass
+                    else:
+                        file_list.append(line.replace("\n", "").strip())
+
+                # shuffle(file_list)
+
+                file = open(f"{posts[0].title}/{posts[0].title}_тур3.txt", "w", encoding="utf-8")
+                num = 1
+                title = "КОМАНДЫ" + " " * 35 + "|СЧЁТ\n"
+                file.write(title)
+                file.write("-" * len(title) + "\n")
+                for command in file_list:
+                    file.write(command.replace("\n", "").ljust(35) + "\n")
+                    if num % 2 == 0:
+                        file.write("-" * len(title) + "\n")
+                    num += 1
+
+                file = open(f"{posts[0].title}/{posts[0].title}_тур3.txt", "r", encoding="utf-8")
+                file.seek(0)
+                c = ((len(file.readlines()) - 23) // 3)
+                count_photo = 0
+                while c > 0:
+                    count_photo += 1
+                    c -= 11
+
+                file.seek(0)
+                other = 0
+                for line in file.readlines():
+                    if line.count("----------------------------------") > 0:
+                        other += 1
+                file.seek(0)
+                file.seek(0)
+                file.readline()
+                file.readline()
+
+                for _ in range(7):
+                    line = file.readline()
+                    team_1 = line[:45].strip()
+                    total_1 = line[45:].strip()
+                    line = file.readline()
+                    team_2 = line[:45].strip()
+                    total_2 = line[45:].strip()
+                    file.readline()
+                    drawer.text((150, height), team_1, font=font_c, fill='white')
+                    drawer.text((1180, height), team_2, font=font_c, fill='white')
+                    height += 90
+
+                base_img.save(f'{posts[0].title}/tour_shedule_3.png', quality=100)
+
+                for i in range(1, count_photo + 1):
+                    height = 65
+                    base_img_copy = Image.open('shedule/back2.png')
+                    drawer = ImageDraw.Draw(base_img_copy)
+                    for _ in range(11):
+                        line = file.readline()
+                        team_1 = line[:45].strip()
+                        line = file.readline()
+                        team_2 = line[:45].strip()
+                        file.readline()
+                        drawer.text((120, height), team_1, font=font_c, fill='white')
+                        drawer.text((1180, height), team_2, font=font_c, fill='white')
+                        height += 90.5
+                    base_img_copy.save(f'{posts[0].title}/tour_shedule_3_{i}.png', quality=100)
+                    height = 63
+
+            else:
+
+                base_img = Image.open('shedule/shedule.png')
+                div = Image.open(f'shedule/{div_name}.png').resize((250, 278))
+                Image.Image.paste(base_img, div, (1570, 76), mask=div)
+                game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
+                Image.Image.paste(base_img, game_, (1274, 90), mask=game_)
+                drawer = ImageDraw.Draw(base_img)
+                tour_ = 2
+                drawer.text((55, 65), str(tour_) + " ТУР", font=font_, fill='white')
+                drawer.text((55, 98), "", font=font_, fill='white')
+
+                height = 415
+
+                file = open(f"{posts[0].title}/{posts[0].title}_тур3.txt", "r", encoding="utf-8")
+                file.seek(0)
+                c = ((len(file.readlines()) - 2) // 3)
+                count_photo = 0
+                while c > 0:
+                    count_photo += 1
+                    c -= 5
+
+                file.seek(0)
+                other = 0
+                for line in file.readlines():
+                    if line.count("----------------------------------") > 0:
+                        other += 1
+                file.seek(0)
+                file.seek(0)
+                file.readline()
+                file.readline()
+
+                base_img.save(f'{posts[0].title}/tour_shedule_3.png', quality=100)
+
+                for i in range(1, count_photo + 1):
+                    base_img_copy = Image.open(f'{posts[0].title}/tour_shedule_3.png')
+                    drawer = ImageDraw.Draw(base_img_copy)
+                    for _ in range(5):
+                        line = file.readline()
+                        team_1 = line[:45].strip()
+                        total_1 = line[45:].strip()
+                        line = file.readline()
+                        team_2 = line[:45].strip()
+                        total_2 = line[45:].strip()
+                        file.readline()
+                        drawer.text((150, height), team_1, font=font_c, fill='white')
+                        drawer.text((1210, height), team_2, font=font_c, fill='white')
+                        height += 134
+                    base_img_copy.save(f'{posts[0].title}/tour_shedule_3_{i}.png', quality=100)
+                    height = 415
+                # ------ end ------
+
             return render(request, 'blog/sсhedule.html',
                           {'title': 'Орда', 'name': posts[0].title, 'count_tour': int(count_tour),
                            'tour1': com_1,
@@ -3062,58 +3197,46 @@ def save_tour_2(request):
         file_count.write("3")
         file_count.close()
 
+
+
+
         # generate shedule (photo)
         font_ = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 40)
         font_c = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 35)
+        base_img = Image.open('shedule/base.png')
+        div = Image.open(f'shedule/{div_name}.png').resize((250, 278))
+        Image.Image.paste(base_img, div, (1570, 76), mask=div)
+        game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
+        Image.Image.paste(base_img, game_, (1274, 90), mask=game_)
+        drawer = ImageDraw.Draw(base_img)
+        drawer.text((55, 65), "2 ТУР", font=font_, fill='white')
+        drawer.text((55, 98), "", font=font_, fill='white')
 
-        if div_name == "МСКЛ":
-            base_img = Image.open('shedule/back1.png')
-            game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
-            Image.Image.paste(base_img, game_, (1650, 90), mask=game_)
-            drawer = ImageDraw.Draw(base_img)
+        height = 415
 
-            height = 402
+        file = open(f"{game}/{game}_тур2.txt", "r", encoding="utf-8")
+        c = ((len(file.readlines()) - 2) // 3)
+        count_photo = 0
+        while c > 0:
+            count_photo += 1
+            c -= 5
 
-            file = open(f"{game}/{game}_тур2.txt", "r", encoding="utf-8")
-            file_list = []
-            for line in file.readlines()[2:]:
-                if line.count("----------"):
-                    pass
-                else:
-                    file_list.append(line.replace("\n", "").strip())
+        file.seek(0)
+        other = 0
+        for line in file.readlines():
+            if line.count("----------------------------------") > 0:
+                other += 1
+        file.seek(0)
+        file.seek(0)
+        file.readline()
+        file.readline()
 
-            shuffle(file_list)
+        base_img.save(f'{game}/shedule_2.png', quality=100)
 
-            file = open(f"{game}/{game}_тур2.txt", "w", encoding="utf-8")
-            num = 1
-            title = "КОМАНДЫ" + " " * 35 + "|СЧЁТ\n"
-            file.write(title)
-            file.write("-" * len(title) + "\n")
-            for command in file_list:
-                file.write(command.replace("\n", "").ljust(35) + "\n")
-                if num % 2 == 0:
-                    file.write("-" * len(title) + "\n")
-                num += 1
-
-            file = open(f"{game}/{game}_тур2.txt", "r", encoding="utf-8")
-            file.seek(0)
-            c = ((len(file.readlines()) - 23) // 3)
-            count_photo = 0
-            while c > 0:
-                count_photo += 1
-                c -= 11
-
-            file.seek(0)
-            other = 0
-            for line in file.readlines():
-                if line.count("----------------------------------") > 0:
-                    other += 1
-            file.seek(0)
-            file.seek(0)
-            file.readline()
-            file.readline()
-
-            for _ in range(7):
+        for i in range(1, count_photo + 1):
+            base_img_copy = Image.open(f'{game}/shedule_2.png')
+            drawer = ImageDraw.Draw(base_img_copy)
+            for _ in range(5):
                 line = file.readline()
                 team_1 = line[:45].strip()
                 total_1 = line[45:].strip()
@@ -3121,82 +3244,14 @@ def save_tour_2(request):
                 team_2 = line[:45].strip()
                 total_2 = line[45:].strip()
                 file.readline()
-                drawer.text((150, height), team_1, font=font_c, fill='white')
+                drawer.text((120, height), team_1, font=font_c, fill='white')
                 drawer.text((1180, height), team_2, font=font_c, fill='white')
-                height += 90
-
-            base_img.save(f'{game}/shedule_1.png', quality=100)
-
-            for i in range(1, count_photo + 1):
-                height = 65
-                base_img_copy = Image.open('shedule/back2.png')
-                drawer = ImageDraw.Draw(base_img_copy)
-                for _ in range(11):
-                    line = file.readline()
-                    team_1 = line[:45].strip()
-                    line = file.readline()
-                    team_2 = line[:45].strip()
-                    file.readline()
-                    drawer.text((120, height), team_1, font=font_c, fill='white')
-                    drawer.text((1180, height), team_2, font=font_c, fill='white')
-                    height += 90.5
-                base_img_copy.save(f'{game}/shedule_2_{i}.png', quality=100)
-                height = 63
-
-        else:
-
-            # generate shedule (photo)
-            font_ = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 40)
-            font_c = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 35)
-            base_img = Image.open('shedule/base.png')
-            div = Image.open(f'shedule/{div_name}.png').resize((250, 278))
-            Image.Image.paste(base_img, div, (1570, 76), mask=div)
-            game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
-            Image.Image.paste(base_img, game_, (1274, 90), mask=game_)
-            drawer = ImageDraw.Draw(base_img)
-            drawer.text((55, 65), "2 ТУР", font=font_, fill='white')
-            drawer.text((55, 98), "", font=font_, fill='white')
-
+                drawer.text((820, height), total_1, font=font_c, fill='white')
+                drawer.text((1085, height), total_2, font=font_c, fill='white')
+                height += 134
+            base_img_copy.save(f'{game}/shedule_2_{i}.png', quality=100)
             height = 415
-
-            file = open(f"{game}/{game}_тур2.txt", "r", encoding="utf-8")
-            c = ((len(file.readlines()) - 2) // 3)
-            count_photo = 0
-            while c > 0:
-                count_photo += 1
-                c -= 5
-
-            file.seek(0)
-            other = 0
-            for line in file.readlines():
-                if line.count("----------------------------------") > 0:
-                    other += 1
-            file.seek(0)
-            file.seek(0)
-            file.readline()
-            file.readline()
-
-            base_img.save(f'{game}/shedule_2.png', quality=100)
-
-            for i in range(1, count_photo + 1):
-                base_img_copy = Image.open(f'{game}/shedule_2.png')
-                drawer = ImageDraw.Draw(base_img_copy)
-                for _ in range(5):
-                    line = file.readline()
-                    team_1 = line[:45].strip()
-                    total_1 = line[45:].strip()
-                    line = file.readline()
-                    team_2 = line[:45].strip()
-                    total_2 = line[45:].strip()
-                    file.readline()
-                    drawer.text((120, height), team_1, font=font_c, fill='white')
-                    drawer.text((1180, height), team_2, font=font_c, fill='white')
-                    drawer.text((820, height), total_1, font=font_c, fill='white')
-                    drawer.text((1085, height), total_2, font=font_c, fill='white')
-                    height += 134
-                base_img_copy.save(f'{game}/shedule_2_{i}.png', quality=100)
-                height = 415
-            # ------ end ------
+        # ------ end ------
 
         data = {"message": "ok"}
         return JsonResponse(data)
@@ -3343,55 +3398,40 @@ def save_tour_3(request):
         # generate shedule (photo)
         font_ = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 40)
         font_c = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 35)
+        base_img = Image.open('shedule/base.png')
+        div = Image.open(f'shedule/{div_name}.png').resize((250, 278))
+        Image.Image.paste(base_img, div, (1570, 76), mask=div)
+        game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
+        Image.Image.paste(base_img, game_, (1274, 90), mask=game_)
+        drawer = ImageDraw.Draw(base_img)
+        drawer.text((55, 65), "3 ТУР", font=font_, fill='white')
+        drawer.text((55, 98), "", font=font_, fill='white')
 
-        if div_name == "МСКЛ":
-            base_img = Image.open('shedule/back1.png')
-            game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
-            Image.Image.paste(base_img, game_, (1650, 90), mask=game_)
-            drawer = ImageDraw.Draw(base_img)
+        height = 415
 
-            height = 402
+        file = open(f"{game}/{game}_тур3.txt", "r", encoding="utf-8")
+        c = ((len(file.readlines()) - 2) // 3)
+        count_photo = 0
+        while c > 0:
+            count_photo += 1
+            c -= 5
 
-            file = open(f"{game}/{game}_тур3.txt", "r", encoding="utf-8")
-            file_list = []
-            for line in file.readlines()[2:]:
-                if line.count("----------"):
-                    pass
-                else:
-                    file_list.append(line.replace("\n", "").strip())
+        file.seek(0)
+        other = 0
+        for line in file.readlines():
+            if line.count("----------------------------------") > 0:
+                other += 1
+        file.seek(0)
+        file.seek(0)
+        file.readline()
+        file.readline()
 
-            shuffle(file_list)
+        base_img.save(f'{game}/shedule_3.png', quality=100)
 
-            file = open(f"{game}/{game}_тур3.txt", "w", encoding="utf-8")
-            num = 1
-            title = "КОМАНДЫ" + " " * 35 + "|СЧЁТ\n"
-            file.write(title)
-            file.write("-" * len(title) + "\n")
-            for command in file_list:
-                file.write(command.replace("\n", "").ljust(35) + "\n")
-                if num % 2 == 0:
-                    file.write("-" * len(title) + "\n")
-                num += 1
-
-            file = open(f"{game}/{game}_тур3.txt", "r", encoding="utf-8")
-            file.seek(0)
-            c = ((len(file.readlines()) - 23) // 3)
-            count_photo = 0
-            while c > 0:
-                count_photo += 1
-                c -= 11
-
-            file.seek(0)
-            other = 0
-            for line in file.readlines():
-                if line.count("----------------------------------") > 0:
-                    other += 1
-            file.seek(0)
-            file.seek(0)
-            file.readline()
-            file.readline()
-
-            for _ in range(7):
+        for i in range(1, count_photo + 1):
+            base_img_copy = Image.open(f'{game}/shedule_3.png')
+            drawer = ImageDraw.Draw(base_img_copy)
+            for _ in range(5):
                 line = file.readline()
                 team_1 = line[:45].strip()
                 total_1 = line[45:].strip()
@@ -3399,81 +3439,14 @@ def save_tour_3(request):
                 team_2 = line[:45].strip()
                 total_2 = line[45:].strip()
                 file.readline()
-                drawer.text((150, height), team_1, font=font_c, fill='white')
+                drawer.text((120, height), team_1, font=font_c, fill='white')
                 drawer.text((1180, height), team_2, font=font_c, fill='white')
-                height += 90
-
-            base_img.save(f'{game}/shedule_3.png', quality=100)
-
-            for i in range(1, count_photo + 1):
-                height = 65
-                base_img_copy = Image.open('shedule/back2.png')
-                drawer = ImageDraw.Draw(base_img_copy)
-                for _ in range(11):
-                    line = file.readline()
-                    team_1 = line[:45].strip()
-                    line = file.readline()
-                    team_2 = line[:45].strip()
-                    file.readline()
-                    drawer.text((120, height), team_1, font=font_c, fill='white')
-                    drawer.text((1180, height), team_2, font=font_c, fill='white')
-                    height += 90.5
-                base_img_copy.save(f'{game}/shedule_3_{i}.png', quality=100)
-                height = 63
-
-        else:
-            # generate shedule (photo)
-            font_ = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 40)
-            font_c = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 35)
-            base_img = Image.open('shedule/base.png')
-            div = Image.open(f'shedule/{div_name}.png').resize((250, 278))
-            Image.Image.paste(base_img, div, (1570, 76), mask=div)
-            game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
-            Image.Image.paste(base_img, game_, (1274, 90), mask=game_)
-            drawer = ImageDraw.Draw(base_img)
-            drawer.text((55, 65), "3 ТУР", font=font_, fill='white')
-            drawer.text((55, 98), "", font=font_, fill='white')
-
+                drawer.text((820, height), total_1, font=font_c, fill='white')
+                drawer.text((1085, height), total_2, font=font_c, fill='white')
+                height += 134
+            base_img_copy.save(f'{game}/shedule_3_{i}.png', quality=100)
             height = 415
-
-            file = open(f"{game}/{game}_тур3.txt", "r", encoding="utf-8")
-            c = ((len(file.readlines()) - 2) // 3)
-            count_photo = 0
-            while c > 0:
-                count_photo += 1
-                c -= 5
-
-            file.seek(0)
-            other = 0
-            for line in file.readlines():
-                if line.count("----------------------------------") > 0:
-                    other += 1
-            file.seek(0)
-            file.seek(0)
-            file.readline()
-            file.readline()
-
-            base_img.save(f'{game}/shedule_3.png', quality=100)
-
-            for i in range(1, count_photo + 1):
-                base_img_copy = Image.open(f'{game}/shedule_3.png')
-                drawer = ImageDraw.Draw(base_img_copy)
-                for _ in range(5):
-                    line = file.readline()
-                    team_1 = line[:45].strip()
-                    total_1 = line[45:].strip()
-                    line = file.readline()
-                    team_2 = line[:45].strip()
-                    total_2 = line[45:].strip()
-                    file.readline()
-                    drawer.text((120, height), team_1, font=font_c, fill='white')
-                    drawer.text((1180, height), team_2, font=font_c, fill='white')
-                    drawer.text((820, height), total_1, font=font_c, fill='white')
-                    drawer.text((1085, height), total_2, font=font_c, fill='white')
-                    height += 134
-                base_img_copy.save(f'{game}/shedule_3_{i}.png', quality=100)
-                height = 415
-            # ------ end ------
+        # ------ end ------
 
 
         data = {"message": "ok"}
@@ -3618,55 +3591,41 @@ def save_tour_4(request):
         # generate shedule (photo)
         font_ = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 40)
         font_c = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 35)
+        base_img = Image.open('shedule/base.png')
+        div = Image.open(f'shedule/{div_name}.png').resize((250, 278))
+        Image.Image.paste(base_img, div, (1570, 76), mask=div)
+        game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
+        Image.Image.paste(base_img, game_, (1274, 90), mask=game_)
+        drawer = ImageDraw.Draw(base_img)
+        tour_ = 1
+        drawer.text((55, 65), "4 ТУР", font=font_, fill='white')
+        drawer.text((55, 98), "", font=font_, fill='white')
 
-        if div_name == "МСКЛ":
-            base_img = Image.open('shedule/back1.png')
-            game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
-            Image.Image.paste(base_img, game_, (1650, 90), mask=game_)
-            drawer = ImageDraw.Draw(base_img)
+        height = 415
 
-            height = 402
+        file = open(f"{game}/{game}_тур4.txt", "r", encoding="utf-8")
+        c = ((len(file.readlines()) - 2) // 3)
+        count_photo = 0
+        while c > 0:
+            count_photo += 1
+            c -= 5
 
-            file = open(f"{game}/{game}_тур4.txt", "r", encoding="utf-8")
-            file_list = []
-            for line in file.readlines()[2:]:
-                if line.count("----------"):
-                    pass
-                else:
-                    file_list.append(line.replace("\n", "").strip())
+        file.seek(0)
+        other = 0
+        for line in file.readlines():
+            if line.count("----------------------------------") > 0:
+                other += 1
+        file.seek(0)
+        file.seek(0)
+        file.readline()
+        file.readline()
 
-            shuffle(file_list)
+        base_img.save(f'{game}/shedule_4.png', quality=100)
 
-            file = open(f"{game}/{game}_тур4.txt", "w", encoding="utf-8")
-            num = 1
-            title = "КОМАНДЫ" + " " * 35 + "|СЧЁТ\n"
-            file.write(title)
-            file.write("-" * len(title) + "\n")
-            for command in file_list:
-                file.write(command.replace("\n", "").ljust(35) + "\n")
-                if num % 2 == 0:
-                    file.write("-" * len(title) + "\n")
-                num += 1
-
-            file = open(f"{game}/{game}_тур4.txt", "r", encoding="utf-8")
-            file.seek(0)
-            c = ((len(file.readlines()) - 23) // 3)
-            count_photo = 0
-            while c > 0:
-                count_photo += 1
-                c -= 11
-
-            file.seek(0)
-            other = 0
-            for line in file.readlines():
-                if line.count("----------------------------------") > 0:
-                    other += 1
-            file.seek(0)
-            file.seek(0)
-            file.readline()
-            file.readline()
-
-            for _ in range(7):
+        for i in range(1, count_photo + 1):
+            base_img_copy = Image.open(f'{game}/shedule_4.png')
+            drawer = ImageDraw.Draw(base_img_copy)
+            for _ in range(5):
                 line = file.readline()
                 team_1 = line[:45].strip()
                 total_1 = line[45:].strip()
@@ -3674,82 +3633,14 @@ def save_tour_4(request):
                 team_2 = line[:45].strip()
                 total_2 = line[45:].strip()
                 file.readline()
-                drawer.text((150, height), team_1, font=font_c, fill='white')
+                drawer.text((120, height), team_1, font=font_c, fill='white')
                 drawer.text((1180, height), team_2, font=font_c, fill='white')
-                height += 90
-
-            base_img.save(f'{game}/shedule_4.png', quality=100)
-
-            for i in range(1, count_photo + 1):
-                height = 65
-                base_img_copy = Image.open('shedule/back2.png')
-                drawer = ImageDraw.Draw(base_img_copy)
-                for _ in range(11):
-                    line = file.readline()
-                    team_1 = line[:45].strip()
-                    line = file.readline()
-                    team_2 = line[:45].strip()
-                    file.readline()
-                    drawer.text((120, height), team_1, font=font_c, fill='white')
-                    drawer.text((1180, height), team_2, font=font_c, fill='white')
-                    height += 90.5
-                base_img_copy.save(f'{game}/shedule_4_{i}.png', quality=100)
-                height = 63
-
-        else:
-            # generate shedule (photo)
-            font_ = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 40)
-            font_c = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 35)
-            base_img = Image.open('shedule/base.png')
-            div = Image.open(f'shedule/{div_name}.png').resize((250, 278))
-            Image.Image.paste(base_img, div, (1570, 76), mask=div)
-            game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
-            Image.Image.paste(base_img, game_, (1274, 90), mask=game_)
-            drawer = ImageDraw.Draw(base_img)
-            tour_ = 1
-            drawer.text((55, 65), "4 ТУР", font=font_, fill='white')
-            drawer.text((55, 98), "", font=font_, fill='white')
-
+                drawer.text((820, height), total_1, font=font_c, fill='white')
+                drawer.text((1085, height), total_2, font=font_c, fill='white')
+                height += 134
+            base_img_copy.save(f'{game}/shedule_4_{i}.png', quality=100)
             height = 415
-
-            file = open(f"{game}/{game}_тур4.txt", "r", encoding="utf-8")
-            c = ((len(file.readlines()) - 2) // 3)
-            count_photo = 0
-            while c > 0:
-                count_photo += 1
-                c -= 5
-
-            file.seek(0)
-            other = 0
-            for line in file.readlines():
-                if line.count("----------------------------------") > 0:
-                    other += 1
-            file.seek(0)
-            file.seek(0)
-            file.readline()
-            file.readline()
-
-            base_img.save(f'{game}/shedule_4.png', quality=100)
-
-            for i in range(1, count_photo + 1):
-                base_img_copy = Image.open(f'{game}/shedule_4.png')
-                drawer = ImageDraw.Draw(base_img_copy)
-                for _ in range(5):
-                    line = file.readline()
-                    team_1 = line[:45].strip()
-                    total_1 = line[45:].strip()
-                    line = file.readline()
-                    team_2 = line[:45].strip()
-                    total_2 = line[45:].strip()
-                    file.readline()
-                    drawer.text((120, height), team_1, font=font_c, fill='white')
-                    drawer.text((1180, height), team_2, font=font_c, fill='white')
-                    drawer.text((820, height), total_1, font=font_c, fill='white')
-                    drawer.text((1085, height), total_2, font=font_c, fill='white')
-                    height += 134
-                base_img_copy.save(f'{game}/shedule_4_{i}.png', quality=100)
-                height = 415
-            # ------ end ------
+        # ------ end ------
 
 
         data = {"message": "ok"}
