@@ -1950,6 +1950,18 @@ def schedule(request, pk):
             if len(com_d[0]) % 2 != 0:
                 com5_5.append([com_d[0][-1], "Пустышка"])
 
+            if len(com_d[1]) % 2 != 0:
+                com5_4.append([com_d[1][-1], "Пустышка"])
+
+            if len(com_d[2]) % 2 != 0:
+                com5_3.append([com_d[2][-1], "Пустышка"])
+
+            if len(com_d[3]) % 2 != 0:
+                com5_2.append([com_d[3][-1], "Пустышка"])
+
+            if len(com_d[4]) % 2 != 0:
+                com5_1.append([com_d[4][-1], "Пустышка"])
+
             file = open(f"{posts[0].title}/{posts[0].title}_тур5.txt", "r", encoding="utf-8")
             if len(file.read()) == 0:
                 file = open(f"{posts[0].title}/{posts[0].title}_тур5.txt", "w", encoding="utf-8")
@@ -2121,6 +2133,15 @@ def schedule(request, pk):
             if len(com_d[0]) % 2 != 0:
                 com4_4.append([com_d[0][-1], "Пустышка"])
 
+            if len(com_d[1]) % 2 != 0:
+                com4_3.append([com_d[1][-1], "Пустышка"])
+
+            if len(com_d[2]) % 2 != 0:
+                com4_2.append([com_d[2][-1], "Пустышка"])
+
+            if len(com_d[3]) % 2 != 0:
+                com4_1.append([com_d[3][-1], "Пустышка"])
+
 
             file = open(f"{posts[0].title}/{posts[0].title}_тур4.txt", "r", encoding="utf-8")
             if len(file.read()) == 0:
@@ -2278,6 +2299,12 @@ def schedule(request, pk):
 
             if len(com_d[0]) % 2 != 0:
                 com3_3.append([com_d[0][-1], "Пустышка"])
+
+            if len(com_d[1]) % 2 != 0:
+                com3_2.append([com_d[1][-1], "Пустышка"])
+
+            if len(com_d[2]) % 2 != 0:
+                com3_1.append([com_d[2][-1], "Пустышка"])
 
             file = open(f"{posts[0].title}/{posts[0].title}_тур3.txt", "r", encoding="utf-8")
             if len(file.read()) == 0:
@@ -3020,10 +3047,10 @@ def save_tour_2(request):
         if com_add[0] != "":
             for c in com_add:
                 if list(c).count(" ") < 3:
-                    res.write(f"{c}: 0\n")
-                    com_file.write(f"\n{c}")
-                    commands_dict[c] = []
-                    add_com_file.write(c + "\n")
+                    res.write(f"{c[:len(c)-2]}: {c[len(c)-1:]}\n")
+                    com_file.write(f"\n{c[:len(c)-2]}")
+                    commands_dict[c[:len(c)-2]] = []
+                    add_com_file.write(c[:len(c)-2] + "\n")
 
         with open(f"{game}/пересечение_команд_{game}.json", "w", encoding="utf-8") as fp:
                 s = json.dumps(commands_dict, ensure_ascii=False)
@@ -3210,13 +3237,15 @@ def save_tour_3(request):
 
         add_com_file = open(f"{game}/{game}_3_доб.txt", "w", encoding="utf-8")
 
+
         if com_add[0] != "":
             for c in com_add:
                 if list(c).count(" ") < 3:
-                    res.write(f"{c}: 0\n")
-                    com_file.write(f"\n{c}")
-                    commands_dict[c] = []
-                    add_com_file.write(c + "\n")
+                    res.write(f"{c[:len(c) - 2]}: {c[len(c) - 1:]}\n")
+                    com_file.write(f"\n{c[:len(c) - 2]}")
+                    commands_dict[c[:len(c) - 2]] = []
+                    add_com_file.write(c[:len(c) - 2] + "\n")
+
 
         with open(f"{game}/пересечение_команд_{game}.json", "w", encoding="utf-8") as fp:
                 s = json.dumps(commands_dict, ensure_ascii=False)
@@ -3406,10 +3435,10 @@ def save_tour_4(request):
         if com_add[0] != "":
             for c in com_add:
                 if list(c).count(" ") < 3:
-                    res.write(f"{c}: 0\n")
-                    com_file.write(f"\n{c}")
-                    commands_dict[c] = []
-                    add_com_file.write(c + "\n")
+                    res.write(f"{c[:len(c) - 2]}: {c[len(c) - 1:]}\n")
+                    com_file.write(f"\n{c[:len(c) - 2]}")
+                    commands_dict[c[:len(c) - 2]] = []
+                    add_com_file.write(c[:len(c) - 2] + "\n")
 
         with open(f"{game}/пересечение_команд_{game}.json", "w", encoding="utf-8") as fp:
                 s = json.dumps(commands_dict, ensure_ascii=False)
@@ -3600,10 +3629,10 @@ def save_tour_5(request):
         if com_add[0] != "":
             for c in com_add:
                 if list(c).count(" ") < 3:
-                    res.write(f"{c}: 0\n")
-                    com_file.write(f"\n{c}")
-                    commands_dict[c] = []
-                    add_com_file.write(c + "\n")
+                    res.write(f"{c[:len(c) - 2]}: {c[len(c) - 1:]}\n")
+                    com_file.write(f"\n{c[:len(c) - 2]}")
+                    commands_dict[c[:len(c) - 2]] = []
+                    add_com_file.write(c[:len(c) - 2] + "\n")
 
         with open(f"{game}/пересечение_команд_{game}.json", "w", encoding="utf-8") as fp:
                 s = json.dumps(commands_dict, ensure_ascii=False)
@@ -3793,10 +3822,10 @@ def save_tour_6(request):
         if com_add[0] != "":
             for c in com_add:
                 if list(c).count(" ") < 3:
-                    res.write(f"{c}: 0\n")
-                    com_file.write(f"\n{c}")
-                    commands_dict[c] = []
-                    add_com_file.write(c + "\n")
+                    res.write(f"{c[:len(c) - 2]}: {c[len(c) - 1:]}\n")
+                    com_file.write(f"\n{c[:len(c) - 2]}")
+                    commands_dict[c[:len(c) - 2]] = []
+                    add_com_file.write(c[:len(c) - 2] + "\n")
 
         with open(f"{game}/пересечение_команд_{game}.json", "w", encoding="utf-8") as fp:
                 s = json.dumps(commands_dict, ensure_ascii=False)
@@ -3986,10 +4015,10 @@ def save_tour_7(request):
         if com_add[0] != "":
             for c in com_add:
                 if list(c).count(" ") < 3:
-                    res.write(f"{c}: 0\n")
-                    com_file.write(f"\n{c}")
-                    commands_dict[c] = []
-                    add_com_file.write(c + "\n")
+                    res.write(f"{c[:len(c) - 2]}: {c[len(c) - 1:]}\n")
+                    com_file.write(f"\n{c[:len(c) - 2]}")
+                    commands_dict[c[:len(c) - 2]] = []
+                    add_com_file.write(c[:len(c) - 2] + "\n")
 
         with open(f"{game}/пересечение_команд_{game}.json", "w", encoding="utf-8") as fp:
                 s = json.dumps(commands_dict, ensure_ascii=False)
@@ -4179,10 +4208,10 @@ def save_tour_8(request):
         if com_add[0] != "":
             for c in com_add:
                 if list(c).count(" ") < 3:
-                    res.write(f"{c}: 0\n")
-                    com_file.write(f"\n{c}")
-                    commands_dict[c] = []
-                    add_com_file.write(c + "\n")
+                    res.write(f"{c[:len(c) - 2]}: {c[len(c) - 1:]}\n")
+                    com_file.write(f"\n{c[:len(c) - 2]}")
+                    commands_dict[c[:len(c) - 2]] = []
+                    add_com_file.write(c[:len(c) - 2] + "\n")
 
         with open(f"{game}/пересечение_команд_{game}.json", "w", encoding="utf-8") as fp:
                 s = json.dumps(commands_dict, ensure_ascii=False)
