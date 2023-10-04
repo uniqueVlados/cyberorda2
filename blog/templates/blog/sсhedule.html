@@ -675,6 +675,7 @@
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_4" onclick="reset4();">Сбросить</a>
                  {% if count_tour == 4 %}
                  <a id="show4" class="btn btn-primary btn-sm mt-1 mb-1" onclick="viewdiv_4(show4);">Добавить</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_3" onclick="download_shedule_3();">Расписание</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_save_4" onclick="save4();">Сохранить</a>
                  {% endif %}
                  {% if count_tour != 4 %}
@@ -761,6 +762,7 @@
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_3" onclick="reset3();">Сбросить</a>
                  {% if count_tour == 3 %}
                  <a id="show3" class="btn btn-primary btn-sm mt-1 mb-1" onclick="viewdiv_3(show3);">Добавить</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_3" onclick="download_shedule_3();">Расписание</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_save_3" onclick="save3();">Сохранить</a>
                  {% endif %}
                  {% if count_tour != 3 %}
@@ -1571,6 +1573,16 @@
         function download_shedule_2() {
             let game = document.getElementById('game').textContent;
             location.href = "http://31.129.102.195:8000/download_shedule_2/" + game;
+        }
+
+        function download_shedule_3() {
+            let game = document.getElementById('game').textContent;
+            location.href = "http://31.129.102.195:8000/download_shedule_3/" + game;
+        }
+
+        function download_shedule_4() {
+            let game = document.getElementById('game').textContent;
+            location.href = "http://31.129.102.195:8000/download_shedule_4/" + game;
         }
 
         function download_1(){
