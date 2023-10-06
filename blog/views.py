@@ -2864,7 +2864,7 @@ def save_tour_1(request):
         for el in file_list[1:]:
             if el.count("-") < 5:
                 com = el[:45].strip()
-                score = el[45:].strip()
+                score = el[:len(el)-4].strip()
                 com_dict[com] += int(score)
 
         # save results from 1 tour
