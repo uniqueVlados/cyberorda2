@@ -2916,6 +2916,9 @@ def save_tour_1(request):
             #         add_com_file.write(c + "\n")
 
             # ADD NEW
+
+            res = open(f"{game}/результат_1_{game}.txt", "a", encoding="utf-8")
+            res.write("\n")
             com_file_list = []
             for i in range(0, len(com_add), 2):
                     com_1 = com_add[i][:len(com_add[i])-2].strip()
@@ -3560,7 +3563,6 @@ def save_tour_4(request):
         checkbox = list(request.GET.get("data"))
         game = request.GET.get("name")
         game_name, div_name = game.split()
-        com_del = request.GET.get("del").split("\n")
         file = open(f"{game}/{game}_счёт_4.txt", "w", encoding="utf-8")
         file.write(" ".join(checkbox))
         file.close()
@@ -3616,22 +3618,6 @@ def save_tour_4(request):
             res.write("\n")
         res.close()
 
-        # del commands
-        res = open(f"{game}/результат_4_{game}.txt", "r", encoding="utf-8")
-        new_res = []
-
-        for c in res.readlines():
-            if c.split(": ")[0] not in com_del:
-                new_res.append(c)
-        res.close()
-
-        res = open(f"{game}/результат_4_{game}.txt", "w", encoding="utf-8")
-
-        for c in new_res:
-            res.write(f"{c}")
-
-        res.close()
-        # end
 
 
         fp = open(f"{game}/пересечение_команд_{game}.json", "r", encoding="utf-8")
