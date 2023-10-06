@@ -3136,6 +3136,7 @@ def save_tour_2(request):
         checkbox = list(request.GET.get("data"))
         game = request.GET.get("name")
         game_name, div_name = game.split()
+        com_add = request.GET.get("com").split("\n")
         com_del = request.GET.get("del").split("\n")
        
         file = open(f"{game}/{game}_счёт_2.txt", "w", encoding="utf-8")
@@ -3217,13 +3218,12 @@ def save_tour_2(request):
 
         res = open(f"{game}/результат_2_{game}.txt", "a", encoding="utf-8")
         com_file = open(f"{game}/команды_{game}.txt", "a", encoding="utf-8")
-        com_add = request.GET.get("com").split("\n")
 
         add_com_file = open(f"{game}/{game}_2_доб.txt", "w", encoding="utf-8")
 
         if com_add[0] != "":
             for c in com_add:
-                if list(c).count(" ") < 3:
+                if list(c).count(" ") < 7:
                     res.write(f"{c[:len(c)-2]}: {c[len(c)-1:]}\n")
                     com_file.write(f"\n{c[:len(c)-2]}")
                     commands_dict[c[:len(c)-2]] = []
@@ -3438,7 +3438,7 @@ def save_tour_3(request):
 
         if com_add[0] != "":
             for c in com_add:
-                if list(c).count(" ") < 3:
+                if list(c).count(" ") < 7:
                     res.write(f"{c[:len(c) - 2]}: {c[len(c) - 1:]}\n")
                     com_file.write(f"\n{c[:len(c) - 2]}")
                     commands_dict[c[:len(c) - 2]] = []
@@ -3633,7 +3633,7 @@ def save_tour_4(request):
 
         if com_add[0] != "":
             for c in com_add:
-                if list(c).count(" ") < 3:
+                if list(c).count(" ") < 7:
                     res.write(f"{c[:len(c) - 2]}: {c[len(c) - 1:]}\n")
                     com_file.write(f"\n{c[:len(c) - 2]}")
                     commands_dict[c[:len(c) - 2]] = []
@@ -3845,7 +3845,7 @@ def save_tour_5(request):
 
         if com_add[0] != "":
             for c in com_add:
-                if list(c).count(" ") < 3:
+                if list(c).count(" ") < 7:
                     res.write(f"{c[:len(c) - 2]}: {c[len(c) - 1:]}\n")
                     com_file.write(f"\n{c[:len(c) - 2]}")
                     commands_dict[c[:len(c) - 2]] = []
@@ -4038,7 +4038,7 @@ def save_tour_6(request):
 
         if com_add[0] != "":
             for c in com_add:
-                if list(c).count(" ") < 3:
+                if list(c).count(" ") < 7:
                     res.write(f"{c[:len(c) - 2]}: {c[len(c) - 1:]}\n")
                     com_file.write(f"\n{c[:len(c) - 2]}")
                     commands_dict[c[:len(c) - 2]] = []
@@ -4231,7 +4231,7 @@ def save_tour_7(request):
 
         if com_add[0] != "":
             for c in com_add:
-                if list(c).count(" ") < 3:
+                if list(c).count(" ") < 7:
                     res.write(f"{c[:len(c) - 2]}: {c[len(c) - 1:]}\n")
                     com_file.write(f"\n{c[:len(c) - 2]}")
                     commands_dict[c[:len(c) - 2]] = []
@@ -4424,7 +4424,7 @@ def save_tour_8(request):
 
         if com_add[0] != "":
             for c in com_add:
-                if list(c).count(" ") < 3:
+                if list(c).count(" ") < 7:
                     res.write(f"{c[:len(c) - 2]}: {c[len(c) - 1:]}\n")
                     com_file.write(f"\n{c[:len(c) - 2]}")
                     commands_dict[c[:len(c) - 2]] = []
