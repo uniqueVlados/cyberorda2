@@ -762,6 +762,7 @@
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_3" onclick="reset3();">Сбросить</a>
                  {% if count_tour == 3 %}
                  <a id="show3" class="btn btn-primary btn-sm mt-1 mb-1" onclick="viewdiv_3(show3);">Добавить</a>
+                 <a id="del_show3" class="btn btn-primary btn-sm mt-1 mb-1" onclick="del_viewdiv_3(del_show3);">Кикнуть</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_3" onclick="download_shedule_3();">Расписание</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_save_3" onclick="save3();">Сохранить</a>
                  {% endif %}
@@ -773,9 +774,14 @@
 
          
          <form name="add3" id="add_com3" class="col-md-12" style="display:none;" method="post">
-            <p class="black" id="p3">Команды для нового тура<Br>
+            <p class="black" id="p1">Команды для нового тура<Br>
             <textarea id="com3" name="commands3" cols="40" rows="3"></textarea></p>
           </form>
+
+        <form name="del_add3" id="del_add_com3" class="col-md-12" style="display:none;" method="post">
+         <p class="black" id="p1">Команды для удаления<Br>
+         <textarea id="del_com3" name="del_commands3" cols="40" rows="3"></textarea></p>
+       </form>
 
         </div>
         <br>
@@ -828,6 +834,7 @@
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_2" onclick="reset2();">Сбросить</a>
                  {% if count_tour == 2 %}
                  <a id="show2" class="btn btn-primary btn-sm mt-1 mb-1" onclick="viewdiv_2(show2);">Добавить</a>
+                 <a id="del_show2" class="btn btn-primary btn-sm mt-1 mb-1" onclick="del_viewdiv_2(del_show2);">Кикнуть</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_2" onclick="download_shedule_2();">Расписание</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_save_2" onclick="save2();">Сохранить</a>
                  {% endif %}
@@ -837,9 +844,14 @@
              </div>
         
              <form name="add2" class="col-md-12" id="add_com2" style="display:none;" method="post">
-                <p class="black" id="p2">Команды для нового тура<Br>
+                <p class="black" id="p1">Команды для нового тура<Br>
                 <textarea id="com2" name="commands2" cols="40" rows="3"></textarea></p>
               </form>
+
+             <form name="del_add2" id="del_add_com2" class="col-md-12" style="display:none;" method="post">
+                 <p class="black" id="p1">Команды для удаления<Br>
+                 <textarea id="del_com2" name="del_commands2" cols="40" rows="3"></textarea></p>
+             </form>
 
          
          
@@ -960,6 +972,31 @@
 
         function del_viewdiv_1(id) {
             var el = document.getElementById("del_add_com1");
+            var link = document.getElementById(id);
+            if (el.style.display == "block") {
+                el.style.display = "none";
+                link.innerText = link.getAttribute('data-text-hide');
+            } else {
+                el.style.display = "block";
+                link.innerText = link.getAttribute('data-text-show');
+            }
+         }
+
+         function del_viewdiv_2(id) {
+            var el = document.getElementById("del_add_com2");
+            var link = document.getElementById(id);
+            if (el.style.display == "block") {
+                el.style.display = "none";
+                link.innerText = link.getAttribute('data-text-hide');
+            } else {
+                el.style.display = "block";
+                link.innerText = link.getAttribute('data-text-show');
+            }
+         }
+
+
+         function del_viewdiv_3(id) {
+            var el = document.getElementById("del_add_com3");
             var link = document.getElementById(id);
             if (el.style.display == "block") {
                 el.style.display = "none";
@@ -1141,6 +1178,7 @@
             let arr = ""
             const ch = document.querySelectorAll('input[name="tour_2"]');
             com = document.getElementById('com2').value;
+            del = document.getElementById('del_com2').value;
             let count_1 = 0
             let count_0 = 0
             for (const f of ch) {
@@ -1158,7 +1196,7 @@
                     url: '/save_tour_2/',
                     type: 'GET',
                     dataType: 'json',
-                    data: {'data': arr, 'name': game, 'com': com},
+                    data: {'data': arr, 'name': game, 'com': com, 'del': del},
                     success: function(response) {
                         console.log(response);
                     },
@@ -1203,6 +1241,7 @@
             let arr = ""
             const ch = document.querySelectorAll('input[name="tour_3"]');
             com = document.getElementById('com3').value;
+            del = document.getElementById('del_com3').value;
             let count_1 = 0
             let count_0 = 0
             for (const f of ch) {
@@ -1220,7 +1259,7 @@
                     url: '/save_tour_3/',
                     type: 'GET',
                     dataType: 'json',
-                    data: {'data': arr, 'name': game, 'com': com},
+                    data: {'data': arr, 'name': game, 'com': com, 'del': del},
                     success: function(response) {
                         console.log(response);
                     },

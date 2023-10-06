@@ -149,7 +149,9 @@ def schedule(request, pk):
             title = "КОМАНДЫ" + " " * 35 + "|СЧЁТ"
             file.write(title + "\n")
             file.write("-" * len(title) + "\n")
-            for command in com_file.readlines():
+            commands = com_file.readlines()
+            shuffle(commands)
+            for command in commands:
                 file.write(command.replace("\n", "").ljust(35) + "\n")
                 commands_dict[command.replace("\n", "").strip()] = []
                 if num % 2 == 0:
@@ -2150,6 +2152,7 @@ def schedule(request, pk):
                 title = "КОМАНДЫ" + " " * 35 + "|СЧЁТ"
                 file.write(title + "\n")
                 file.write("-" * len(title) + "\n")
+
                 for com in com4_1:
                     file.write(com[0].replace("\n", "").ljust(37) + "\n")
                     file.write(com[1].replace("\n", "").ljust(37) + "\n")
@@ -2313,6 +2316,9 @@ def schedule(request, pk):
                 title = "КОМАНДЫ" + " " * 35 + "|СЧЁТ"
                 file.write(title + "\n")
                 file.write("-" * len(title) + "\n")
+                shuffle(com3_1)
+                shuffle(com3_2)
+                shuffle(com3_3)
                 for com in com3_1:
                     file.write(com[0].replace("\n", "").ljust(37) + "\n")
                     file.write(com[1].replace("\n", "").ljust(37) + "\n")
@@ -2543,9 +2549,6 @@ def schedule(request, pk):
             if len(com_d[1]) % 2 != 0:
                 com2_1.append([com_d[1][-1], "Пустышка"])
 
-            # shuffle(com2_1)
-            # shuffle(com2_2)
-
             file = open(f"{posts[0].title}/{posts[0].title}_тур2.txt", "r", encoding="utf-8")
             if len(file.read()) == 0:
                 file.close()
@@ -2555,6 +2558,8 @@ def schedule(request, pk):
                 file.write(title + "\n")
                 file.write("-" * len(title) + "\n")
 
+                shuffle(com2_1)
+                shuffle(com2_2)
                 for com in com2_1:
                     file.write(com[0].replace("\n", "").ljust(37) + "\n")
                     file.write(com[1].replace("\n", "").ljust(37) + "\n")
@@ -2833,7 +2838,6 @@ def save_tour_1(request):
         i = 0
 
 
-
         for line in file.readlines():
             if line.count("КОМАНДЫ") or line.count("---------------") or line.count(" ") > 40 or line.strip() in com_del:
                 file_list.append(line)
@@ -2878,6 +2882,23 @@ def save_tour_1(request):
             if k % 2 != 0 and i != 0:
                 res.write("Пустышка" + ": " + str(i) + "\n")
             res.write("\n")
+
+        # del commands
+        res = open(f"{game}/результат_1_{game}.txt", "r", encoding="utf-8")
+        new_res = []
+
+        for c in res.readlines():
+            if c.split(": ")[0] not in com_del:
+                new_res.append(c)
+        res.close()
+
+        res = open(f"{game}/результат_1_{game}.txt", "w", encoding="utf-8")
+
+        for c in new_res:
+            res.write(f"{c}")
+
+        res.close()
+        # end
 
         fp = open(f"{game}/пересечение_команд_{game}.json", "r", encoding="utf-8")
         commands_dict = json.load(fp)
@@ -3112,6 +3133,7 @@ def save_tour_2(request):
         checkbox = list(request.GET.get("data"))
         game = request.GET.get("name")
         game_name, div_name = game.split()
+        com_del = request.GET.get("del").split("\n")
        
         file = open(f"{game}/{game}_счёт_2.txt", "w", encoding="utf-8")
         file.write(" ".join(checkbox))
@@ -3167,6 +3189,23 @@ def save_tour_2(request):
                 res.write("Пустышка" + ": " + str(i) + "\n")
             res.write("\n")
         res.close()
+
+        # del commands
+        res = open(f"{game}/результат_2_{game}.txt", "r", encoding="utf-8")
+        new_res = []
+
+        for c in res.readlines():
+            if c.split(": ")[0] not in com_del:
+                new_res.append(c)
+        res.close()
+
+        res = open(f"{game}/результат_2_{game}.txt", "w", encoding="utf-8")
+
+        for c in new_res:
+            res.write(f"{c}")
+
+        res.close()
+        # end
 
         fp = open(f"{game}/пересечение_команд_{game}.json", "r", encoding="utf-8")
         commands_dict = json.load(fp)
@@ -3308,6 +3347,7 @@ def save_tour_3(request):
     if request.method == 'GET':
         checkbox = list(request.GET.get("data"))
         game = request.GET.get("name")
+        com_del = request.GET.get("del").split("\n")
         game_name, div_name = game.split()
         file = open(f"{game}/{game}_счёт_3.txt", "w", encoding="utf-8")
         file.write(" ".join(checkbox))
@@ -3351,7 +3391,7 @@ def save_tour_3(request):
                 if com != "Пустышка":
                     com_dict[com] += int(score)
 
-        # save results from 2 tour
+        # save results from 3 tour
         res = open(f"{game}/результат_3_{game}.txt", "w", encoding="utf-8")
         for i in range(0, 10):
             k = 0
@@ -3363,6 +3403,23 @@ def save_tour_3(request):
                 res.write("Пустышка" + ": " + str(i) + "\n")
             res.write("\n")
         res.close()
+
+        # del commands
+        res = open(f"{game}/результат_3_{game}.txt", "r", encoding="utf-8")
+        new_res = []
+
+        for c in res.readlines():
+            if c.split(": ")[0] not in com_del:
+                new_res.append(c)
+        res.close()
+
+        res = open(f"{game}/результат_3_{game}.txt", "w", encoding="utf-8")
+
+        for c in new_res:
+            res.write(f"{c}")
+
+        res.close()
+        # end
 
         fp = open(f"{game}/пересечение_команд_{game}.json", "r", encoding="utf-8")
         commands_dict = json.load(fp)
@@ -3503,6 +3560,7 @@ def save_tour_4(request):
         checkbox = list(request.GET.get("data"))
         game = request.GET.get("name")
         game_name, div_name = game.split()
+        com_del = request.GET.get("del").split("\n")
         file = open(f"{game}/{game}_счёт_4.txt", "w", encoding="utf-8")
         file.write(" ".join(checkbox))
         file.close()
@@ -3558,6 +3616,22 @@ def save_tour_4(request):
             res.write("\n")
         res.close()
 
+        # del commands
+        res = open(f"{game}/результат_4_{game}.txt", "r", encoding="utf-8")
+        new_res = []
+
+        for c in res.readlines():
+            if c.split(": ")[0] not in com_del:
+                new_res.append(c)
+        res.close()
+
+        res = open(f"{game}/результат_4_{game}.txt", "w", encoding="utf-8")
+
+        for c in new_res:
+            res.write(f"{c}")
+
+        res.close()
+        # end
 
 
         fp = open(f"{game}/пересечение_команд_{game}.json", "r", encoding="utf-8")
@@ -3754,6 +3828,23 @@ def save_tour_5(request):
                 res.write("Пустышка" + ": " + str(i) + "\n")
             res.write("\n")
         res.close()
+
+        # del commands
+        res = open(f"{game}/результат_5_{game}.txt", "r", encoding="utf-8")
+        new_res = []
+
+        for c in res.readlines():
+            if c.split(": ")[0] not in com_del:
+                new_res.append(c)
+        res.close()
+
+        res = open(f"{game}/результат_5_{game}.txt", "w", encoding="utf-8")
+
+        for c in new_res:
+            res.write(f"{c}")
+
+        res.close()
+        # end
 
         fp = open(f"{game}/пересечение_команд_{game}.json", "r", encoding="utf-8")
         commands_dict = json.load(fp)
@@ -4533,13 +4624,11 @@ def download_shedule_2(request, game):
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     filename = 'tour_shedule_2.zip'
 
-    print(game)
     file = open(f"{game}/{game}_тур2.txt", "r", encoding="utf-8")
     file.seek(0)
     div_name = game.split()[1]
 
     if div_name == "МСКЛ":
-        print(1)
         c = ((len(file.readlines()) - 23) // 3)
         count_photo = 0
         while c > 0:
@@ -4578,13 +4667,11 @@ def download_shedule_3(request, game):
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     filename = 'tour_shedule_3.zip'
 
-    print(game)
     file = open(f"{game}/{game}_тур3.txt", "r", encoding="utf-8")
     file.seek(0)
     div_name = game.split()[1]
 
     if div_name == "МСКЛ":
-        print(1)
         c = ((len(file.readlines()) - 23) // 3)
         count_photo = 0
         while c > 0:
@@ -4623,13 +4710,11 @@ def download_shedule_4(request, game):
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     filename = 'tour_shedule_2.zip'
 
-    print(game)
     file = open(f"{game}/{game}_тур4.txt", "r", encoding="utf-8")
     file.seek(0)
     div_name = game.split()[1]
 
     if div_name == "МСКЛ":
-        print(1)
         c = ((len(file.readlines()) - 23) // 3)
         count_photo = 0
         while c > 0:
