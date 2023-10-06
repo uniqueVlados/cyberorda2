@@ -2448,7 +2448,7 @@ def schedule(request, pk):
                 game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
                 Image.Image.paste(base_img, game_, (1274, 90), mask=game_)
                 drawer = ImageDraw.Draw(base_img)
-                tour_ = 2
+                tour_ = 3
                 drawer.text((55, 65), str(tour_) + " ТУР", font=font_, fill='white')
                 drawer.text((55, 98), "", font=font_, fill='white')
 
