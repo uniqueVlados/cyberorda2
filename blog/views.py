@@ -5,6 +5,7 @@ import mimetypes
 from random import shuffle
 from PIL import Image, ImageDraw, ImageFont
 from zipfile import ZipFile
+import xlsxwriter
 
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -4712,13 +4713,31 @@ def del_dir_of_game(request):
 
 def results(request, game, tour):
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    filename = f'{game}_тур{tour}.txt'
+    filename = f'{game}_тур{tour}.xlsx'
 
-    # file = open(f"{game}/{game}_тур1.txt", "r", encoding="utf-8")
-    # file.seek(0)
+    workbook = xlsxwriter.Workbook(BASE_DIR + "/" + game + "/" + filename)
+    worksheet = workbook.add_worksheet()
+
+    file = open(f"{game}/{game}_тур{tour}.txt", "r", encoding="utf-8")
+    file.seek(0)
+
+    i = 0
+    com1 = 1
+    com2 = 1
+    for com in file.readlines()[2:]:
+        if com.count("-") < 7:
+            i += 1
+            if i % 2 != 0:
+                worksheet.write(f'A{com1}', com[:len(com)-2].strip())
+                com1 += 1
+            else:
+                worksheet.write(f'B{com2}', com[:len(com)-2].strip())
+                com2 += 1
+    workbook.close()
+
 
     filepath = BASE_DIR + "/" + game + "/" + filename
-    path = open(filepath, 'r', encoding="utf-8")
+    path = open(filepath, 'rb')
     mime_type, _ = mimetypes.guess_type(filepath)
 
     response = HttpResponse(path, content_type=mime_type)
