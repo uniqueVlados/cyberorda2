@@ -107,6 +107,7 @@
         {% if tour9_1 %}
              <div class="col-md-12">
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_9" onclick="reset9();">Сбросить</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="results_9" onclick="results('{{ name }}', 9);">Выгрузить</a>
                  {% if count_tour == 9 %}
                  <a id="show9" class="btn btn-primary btn-sm mt-1 mb-1" onclick="viewdiv_9(show9);">Добавить</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_save_9" onclick="save9();">Сохранить</a>
@@ -230,6 +231,7 @@
         {% if tour8_1 %}
              <div class="col-md-12">
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_8" onclick="reset8();">Сбросить</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="results_8" onclick="results('{{ name }}', 8);">Выгрузить</a>
                  {% if count_tour == 8 %}
                  <a id="show8" class="btn btn-primary btn-sm mt-1 mb-1" onclick="viewdiv_8(show8);">Добавить</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_save_8" onclick="save8();">Сохранить</a>
@@ -343,6 +345,7 @@
         {% if tour7_1 %}
              <div class="col-md-12">
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_7" onclick="reset7();">Сбросить</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="results_7" onclick="results('{{ name }}', 7);">Выгрузить</a>
                  {% if count_tour == 7 %}
                  <a id="show7" class="btn btn-primary btn-sm mt-1 mb-1" onclick="viewdiv_7(show7);">Добавить</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_save_7" onclick="save7();">Сохранить</a>
@@ -469,6 +472,7 @@
         {% if tour6_1 %}
              <div class="col-md-12">
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_6" onclick="reset6();">Сбросить</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="results_6" onclick="results('{{ name }}', 6);">Выгрузить</a>
                  {% if count_tour == 6 %}
                  <a id="show6" class="btn btn-primary btn-sm mt-1 mb-1" onclick="viewdiv_6(show6);">Добавить</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_save_6" onclick="save6();">Сохранить</a>
@@ -580,6 +584,7 @@
         {% if tour5_1 %}
              <div class="col-md-12">
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_5" onclick="reset5();">Сбросить</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="results_5" onclick="results('{{ name }}', 5);">Выгрузить</a>
                  {% if count_tour == 5 %}
                  <a id="show5" class="btn btn-primary btn-sm mt-1 mb-1" onclick="viewdiv_5(show5);">Добавить</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_save_5" onclick="save5();">Сохранить</a>
@@ -673,6 +678,7 @@
         {% if tour4_1 or tour4_2 or tour4_3 or tour4_4%}
              <div class="col-md-12">
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_4" onclick="reset4();">Сбросить</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="results_4" onclick="results('{{ name }}', 4);">Выгрузить</a>
                  {% if count_tour == 4 %}
                  <a id="show4" class="btn btn-primary btn-sm mt-1 mb-1" onclick="viewdiv_4(show4);">Добавить</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_4" onclick="download_shedule_4();">Расписание</a>
@@ -760,6 +766,7 @@
         {% if tour3_1 or tour3_2 or tour3_3%}
              <div class="col-md-12">
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_3" onclick="reset3();">Сбросить</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="results_3" onclick="results('{{ name }}', 3);">Выгрузить</a>
                  {% if count_tour == 3 %}
                  <a id="show3" class="btn btn-primary btn-sm mt-1 mb-1" onclick="viewdiv_3(show3);">Добавить</a>
                  <a id="del_show3" class="btn btn-primary btn-sm mt-1 mb-1" onclick="del_viewdiv_3(del_show3);">Кикнуть</a>
@@ -832,6 +839,7 @@
              </div>
              <div class="col-md-12">
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_2" onclick="reset2();">Сбросить</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="results_2" onclick="results('{{ name }}', 2);">Выгрузить</a>
                  {% if count_tour == 2 %}
                  <a id="show2" class="btn btn-primary btn-sm mt-1 mb-1" onclick="viewdiv_2(show2);">Добавить</a>
                  <a id="del_show2" class="btn btn-primary btn-sm mt-1 mb-1" onclick="del_viewdiv_2(del_show2);">Кикнуть</a>
@@ -891,6 +899,7 @@
         </div>
              <div class="col-md-12">
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="reset_1" onclick="reset1();">Сбросить</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="results_1" onclick="results('{{ name }}', 1);">Выгрузить</a>
                  {% if count_tour == 1 %}
                  <a id="show1" class="btn btn-primary btn-sm mt-1 mb-1" onclick="viewdiv_1(show1);">Добавить</a>
                  <a id="del_show1" class="btn btn-primary btn-sm mt-1 mb-1" onclick="del_viewdiv_1(del_show1);">Кикнуть</a>
@@ -1604,6 +1613,11 @@
         }
 
 
+        function results(game, tour){
+            location.href = "http://127.0.0.1:8000/results/" + game + "/" + tour;
+        }
+
+
         function download_shedule_1() {
             let game = document.getElementById('game').textContent;
             location.href = "http://31.129.102.195:8000/download_shedule_1/" + game;
@@ -1688,6 +1702,8 @@
             let game = document.getElementById('game').textContent;
             location.href = "http://31.129.102.195:8000/download_13/" + game;
         }
+
+
 
     </script>
 

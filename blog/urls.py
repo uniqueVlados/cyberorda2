@@ -38,6 +38,7 @@ urlpatterns = [
     path('reset_7/', views.reset_7, name='reset-7'),
     path('reset_8/', views.reset_8, name='reset-8'),
     path('new_files/', views.new_files, name='new-files'),
+    path('results/<str:game>/<str:tour>', views.results, name='results'),
     path('del_dir_of_game/', views.del_dir_of_game, name='del_dir_of_game'),
     path('download_1/<str:game>', views.download_1, name='download_1'),
     path('download_2/<str:game>', views.download_2, name='download_2'),

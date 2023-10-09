@@ -4710,6 +4710,24 @@ def del_dir_of_game(request):
         return JsonResponse(data)
 
 
+def results(request, game, tour):
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    filename = f'{game}_тур{tour}.txt'
+
+    # file = open(f"{game}/{game}_тур1.txt", "r", encoding="utf-8")
+    # file.seek(0)
+
+    filepath = BASE_DIR + "/" + game + "/" + filename
+    path = open(filepath, 'r', encoding="utf-8")
+    mime_type, _ = mimetypes.guess_type(filepath)
+
+    response = HttpResponse(path, content_type=mime_type)
+
+    response['Content-Disposition'] = "attachment; filename=%s" % filename
+
+    return response
+
+
 def download_shedule_1(request, game):
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     filename = 'tour_shedule_1.zip'
