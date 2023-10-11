@@ -581,19 +581,20 @@
             </div>
 
         </div>
-        {% if tour5_1 %}
+<!--        {% if tour5_1 %}-->
              <div class="col-md-12">
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_5" onclick="reset5();">Сбросить</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="results_5" onclick="results('{{ name }}', 5);">Выгрузить</a>
                  {% if count_tour == 5 %}
                  <a id="show5" class="btn btn-primary btn-sm mt-1 mb-1" onclick="viewdiv_5(show5);">Добавить</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_5" onclick="download_shedule_5();">Расписание</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_save_5" onclick="save5();">Сохранить</a>
                  {% endif %}
                  {% if count_tour != 5 %}
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_5" onclick="download_5();">Скачать</a>
                  {% endif %}
              </div>
-         {% endif %}
+<!--         {% endif %}-->
          
          <form name="add5" id="add_com5" class="col-md-12" style="display:none;" method="post">
             <p class="black" id="p5">Команды для нового тура<Br>
@@ -675,7 +676,7 @@
                 {% endfor %}
             </div>
         </div>
-        {% if tour4_1 or tour4_2 or tour4_3 or tour4_4%}
+<!--        {% if tour4_1 or tour4_2 or tour4_3 or tour4_4%}-->
              <div class="col-md-12">
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_4" onclick="reset4();">Сбросить</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="results_4" onclick="results('{{ name }}', 4);">Выгрузить</a>
@@ -688,7 +689,7 @@
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_4" onclick="download_4();">Скачать</a>
                  {% endif %}
              </div>
-         {% endif %}
+<!--         {% endif %}-->
          
          <form name="add4" id="add_com4" class="col-md-12" style="display:none;" method="post">
             <p class="black" id="p4">Команды для нового тура<Br>
@@ -763,7 +764,7 @@
                 {% endfor %}
             </div>
 
-        {% if tour3_1 or tour3_2 or tour3_3%}
+<!--        {% if tour3_1 or tour3_2 or tour3_3%}-->
              <div class="col-md-12">
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_3" onclick="reset3();">Сбросить</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="results_3" onclick="results('{{ name }}', 3);">Выгрузить</a>
@@ -777,7 +778,7 @@
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_3" onclick="download_3();">Скачать</a>
                  {% endif %}
              </div>
-         {% endif %}
+<!--         {% endif %}-->
 
          
          <form name="add3" id="add_com3" class="col-md-12" style="display:none;" method="post">
@@ -1636,6 +1637,11 @@
         function download_shedule_4() {
             let game = document.getElementById('game').textContent;
             location.href = "http://31.129.102.195:8000/download_shedule_4/" + game;
+        }
+
+        function download_shedule_5() {
+            let game = document.getElementById('game').textContent;
+            location.href = "http://31.129.102.195:8000/download_shedule_5/" + game;
         }
 
         function download_1(){

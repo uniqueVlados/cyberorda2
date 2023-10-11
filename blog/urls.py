@@ -57,4 +57,5 @@ urlpatterns = [
     path('download_shedule_2/<str:game>', views.download_shedule_2, name='download_shedule_2'),
     path('download_shedule_3/<str:game>', views.download_shedule_3, name='download_shedule_3'),
     path('download_shedule_4/<str:game>', views.download_shedule_4, name='download_shedule_4'),
+    path('download_shedule_5/<str:game>', views.download_shedule_5, name='download_shedule_5'),
 ]
