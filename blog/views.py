@@ -3505,7 +3505,8 @@ def save_tour_2(request):
                 if list(c).count(" ") < 7:
                     res.write(f"{c[:len(c)-2]}: {c[len(c)-1:]}\n")
                     com_file.write(f"\n{c[:len(c)-2]}")
-                    commands_dict[c[:len(c)-2]] = []
+                    if c[c[:len(c)-2]] not in commands_dict:
+                        commands_dict[c[:len(c)-2]] = []
                     add_com_file.write(c[:len(c)-2] + "\n")
 
         with open(f"{game}/пересечение_команд_{game}.json", "w", encoding="utf-8") as fp:
