@@ -46,18 +46,64 @@ def my_home(request):
 
 def rating(request):
     current_user = request.user.groups.filter(name='орда').exists()
-    commands = [[0, "school 32", 4, 6, 40], [0, "school 43", 8, 2, 80], [0, "school 22", 7, 3, 70], [0, "school 67", 6, 4, 60]]
-    commands.sort(key=lambda x: x[-1], reverse=True)
-    count = 1
-    for i in range(len(commands)):
-        commands[i][0] = count
-        count += 1
-    context = {
-        'posts': Post.objects.filter(author_id=request.user.id),
-        'allow': current_user,
-        'commands': commands,
-    }
+
+    if not os.path.exists(f"filter_param/{request.user.id}.txt"):
+        context = {
+            'posts': Post.objects.filter(author_id=request.user.id),
+            'allow': current_user,
+            'commands': [],
+        }
+    else:
+        file = open(f"filter_param/{request.user.id}.txt", "r", encoding="utf-8")
+        game, div, tour, sort = file.readline().replace("\n", "").split()
+        file.close()
+
+        if not os.path.exists(f"{game} {div}/результат_{tour}_{game} {div}.txt"):
+            context = {
+                'posts': Post.objects.filter(author_id=request.user.id),
+                'allow': current_user,
+                'commands': [],
+            }
+        else:
+            commands_file = open(f"{game} {div}/результат_{tour}_{game} {div}.txt", "r", encoding="utf-8")
+            commands = []
+            for com in commands_file.readlines():
+                line = com.replace("\n", "")
+                if line != "" and line.find("Пустышка") == -1:
+                    com_, res = line.split(": ")
+                    res = int(res)
+                    commands.append([0, com_, res, int(tour) - res, round(res/int(tour) * 100, 1)])
+
+            if sort == "Убывание":
+                commands.sort(key=lambda x: x[-1], reverse=True)
+            else:
+                commands.sort(key=lambda x: x[-1])
+
+            count = 1
+            for i in range(len(commands)):
+                commands[i][0] = count
+                count += 1
+            context = {
+                'posts': Post.objects.filter(author_id=request.user.id),
+                'allow': current_user,
+                'commands': commands,
+            }
     return render(request, 'blog/rating.html', context)
+
+
+def reload_filter(request):
+    if request.method == 'GET':
+        game = request.GET.get("game")
+        div = request.GET.get("div")
+        tour = request.GET.get("tour")
+        sort = request.GET.get("sort")
+
+        file = open(f"filter_param/{request.user.id}.txt", "w", encoding="utf-8")
+        file.write(f"{game} {div} {tour} {sort}")
+        file.close()
+
+        data = {"message": "ok"}
+        return JsonResponse(data)
 
 
 class PostListView(ListView):
