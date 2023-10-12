@@ -80,6 +80,7 @@ def rating(request):
                 commands.sort(key=lambda x: x[-1])
 
             count = 1
+
             for i in range(len(commands)):
                 commands[i][0] = count
                 count += 1
