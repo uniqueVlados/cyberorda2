@@ -3793,7 +3793,8 @@ def save_tour_4(request):
             if el.count("-") < 5:
                 com = el[:45].strip()
                 score = el[45:].strip()
-                com_dict[com] += int(score)
+                if com != "Пустышка":
+                    com_dict[com] += int(score)
 
         # save results from 3 tour
         res = open(f"{game}/результат_4_{game}.txt", "w", encoding="utf-8")
