@@ -110,6 +110,7 @@
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="results_9" onclick="results('{{ name }}', 9);">Выгрузить</a>
                  {% if count_tour == 9 %}
                  <a id="show9" class="btn btn-primary btn-sm mt-1 mb-1" onclick="viewdiv_9(show9);">Добавить</a>
+                 <a id="del_show9" class="btn btn-primary btn-sm mt-1 mb-1" onclick="del_viewdiv_9(del_show9);">Кикнуть</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_9" onclick="download_shedule('{{ name }}', 9);">Расписание</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_save_9" onclick="save9();">Сохранить</a>
                  {% endif %}
@@ -124,6 +125,11 @@
             <p class="black" id="p8">Команды для нового тура<Br>
             <textarea id="com8" name="commands6" cols="40" rows="3"></textarea></p>
           </form>
+
+        <form name="del_add9" id="del_add_com9" style="display:none;" method="post">
+             <p class="black" id="p1">Команды для удаления<Br>
+             <textarea id="del_com9" name="del_commands9" cols="40" rows="3"></textarea></p>
+           </form>
 
         <br>
         <div class="row c">
@@ -235,6 +241,7 @@
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="results_8" onclick="results('{{ name }}', 8);">Выгрузить</a>
                  {% if count_tour == 8 %}
                  <a id="show8" class="btn btn-primary btn-sm mt-1 mb-1" onclick="viewdiv_8(show8);">Добавить</a>
+                 <a id="del_show8" class="btn btn-primary btn-sm mt-1 mb-1" onclick="del_viewdiv_8(del_show8);">Кикнуть</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_8" onclick="download_shedule('{{ name }}', 8);">Расписание</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_save_8" onclick="save8();">Сохранить</a>
                  {% endif %}
@@ -249,6 +256,11 @@
             <p class="black" id="p8">Команды для нового тура<Br>
             <textarea id="com8" name="commands6" cols="40" rows="3"></textarea></p>
           </form>
+
+        <form name="del_add8" id="del_add_com8" style="display:none;" method="post">
+             <p class="black" id="p1">Команды для удаления<Br>
+             <textarea id="del_com8" name="del_commands8" cols="40" rows="3"></textarea></p>
+        </form>
 
         <br>
         <div class="row c">
@@ -350,6 +362,7 @@
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="results_7" onclick="results('{{ name }}', 7);">Выгрузить</a>
                  {% if count_tour == 7 %}
                  <a id="show7" class="btn btn-primary btn-sm mt-1 mb-1" onclick="viewdiv_7(show7);">Добавить</a>
+                 <a id="del_show7" class="btn btn-primary btn-sm mt-1 mb-1" onclick="del_viewdiv_7(del_show7);">Кикнуть</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_7" onclick="download_shedule('{{ name }}', 7);">Расписание</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_save_7" onclick="save7();">Сохранить</a>
                  {% endif %}
@@ -364,6 +377,11 @@
             <p class="black" id="p7">Команды для нового тура<Br>
             <textarea id="com7" name="commands6" cols="40" rows="3"></textarea></p>
           </form>
+
+        <form name="del_add7" id="del_add_com7" style="display:none;" method="post">
+             <p class="black" id="p1">Команды для удаления<Br>
+             <textarea id="del_com7" name="del_commands7" cols="40" rows="3"></textarea></p>
+           </form>
 
         <br>
         <div class="row c">
@@ -478,6 +496,7 @@
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="results_6" onclick="results('{{ name }}', 6);">Выгрузить</a>
                  {% if count_tour == 6 %}
                  <a id="show6" class="btn btn-primary btn-sm mt-1 mb-1" onclick="viewdiv_6(show6);">Добавить</a>
+                 <a id="del_show6" class="btn btn-primary btn-sm mt-1 mb-1" onclick="del_viewdiv_6(del_show6);">Кикнуть</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_6" onclick="download_shedule('{{ name }}', 6);">Расписание</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_save_6" onclick="save6();">Сохранить</a>
                  {% endif %}
@@ -492,6 +511,11 @@
             <p class="black" id="p6">Команды для нового тура<Br>
             <textarea id="com6" name="commands6" cols="40" rows="3"></textarea></p>
           </form>
+
+        <form name="del_add6" id="del_add_com6" style="display:none;" method="post">
+             <p class="black" id="p1">Команды для удаления<Br>
+             <textarea id="del_com6" name="del_commands6" cols="40" rows="3"></textarea></p>
+           </form>
 
         <br>
         <div class="row c">
@@ -591,6 +615,7 @@
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="results_5" onclick="results('{{ name }}', 5);">Выгрузить</a>
                  {% if count_tour == 5 %}
                  <a id="show5" class="btn btn-primary btn-sm mt-1 mb-1" onclick="viewdiv_5(show5);">Добавить</a>
+                 <a id="del_show5" class="btn btn-primary btn-sm mt-1 mb-1" onclick="del_viewdiv_5(del_show5);">Кикнуть</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_5" onclick="download_shedule('{{ name }}', 5);">Расписание</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_save_5" onclick="save5();">Сохранить</a>
                  {% endif %}
@@ -604,6 +629,11 @@
             <p class="black" id="p5">Команды для нового тура<Br>
             <textarea id="com5" name="commands5" cols="40" rows="3"></textarea></p>
           </form>
+
+        <form name="del_add5" id="del_add_com5" style="display:none;" method="post">
+             <p class="black" id="p1">Команды для удаления<Br>
+             <textarea id="del_com5" name="del_commands5" cols="40" rows="3"></textarea></p>
+           </form>
 
         <br>
         <div class="row c">
@@ -685,6 +715,7 @@
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="results_4" onclick="results('{{ name }}', 4);">Выгрузить</a>
                  {% if count_tour == 4 %}
                  <a id="show4" class="btn btn-primary btn-sm mt-1 mb-1" onclick="viewdiv_4(show4);">Добавить</a>
+                 <a id="del_show4" class="btn btn-primary btn-sm mt-1 mb-1" onclick="del_viewdiv_4(del_show4);">Кикнуть</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_4" onclick="download_shedule('{{ name }}', 4);">Расписание</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_save_4" onclick="save4();">Сохранить</a>
                  {% endif %}
@@ -697,6 +728,11 @@
             <p class="black" id="p4">Команды для нового тура<Br>
             <textarea id="com4" name="commands4" cols="40" rows="3"></textarea></p>
           </form>
+
+         <form name="del_add1" id="del_add_com4" style="display:none;" method="post">
+             <p class="black" id="p1">Команды для удаления<Br>
+             <textarea id="del_com4" name="del_commands4" cols="40" rows="3"></textarea></p>
+         </form>
 
         <br>
 
@@ -1017,6 +1053,66 @@
             }
          }
 
+         function del_viewdiv_4(id) {
+            var el = document.getElementById("del_add_com4");
+            var link = document.getElementById(id);
+            if (el.style.display == "block") {
+                el.style.display = "none";
+                link.innerText = link.getAttribute('data-text-hide');
+            } else {
+                el.style.display = "block";
+                link.innerText = link.getAttribute('data-text-show');
+            }
+         }
+
+         function del_viewdiv_5(id) {
+            var el = document.getElementById("del_add_com5");
+            var link = document.getElementById(id);
+            if (el.style.display == "block") {
+                el.style.display = "none";
+                link.innerText = link.getAttribute('data-text-hide');
+            } else {
+                el.style.display = "block";
+                link.innerText = link.getAttribute('data-text-show');
+            }
+         }
+
+        function del_viewdiv_6(id) {
+            var el = document.getElementById("del_add_com6");
+            var link = document.getElementById(id);
+            if (el.style.display == "block") {
+                el.style.display = "none";
+                link.innerText = link.getAttribute('data-text-hide');
+            } else {
+                el.style.display = "block";
+                link.innerText = link.getAttribute('data-text-show');
+            }
+         }
+
+         function del_viewdiv_7(id) {
+            var el = document.getElementById("del_add_com7");
+            var link = document.getElementById(id);
+            if (el.style.display == "block") {
+                el.style.display = "none";
+                link.innerText = link.getAttribute('data-text-hide');
+            } else {
+                el.style.display = "block";
+                link.innerText = link.getAttribute('data-text-show');
+            }
+         }
+
+         function del_viewdiv_8(id) {
+            var el = document.getElementById("del_add_com8");
+            var link = document.getElementById(id);
+            if (el.style.display == "block") {
+                el.style.display = "none";
+                link.innerText = link.getAttribute('data-text-hide');
+            } else {
+                el.style.display = "block";
+                link.innerText = link.getAttribute('data-text-show');
+            }
+         }
+
         function viewdiv_1(id) {
             var el = document.getElementById("add_com1");
             var link = document.getElementById(id);
@@ -1138,7 +1234,7 @@
                 }
             }
 
-<!--            if (count_1 == count_0) {-->
+            if (count_1 == count_0 || count_1 == 0) {
                  $.ajax({
                     url: '/save_tour_1/',
                     type: 'GET',
@@ -1159,7 +1255,7 @@
                 document.getElementById('show1').hidden = true;
                 document.getElementById('com1').hidden = true;
                 document.getElementById('p1').hidden = true;
-<!--            }-->
+            }
         }
 
 
@@ -1183,7 +1279,7 @@
                 }
             }
 
-             if (count_1 == count_0) {
+             if (count_1 == count_0 || count_1 == 0) {
                  $.ajax({
                     url: '/save_tour_2/',
                     type: 'GET',
@@ -1229,7 +1325,7 @@
                 }
             }
 
-             if (count_1 == count_0) {
+             if (count_1 == count_0 || count_1 == 0) {
                  $.ajax({
                     url: '/save_tour_3/',
                     type: 'GET',
@@ -1261,6 +1357,7 @@
             let arr = ""
             const ch = document.querySelectorAll('input[name="tour_4"]');
             com = document.getElementById('com4').value;
+            del = document.getElementById('del_com4').value;
             let count_1 = 0
             let count_0 = 0
             for (const f of ch) {
@@ -1273,12 +1370,12 @@
                 }
             }
 
-             if (count_1 == count_0) {
+             if (count_1 == count_0 || count_1 == 0) {
                  $.ajax({
                     url: '/save_tour_4/',
                     type: 'GET',
                     dataType: 'json',
-                    data: {'data': arr, 'name': game, 'com': com},
+                    data: {'data': arr, 'name': game, 'com': com, 'del': del},
                     success: function(response) {
                         console.log(response);
                     },
@@ -1305,6 +1402,7 @@
             let arr = ""
             const ch = document.querySelectorAll('input[name="tour_5"]');
             com = document.getElementById('com5').value;
+            del = document.getElementById('del_com5').value;
             let count_1 = 0
             let count_0 = 0
             for (const f of ch) {
@@ -1317,12 +1415,12 @@
                 }
             }
 
-             if (count_1 == count_0) {
+             if (count_1 == count_0 || count_1 == 0) {
                  $.ajax({
                     url: '/save_tour_5/',
                     type: 'GET',
                     dataType: 'json',
-                    data: {'data': arr, 'name': game, 'com': com},
+                    data: {'data': arr, 'name': game, 'com': com, 'del': del},
                     success: function(response) {
                         console.log(response);
                     },
@@ -1349,6 +1447,7 @@
             let arr = ""
             const ch = document.querySelectorAll('input[name="tour_6"]');
             com = document.getElementById('com6').value;
+            del = document.getElementById('del_com6').value;
             let count_1 = 0
             let count_0 = 0
             for (const f of ch) {
@@ -1361,12 +1460,12 @@
                 }
             }
 
-             if (count_1 == count_0) {
+             if (count_1 == count_0 || count_1 == 0) {
                  $.ajax({
                     url: '/save_tour_6/',
                     type: 'GET',
                     dataType: 'json',
-                    data: {'data': arr, 'name': game, 'com': com},
+                    data: {'data': arr, 'name': game, 'com': com, 'del': del},
                     success: function(response) {
                         console.log(response);
                     },
@@ -1394,6 +1493,7 @@
             let arr = ""
             const ch = document.querySelectorAll('input[name="tour_7"]');
             com = document.getElementById('com7').value;
+            del = document.getElementById('del_com7').value;
             let count_1 = 0
             let count_0 = 0
             for (const f of ch) {
@@ -1406,12 +1506,12 @@
                 }
             }
 
-             if (count_1 == count_0) {
+             if (count_1 == count_0 || count_1 == 0) {
                  $.ajax({
                     url: '/save_tour_7/',
                     type: 'GET',
                     dataType: 'json',
-                    data: {'data': arr, 'name': game, 'com': com},
+                    data: {'data': arr, 'name': game, 'com': com, 'del': del},
                     success: function(response) {
                         console.log(response);
                     },
@@ -1438,6 +1538,7 @@
             let arr = ""
             const ch = document.querySelectorAll('input[name="tour_8"]');
             com = document.getElementById('com8').value;
+            del = document.getElementById('del_com8').value;
             let count_1 = 0
             let count_0 = 0
             for (const f of ch) {
@@ -1450,12 +1551,12 @@
                 }
             }
 
-             if (count_1 == count_0) {
+             if (count_1 == count_0 || count_1 == 0) {
                  $.ajax({
                     url: '/save_tour_8/',
                     type: 'GET',
                     dataType: 'json',
-                    data: {'data': arr, 'name': game, 'com': com},
+                    data: {'data': arr, 'name': game, 'com': com, 'del': del},
                     success: function(response) {
                         console.log(response);
                     },

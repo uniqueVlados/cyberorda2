@@ -3695,6 +3695,7 @@ def save_tour_4(request):
         checkbox = list(request.GET.get("data"))
         game = request.GET.get("name")
         game_name, div_name = game.split()
+        com_del = request.GET.get("del").split("\n")
         file = open(f"{game}/{game}_счёт_4.txt", "w", encoding="utf-8")
         file.write(" ".join(checkbox))
         file.close()
@@ -3749,6 +3750,23 @@ def save_tour_4(request):
                 res.write("Пустышка" + ": " + str(i) + "\n")
             res.write("\n")
         res.close()
+
+        # del commands
+        res = open(f"{game}/результат_4_{game}.txt", "r", encoding="utf-8")
+        new_res = []
+
+        for c in res.readlines():
+            if c.split(": ")[0] not in com_del:
+                new_res.append(c)
+        res.close()
+
+        res = open(f"{game}/результат_4_{game}.txt", "w", encoding="utf-8")
+
+        for c in new_res:
+            res.write(f"{c}")
+
+        res.close()
+        # end
 
 
 
@@ -3846,6 +3864,7 @@ def save_tour_5(request):
         checkbox = list(request.GET.get("data"))
         game = request.GET.get("name")
         game_name, div_name = game.split()
+        com_del = request.GET.get("del").split("\n")
         file = open(f"{game}/{game}_счёт_5.txt", "w", encoding="utf-8")
         file.write(" ".join(checkbox))
         file.close()
@@ -4010,6 +4029,7 @@ def save_tour_6(request):
     if request.method == 'GET':
         checkbox = list(request.GET.get("data"))
         game = request.GET.get("name")
+        com_del = request.GET.get("del").split("\n")
         game_name, div_name = game.split()
         file = open(f"{game}/{game}_счёт_6.txt", "w", encoding="utf-8")
         file.write(" ".join(checkbox))
@@ -4065,6 +4085,22 @@ def save_tour_6(request):
             res.write("\n")
         res.close()
 
+        # del commands
+        res = open(f"{game}/результат_6_{game}.txt", "r", encoding="utf-8")
+        new_res = []
+
+        for c in res.readlines():
+            if c.split(": ")[0] not in com_del:
+                new_res.append(c)
+        res.close()
+
+        res = open(f"{game}/результат_6_{game}.txt", "w", encoding="utf-8")
+
+        for c in new_res:
+            res.write(f"{c}")
+
+        res.close()
+        # end
 
 
         fp = open(f"{game}/пересечение_команд_{game}.json", "r", encoding="utf-8")
@@ -4159,6 +4195,7 @@ def save_tour_7(request):
     if request.method == 'GET':
         checkbox = list(request.GET.get("data"))
         game = request.GET.get("name")
+        com_del = request.GET.get("del").split("\n")
         game_name, div_name = game.split()
         file = open(f"{game}/{game}_счёт_7.txt", "w", encoding="utf-8")
         file.write(" ".join(checkbox))
@@ -4213,6 +4250,23 @@ def save_tour_7(request):
                 res.write("Пустышка" + ": " + str(i) + "\n")
             res.write("\n")
         res.close()
+
+        # del commands
+        res = open(f"{game}/результат_7_{game}.txt", "r", encoding="utf-8")
+        new_res = []
+
+        for c in res.readlines():
+            if c.split(": ")[0] not in com_del:
+                new_res.append(c)
+        res.close()
+
+        res = open(f"{game}/результат_7_{game}.txt", "w", encoding="utf-8")
+
+        for c in new_res:
+            res.write(f"{c}")
+
+        res.close()
+        # end
 
 
 
@@ -4308,6 +4362,7 @@ def save_tour_8(request):
     if request.method == 'GET':
         checkbox = list(request.GET.get("data"))
         game = request.GET.get("name")
+        com_del = request.GET.get("del").split("\n")
         game_name, div_name = game.split()
         file = open(f"{game}/{game}_счёт_8.txt", "w", encoding="utf-8")
         file.write(" ".join(checkbox))
@@ -4363,7 +4418,22 @@ def save_tour_8(request):
             res.write("\n")
         res.close()
 
+        # del commands
+        res = open(f"{game}/результат_8_{game}.txt", "r", encoding="utf-8")
+        new_res = []
 
+        for c in res.readlines():
+            if c.split(": ")[0] not in com_del:
+                new_res.append(c)
+        res.close()
+
+        res = open(f"{game}/результат_8_{game}.txt", "w", encoding="utf-8")
+
+        for c in new_res:
+            res.write(f"{c}")
+
+        res.close()
+        # end
 
         fp = open(f"{game}/пересечение_команд_{game}.json", "r", encoding="utf-8")
         commands_dict = json.load(fp)
