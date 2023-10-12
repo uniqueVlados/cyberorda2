@@ -106,14 +106,15 @@
         </div>
         {% if tour9_1 %}
              <div class="col-md-12">
-                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_9" onclick="reset9();">Сбросить</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="reset_9" onclick="reset('{{ name }}', 9);">Сбросить</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="results_9" onclick="results('{{ name }}', 9);">Выгрузить</a>
                  {% if count_tour == 9 %}
                  <a id="show9" class="btn btn-primary btn-sm mt-1 mb-1" onclick="viewdiv_9(show9);">Добавить</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_9" onclick="download_shedule('{{ name }}', 9);">Расписание</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_save_9" onclick="save9();">Сохранить</a>
                  {% endif %}
                  {% if count_tour != 9 %}
-                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_9" onclick="download_9();">Скачать</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_9" onclick="download_tour('{{ name }}', 9);">Скачать</a>
                  {% endif %}
              </div>
          {% endif %}
@@ -230,14 +231,15 @@
         </div>
         {% if tour8_1 %}
              <div class="col-md-12">
-                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_8" onclick="reset8();">Сбросить</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="reset_8" onclick="reset('{{ name }}', 8);">Сбросить</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="results_8" onclick="results('{{ name }}', 8);">Выгрузить</a>
                  {% if count_tour == 8 %}
                  <a id="show8" class="btn btn-primary btn-sm mt-1 mb-1" onclick="viewdiv_8(show8);">Добавить</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_8" onclick="download_shedule('{{ name }}', 8);">Расписание</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_save_8" onclick="save8();">Сохранить</a>
                  {% endif %}
                  {% if count_tour != 8 %}
-                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_8" onclick="download_8();">Скачать</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_8" onclick="download_tour('{{ name }}', 8);">Скачать</a>
                  {% endif %}
              </div>
          {% endif %}
@@ -344,14 +346,15 @@
         </div>
         {% if tour7_1 %}
              <div class="col-md-12">
-                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_7" onclick="reset7();">Сбросить</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="reset_7" onclick="reset('{{ name }}', 7);">Сбросить</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="results_7" onclick="results('{{ name }}', 7);">Выгрузить</a>
                  {% if count_tour == 7 %}
                  <a id="show7" class="btn btn-primary btn-sm mt-1 mb-1" onclick="viewdiv_7(show7);">Добавить</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_7" onclick="download_shedule('{{ name }}', 7);">Расписание</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_save_7" onclick="save7();">Сохранить</a>
                  {% endif %}
                  {% if count_tour != 7 %}
-                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_7" onclick="download_7();">Скачать</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_7" onclick="download_tour('{{ name }}', 7);">Скачать</a>
                  {% endif %}
              </div>
          {% endif %}
@@ -471,14 +474,15 @@
         </div>
         {% if tour6_1 %}
              <div class="col-md-12">
-                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_6" onclick="reset6();">Сбросить</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="reset_6" onclick="reset('{{ name }}', 6);">Сбросить</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="results_6" onclick="results('{{ name }}', 6);">Выгрузить</a>
                  {% if count_tour == 6 %}
                  <a id="show6" class="btn btn-primary btn-sm mt-1 mb-1" onclick="viewdiv_6(show6);">Добавить</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_6" onclick="download_shedule('{{ name }}', 6);">Расписание</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_save_6" onclick="save6();">Сохранить</a>
                  {% endif %}
                  {% if count_tour != 6 %}
-                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_6" onclick="download_6();">Скачать</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_6" onclick="download_tour('{{ name }}', 6);">Скачать</a>
                  {% endif %}
              </div>
          {% endif %}
@@ -583,15 +587,15 @@
         </div>
 <!--        {% if tour5_1 %}-->
              <div class="col-md-12">
-                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_5" onclick="reset5();">Сбросить</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="reset_5" onclick="reset('{{ name }}', 5);">Сбросить</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="results_5" onclick="results('{{ name }}', 5);">Выгрузить</a>
                  {% if count_tour == 5 %}
                  <a id="show5" class="btn btn-primary btn-sm mt-1 mb-1" onclick="viewdiv_5(show5);">Добавить</a>
-                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_5" onclick="download_shedule_5();">Расписание</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_5" onclick="download_shedule('{{ name }}', 5);">Расписание</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_save_5" onclick="save5();">Сохранить</a>
                  {% endif %}
                  {% if count_tour != 5 %}
-                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_5" onclick="download_5();">Скачать</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_5" onclick="download_tour('{{ name }}', 5);">Скачать</a>
                  {% endif %}
              </div>
 <!--         {% endif %}-->
@@ -677,15 +681,15 @@
             </div>
         </div>
              <div class="col-md-12">
-                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_4" onclick="reset4();">Сбросить</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="reset_4" onclick="reset('{{ name }}', 4);">Сбросить</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="results_4" onclick="results('{{ name }}', 4);">Выгрузить</a>
                  {% if count_tour == 4 %}
                  <a id="show4" class="btn btn-primary btn-sm mt-1 mb-1" onclick="viewdiv_4(show4);">Добавить</a>
-                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_4" onclick="download_shedule_4();">Расписание</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_4" onclick="download_shedule('{{ name }}', 4);">Расписание</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_save_4" onclick="save4();">Сохранить</a>
                  {% endif %}
                  {% if count_tour != 4 %}
-                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_4" onclick="download_4();">Скачать</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_4" onclick="download_tour('{{ name }}', 4);">Скачать</a>
                  {% endif %}
              </div>
          
@@ -763,16 +767,16 @@
             </div>
 
              <div class="col-md-12">
-                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_3" onclick="reset3();">Сбросить</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="reset_3" onclick="reset('{{ name }}', 3);">Сбросить</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="results_3" onclick="results('{{ name }}', 3);">Выгрузить</a>
                  {% if count_tour == 3 %}
                  <a id="show3" class="btn btn-primary btn-sm mt-1 mb-1" onclick="viewdiv_3(show3);">Добавить</a>
                  <a id="del_show3" class="btn btn-primary btn-sm mt-1 mb-1" onclick="del_viewdiv_3(del_show3);">Кикнуть</a>
-                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_3" onclick="download_shedule_3();">Расписание</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_3" onclick="download_shedule('{{ name }}', 3);">Расписание</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_save_3" onclick="save3();">Сохранить</a>
                  {% endif %}
                  {% if count_tour != 3 %}
-                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_3" onclick="download_3();">Скачать</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_3" onclick="download_tour('{{ name }}', 3);">Скачать</a>
                  {% endif %}
              </div>
 
@@ -835,16 +839,16 @@
                 {% endfor %}
              </div>
              <div class="col-md-12">
-                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_2" onclick="reset2();">Сбросить</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="reset_2" onclick="reset('{{ name }}', 2);">Сбросить</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="results_2" onclick="results('{{ name }}', 2);">Выгрузить</a>
                  {% if count_tour == 2 %}
                  <a id="show2" class="btn btn-primary btn-sm mt-1 mb-1" onclick="viewdiv_2(show2);">Добавить</a>
                  <a id="del_show2" class="btn btn-primary btn-sm mt-1 mb-1" onclick="del_viewdiv_2(del_show2);">Кикнуть</a>
-                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_2" onclick="download_shedule_2();">Расписание</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_2" onclick="download_shedule('{{ name }}', 2);">Расписание</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_save_2" onclick="save2();">Сохранить</a>
                  {% endif %}
                  {% if count_tour != 2 %}
-                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_2" onclick="download_2();">Скачать</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_2" onclick="download_tour('{{ name }}', 2);">Скачать</a>
                  {% endif %}
              </div>
         
@@ -895,16 +899,16 @@
             </div>
         </div>
              <div class="col-md-12">
-                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="reset_1" onclick="reset1();">Сбросить</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="reset_1" onclick="reset('{{ name }}', 1);">Сбросить</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="results_1" onclick="results('{{ name }}', 1);">Выгрузить</a>
                  {% if count_tour == 1 %}
                  <a id="show1" class="btn btn-primary btn-sm mt-1 mb-1" onclick="viewdiv_1(show1);">Добавить</a>
                  <a id="del_show1" class="btn btn-primary btn-sm mt-1 mb-1" onclick="del_viewdiv_1(del_show1);">Кикнуть</a>
-                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_1" onclick="download_shedule_1();">Расписание</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_1" onclick="download_shedule('{{ name }}', 1);">Расписание</a>
                  <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_save_1" onclick="save1();">Сохранить</a>
                  {% endif %}
                  {% if count_tour != 1 %}
-                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_1" onclick="download_1();">Скачать</a>
+                 <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_1" onclick="download_tour('{{ name }}', 1);">Скачать</a>
                  {% endif %}
              </div>
 
@@ -1159,24 +1163,6 @@
         }
 
 
-        function reset1(){
-            let game = document.getElementById('game').textContent;
-            $.ajax({
-                    url: '/reset_1/',
-                    type: 'GET',
-                    dataType: 'json',
-                    data: {'name': game},
-                    success: function(response) {
-                        console.log(response);
-                    },
-                    error: function(error) {
-                        console.error('Ошибка:', error);
-                    }
-                });
-
-            location.href = window.location.href;
-        }
-
         // 2 tour
 
         function save2() {
@@ -1222,23 +1208,6 @@
 
         }
 
-        function reset2(){
-            let game = document.getElementById('game').textContent;
-            $.ajax({
-                    url: '/reset_2/',
-                    type: 'GET',
-                    dataType: 'json',
-                    data: {'name': game},
-                    success: function(response) {
-                        console.log(response);
-                    },
-                    error: function(error) {
-                        console.error('Ошибка:', error);
-                    }
-                });
-
-            location.href = window.location.href;
-        }
 
         // 3 tour
 
@@ -1284,23 +1253,6 @@
             }
 
         }
-        function reset3(){
-            let game = document.getElementById('game').textContent;
-            $.ajax({
-                    url: '/reset_3/',
-                    type: 'GET',
-                    dataType: 'json',
-                    data: {'name': game},
-                    success: function(response) {
-                        console.log(response);
-                    },
-                    error: function(error) {
-                        console.error('Ошибка:', error);
-                    }
-                });
-
-            location.href = window.location.href;
-        }
 
         // 4 tour
 
@@ -1344,23 +1296,6 @@
                 document.getElementById('p4').hidden = true;
             }
 
-        }
-        function reset4(){
-            let game = document.getElementById('game').textContent;
-            $.ajax({
-                    url: '/reset_4/',
-                    type: 'GET',
-                    dataType: 'json',
-                    data: {'name': game},
-                    success: function(response) {
-                        console.log(response);
-                    },
-                    error: function(error) {
-                        console.error('Ошибка:', error);
-                    }
-                });
-
-            location.href = window.location.href;
         }
 
         // 5 tour
@@ -1406,23 +1341,6 @@
             }
 
         }
-        function reset5(){
-            let game = document.getElementById('game').textContent;
-            $.ajax({
-                    url: '/reset_5/',
-                    type: 'GET',
-                    dataType: 'json',
-                    data: {'name': game},
-                    success: function(response) {
-                        console.log(response);
-                    },
-                    error: function(error) {
-                        console.error('Ошибка:', error);
-                    }
-                });
-
-            location.href = window.location.href;
-        }
 
         // 6 tour
 
@@ -1466,23 +1384,6 @@
                 document.getElementById('p6').hidden = true;
             }
 
-        }
-        function reset6(){
-            let game = document.getElementById('game').textContent;
-            $.ajax({
-                    url: '/reset_6/',
-                    type: 'GET',
-                    dataType: 'json',
-                    data: {'name': game},
-                    success: function(response) {
-                        console.log(response);
-                    },
-                    error: function(error) {
-                        console.error('Ошибка:', error);
-                    }
-                });
-
-            location.href = window.location.href;
         }
 
 
@@ -1529,24 +1430,6 @@
             }
 
         }
-        function reset7(){
-            let game = document.getElementById('game').textContent;
-            $.ajax({
-                    url: '/reset_7/',
-                    type: 'GET',
-                    dataType: 'json',
-                    data: {'name': game},
-                    success: function(response) {
-                        console.log(response);
-                    },
-                    error: function(error) {
-                        console.error('Ошибка:', error);
-                    }
-                });
-
-            location.href = window.location.href;
-        }
-
 
         // 8 tour
 
@@ -1591,13 +1474,24 @@
             }
 
         }
-        function reset8(){
-            let game = document.getElementById('game').textContent;
+
+        function results(game, tour){
+            location.href = "http://31.129.102.195:8000/results/" + game + "/" + tour;
+        }
+
+        function download_tour(game, tour){
+            location.href = "http://127.0.0.1:8000/download/" + game + "/" + tour;
+        }
+
+        function download_shedule(game, tour) {
+            location.href = "http://127.0.0.1:8000/download_shedule/" + game + "/" + tour;
+        }
+
+        function reset(game, tour){
             $.ajax({
-                    url: '/reset_8/',
+                    url: '/reset/' + game + "/" + tour,
                     type: 'GET',
                     dataType: 'json',
-                    data: {'name': game},
                     success: function(response) {
                         console.log(response);
                     },
@@ -1609,104 +1503,46 @@
             location.href = window.location.href;
         }
 
+<!--        function save_tour(game, tour) {-->
+<!--            let arr = ""-->
+<!--            const ch = document.querySelectorAll('input[name="tour_2"]');-->
+<!--            com = document.getElementById('com1').value;-->
+<!--            let count_1 = 0-->
+<!--            let count_0 = 0-->
+<!--            for (const f of ch) {-->
+<!--                if (f.checked) {-->
+<!--                    arr += 1-->
+<!--                    count_1 += 1-->
+<!--                } else {-->
+<!--                    arr += 0-->
+<!--                    count_0 += 1-->
+<!--                }-->
+<!--            }-->
 
-        function results(game, tour){
-            location.href = "http://31.129.102.195:8000/results/" + game + "/" + tour;
-        }
+<!--             if (count_1 == count_0) {-->
+<!--                 $.ajax({-->
+<!--                    url: '/save_tour/' + game + "/" + tour,-->
+<!--                    type: 'GET',-->
+<!--                    dataType: 'json',-->
+<!--                    data: {'data': arr, 'com': com},-->
+<!--                    success: function(response) {-->
+<!--                        console.log(response);-->
+<!--                    },-->
+<!--                    error: function(error) {-->
+<!--                        console.error('Ошибка:', error);-->
+<!--                    }-->
+<!--                });-->
 
+<!--                var elem = document.getElementById("tour_save_2");-->
+<!--                elem.className = "btn btn-warning btn-sm mt-1 mb-1";-->
+<!--                elem.textContent = 'Обновить';-->
+<!--                elem.setAttribute('onclick', 'update()');-->
+<!--                document.getElementById('show2').hidden = true;-->
+<!--                document.getElementById('com2').hidden = true;-->
+<!--                document.getElementById('p2').hidden = true;-->
+<!--            }-->
 
-        function download_shedule_1() {
-            let game = document.getElementById('game').textContent;
-            location.href = "http://31.129.102.195:8000/download_shedule_1/" + game;
-        }
-
-        function download_shedule_2() {
-            let game = document.getElementById('game').textContent;
-            location.href = "http://31.129.102.195:8000/download_shedule_2/" + game;
-        }
-
-        function download_shedule_3() {
-            let game = document.getElementById('game').textContent;
-            location.href = "http://31.129.102.195:8000/download_shedule_3/" + game;
-        }
-
-        function download_shedule_4() {
-            let game = document.getElementById('game').textContent;
-            location.href = "http://31.129.102.195:8000/download_shedule_4/" + game;
-        }
-
-        function download_shedule_5() {
-            let game = document.getElementById('game').textContent;
-            location.href = "http://31.129.102.195:8000/download_shedule_5/" + game;
-        }
-
-        function download_1(){
-            let game = document.getElementById('game').textContent;
-            location.href = "http://31.129.102.195:8000/download_1/" + game;
-        }
-
-        function download_2(){
-            let game = document.getElementById('game').textContent;
-            location.href = "http://31.129.102.195:8000/download_2/" + game;
-        }
-
-        function download_3(){
-            let game = document.getElementById('game').textContent;
-            location.href = "http://31.129.102.195:8000/download_3/" + game;
-        }
-
-        function download_4(){
-            let game = document.getElementById('game').textContent;
-            location.href = "http://31.129.102.195:8000/download_4/" + game;
-        }
-
-        function download_5(){
-            let game = document.getElementById('game').textContent;
-            location.href = "http://31.129.102.195:8000/download_5/" + game;
-        }
-
-        function download_6(){
-            let game = document.getElementById('game').textContent;
-            location.href = "http://31.129.102.195:8000/download_6/" + game;
-        }
-
-        function download_7(){
-            let game = document.getElementById('game').textContent;
-            location.href = "http://31.129.102.195:8000/download_7/" + game;
-        }
-
-        function download_8(){
-            let game = document.getElementById('game').textContent;
-            location.href = "http://31.129.102.195:8000/download_8/" + game;
-        }
-
-        function download_9(){
-            let game = document.getElementById('game').textContent;
-            location.href = "http://31.129.102.195/:8000/download_9/" + game;
-        }
-
-        function download_10(){
-            let game = document.getElementById('game').textContent;
-            location.href = "http://31.129.102.195:8000/download_10/" + game;
-        }
-
-        function download_11(){
-            let game = document.getElementById('game').textContent;
-            location.href = "http://31.129.102.195:8000/download_11/" + game;
-        }
-
-        function download_12(){
-            let game = document.getElementById('game').textContent;
-            location.href = "http://31.129.102.195:8000/download_12/" + game;
-        }
-
-        function download_13(){
-            let game = document.getElementById('game').textContent;
-            location.href = "http://31.129.102.195:8000/download_13/" + game;
-        }
-
-
-
+<!--        }-->
     </script>
 
 {% endblock content %}

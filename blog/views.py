@@ -3354,52 +3354,6 @@ def save_tour_1(request):
         return JsonResponse(data)
 
 
-def reset_1(request):
-    if request.method == 'GET':
-        game = request.GET.get("name")
-        file_count = open(f"{game}/{game}_туры.txt", "w", encoding="utf-8")
-        file_count.write("1")
-        file_count.close()
-
-        add_com_list = []
-        for i in range(1, 8):
-            if os.path.exists(f"{game}/{game}_{i}_доб.txt"):
-                add_com_list += [c.replace("\n", "") for c in
-                                 open(f"{game}/{game}_{i}_доб.txt", "r", encoding="utf-8").readlines()]
-        com_list = [c.replace("\n", "") for c in open(f"{game}/команды_{game}.txt", "r", encoding="utf-8").readlines()]
-        com_list_new = []
-
-        for c in com_list:
-            if c not in add_com_list:
-                com_list_new.append(c)
-
-        com_file = open(f"{game}/команды_{game}.txt", "w", encoding="utf-8")
-        for i in range(len(com_list_new)):
-            if i == 0:
-                com_file.write(com_list_new[i])
-            else:
-                com_file.write("\n" + com_list_new[i])
-
-        f = open(f"{game}/{game}_тур2.txt", "w", encoding="utf-8")
-
-
-        fp = open(f"{game}/пересечение_команд_{game}.json", "r", encoding="utf-8")
-        commands_dict = json.load(fp)
-
-        for key in commands_dict.keys():
-            if key != "Пустышка" and len(commands_dict[key]) != 0:
-                commands_dict[key] = [commands_dict[key][0]]
-
-
-        with open(f"{game}/пересечение_команд_{game}.json", "w", encoding="utf-8") as fp:
-            s = json.dumps(commands_dict, ensure_ascii=False)
-            fp.write(s)
-
-
-        data = {"message": "ok"}
-        return JsonResponse(data)
-
-
 def save_tour_2(request):
     if request.method == 'GET':
         checkbox = list(request.GET.get("data"))
@@ -3407,7 +3361,7 @@ def save_tour_2(request):
         game_name, div_name = game.split()
         com_add = request.GET.get("com").split("\n")
         com_del = request.GET.get("del").split("\n")
-       
+
         file = open(f"{game}/{game}_счёт_2.txt", "w", encoding="utf-8")
         file.write(" ".join(checkbox))
         file.close()
@@ -3563,53 +3517,6 @@ def save_tour_2(request):
                 base_img_copy.save(f'{game}/shedule_2_{i}.png', quality=100)
                 height = 415
             # ------ end ------
-
-        data = {"message": "ok"}
-        return JsonResponse(data)
-
-
-def reset_2(request):
-    if request.method == 'GET':
-        game = request.GET.get("name")
-        file_count = open(f"{game}/{game}_туры.txt", "w", encoding="utf-8")
-        file_count.write("2")
-        file_count.close()
-
-        add_com_list = []
-        for i in range(2, 8):
-            if os.path.exists(f"{game}/{game}_{i}_доб.txt"):
-                add_com_list += [c.replace("\n", "") for c in
-                                 open(f"{game}/{game}_{i}_доб.txt", "r", encoding="utf-8").readlines()]
-        com_list = [c.replace("\n", "") for c in open(f"{game}/команды_{game}.txt", "r", encoding="utf-8").readlines()]
-        com_list_new = []
-
-        for c in com_list:
-            if c not in add_com_list:
-                com_list_new.append(c)
-
-        com_file = open(f"{game}/команды_{game}.txt", "w", encoding="utf-8")
-        for i in range(len(com_list_new)):
-            if i == 0:
-                com_file.write(com_list_new[i])
-            else:
-                com_file.write("\n" + com_list_new[i])
-
-        f = open(f"{game}/{game}_тур3.txt", "w", encoding="utf-8")
-
-
-        fp = open(f"{game}/пересечение_команд_{game}.json", "r", encoding="utf-8")
-        commands_dict = json.load(fp)
-
-        for key in commands_dict.keys():
-            if key != "Пустышка":
-                commands_dict[key] = [commands_dict[key][0]]
-
-
-        with open(f"{game}/пересечение_команд_{game}.json", "w", encoding="utf-8") as fp:
-            s = json.dumps(commands_dict, ensure_ascii=False)
-            fp.write(s)
-
-
 
         data = {"message": "ok"}
         return JsonResponse(data)
@@ -3783,50 +3690,6 @@ def save_tour_3(request):
         return JsonResponse(data)
 
 
-def reset_3(request):
-    if request.method == 'GET':
-        game = request.GET.get("name")
-        file_count = open(f"{game}/{game}_туры.txt", "w", encoding="utf-8")
-        file_count.write("3")
-        file_count.close()
-
-        add_com_list = []
-        for i in range(3, 8):
-            if os.path.exists(f"{game}/{game}_{i}_доб.txt"):
-                add_com_list += [c.replace("\n", "") for c in
-                                 open(f"{game}/{game}_{i}_доб.txt", "r", encoding="utf-8").readlines()]
-        com_list = [c.replace("\n", "") for c in open(f"{game}/команды_{game}.txt", "r", encoding="utf-8").readlines()]
-        com_list_new = []
-
-        for c in com_list:
-            if c not in add_com_list:
-                com_list_new.append(c)
-
-        com_file = open(f"{game}/команды_{game}.txt", "w", encoding="utf-8")
-        for i in range(len(com_list_new)):
-            if i == 0:
-                com_file.write(com_list_new[i])
-            else:
-                com_file.write("\n" + com_list_new[i])
-
-        f = open(f"{game}/{game}_тур4.txt", "w", encoding="utf-8")
-
-
-
-        fp = open(f"{game}/пересечение_команд_{game}.json", "r", encoding="utf-8")
-        commands_dict = json.load(fp)
-
-        for key in commands_dict.keys():
-            commands_dict[key] = commands_dict[key][0:3]
-
-        with open(f"{game}/пересечение_команд_{game}.json", "w", encoding="utf-8") as fp:
-            s = json.dumps(commands_dict, ensure_ascii=False)
-            fp.write(s)
-
-        data = {"message": "ok"}
-        return JsonResponse(data)
-
-
 def save_tour_4(request):
     if request.method == 'GET':
         checkbox = list(request.GET.get("data"))
@@ -3976,52 +3839,6 @@ def save_tour_4(request):
 
         data = {"message": "ok"}
         return JsonResponse(data)
-
-
-def reset_4(request):
-    if request.method == 'GET':
-        game = request.GET.get("name")
-        file_count = open(f"{game}/{game}_туры.txt", "w", encoding="utf-8")
-        file_count.write("4")
-        file_count.close()
-
-        add_com_list = []
-        for i in range(4, 8):
-            if os.path.exists(f"{game}/{game}_{i}_доб.txt"):
-                add_com_list += [c.replace("\n", "") for c in
-                                 open(f"{game}/{game}_{i}_доб.txt", "r", encoding="utf-8").readlines()]
-        com_list = [c.replace("\n", "") for c in open(f"{game}/команды_{game}.txt", "r", encoding="utf-8").readlines()]
-        com_list_new = []
-
-        for c in com_list:
-            if c not in add_com_list:
-                com_list_new.append(c)
-
-        com_file = open(f"{game}/команды_{game}.txt", "w", encoding="utf-8")
-        for i in range(len(com_list_new)):
-            if i == 0:
-                com_file.write(com_list_new[i])
-            else:
-                com_file.write("\n" + com_list_new[i])
-
-        f = open(f"{game}/{game}_тур5.txt", "w", encoding="utf-8")
-
-
-
-        fp = open(f"{game}/пересечение_команд_{game}.json", "r", encoding="utf-8")
-        commands_dict = json.load(fp)
-
-        for key in commands_dict.keys():
-            commands_dict[key] = commands_dict[key][0:4]
-
-        with open(f"{game}/пересечение_команд_{game}.json", "w", encoding="utf-8") as fp:
-            s = json.dumps(commands_dict, ensure_ascii=False)
-            fp.write(s)
-
-
-        data = {"message": "ok"}
-        return JsonResponse(data)
-
 
 
 def save_tour_5(request):
@@ -4189,50 +4006,6 @@ def save_tour_5(request):
         return JsonResponse(data)
 
 
-def reset_5(request):
-    if request.method == 'GET':
-        game = request.GET.get("name")
-        file_count = open(f"{game}/{game}_туры.txt", "w", encoding="utf-8")
-        file_count.write("5")
-        file_count.close()
-
-        add_com_list = []
-        for i in range(5, 8):
-            if os.path.exists(f"{game}/{game}_{i}_доб.txt"):
-                add_com_list += [c.replace("\n", "") for c in
-                                 open(f"{game}/{game}_{i}_доб.txt", "r", encoding="utf-8").readlines()]
-        com_list = [c.replace("\n", "") for c in open(f"{game}/команды_{game}.txt", "r", encoding="utf-8").readlines()]
-        com_list_new = []
-
-        for c in com_list:
-            if c not in add_com_list:
-                com_list_new.append(c)
-
-        com_file = open(f"{game}/команды_{game}.txt", "w", encoding="utf-8")
-        for i in range(len(com_list_new)):
-            if i == 0:
-                com_file.write(com_list_new[i])
-            else:
-                com_file.write("\n" + com_list_new[i])
-
-        f = open(f"{game}/{game}_тур6.txt", "w", encoding="utf-8")
-
-
-        fp = open(f"{game}/пересечение_команд_{game}.json", "r", encoding="utf-8")
-        commands_dict = json.load(fp)
-
-        for key in commands_dict.keys():
-            commands_dict[key] = commands_dict[key][0:5]
-
-        with open(f"{game}/пересечение_команд_{game}.json", "w", encoding="utf-8") as fp:
-            s = json.dumps(commands_dict, ensure_ascii=False)
-            fp.write(s)
-
-
-        data = {"message": "ok"}
-        return JsonResponse(data)
-
-
 def save_tour_6(request):
     if request.method == 'GET':
         checkbox = list(request.GET.get("data"))
@@ -4376,50 +4149,6 @@ def save_tour_6(request):
             base_img_copy.save(f'{game}/shedule_6_{i}.png', quality=100)
             height = 415
         # ------ end ------
-
-
-        data = {"message": "ok"}
-        return JsonResponse(data)
-
-
-def reset_6(request):
-    if request.method == 'GET':
-        game = request.GET.get("name")
-        file_count = open(f"{game}/{game}_туры.txt", "w", encoding="utf-8")
-        file_count.write("6")
-        file_count.close()
-
-        add_com_list = []
-        for i in range(6, 8):
-            if os.path.exists(f"{game}/{game}_{i}_доб.txt"):
-                add_com_list += [c.replace("\n", "") for c in
-                                 open(f"{game}/{game}_{i}_доб.txt", "r", encoding="utf-8").readlines()]
-        com_list = [c.replace("\n", "") for c in open(f"{game}/команды_{game}.txt", "r", encoding="utf-8").readlines()]
-        com_list_new = []
-
-        for c in com_list:
-            if c not in add_com_list:
-                com_list_new.append(c)
-
-        com_file = open(f"{game}/команды_{game}.txt", "w", encoding="utf-8")
-        for i in range(len(com_list_new)):
-            if i == 0:
-                com_file.write(com_list_new[i])
-            else:
-                com_file.write("\n" + com_list_new[i])
-
-        f = open(f"{game}/{game}_тур7.txt", "w", encoding="utf-8")
-
-
-        fp = open(f"{game}/пересечение_команд_{game}.json", "r", encoding="utf-8")
-        commands_dict = json.load(fp)
-
-        for key in commands_dict.keys():
-            commands_dict[key] = commands_dict[key][0:6]
-
-        with open(f"{game}/пересечение_команд_{game}.json", "w", encoding="utf-8") as fp:
-            s = json.dumps(commands_dict, ensure_ascii=False)
-            fp.write(s)
 
 
         data = {"message": "ok"}
@@ -4575,50 +4304,6 @@ def save_tour_7(request):
         return JsonResponse(data)
 
 
-def reset_7(request):
-    if request.method == 'GET':
-        game = request.GET.get("name")
-        file_count = open(f"{game}/{game}_туры.txt", "w", encoding="utf-8")
-        file_count.write("7")
-        file_count.close()
-
-        add_com_list = []
-        for i in range(7, 8):
-            if os.path.exists(f"{game}/{game}_{i}_доб.txt"):
-                add_com_list += [c.replace("\n", "") for c in
-                                 open(f"{game}/{game}_{i}_доб.txt", "r", encoding="utf-8").readlines()]
-        com_list = [c.replace("\n", "") for c in open(f"{game}/команды_{game}.txt", "r", encoding="utf-8").readlines()]
-        com_list_new = []
-
-        for c in com_list:
-            if c not in add_com_list:
-                com_list_new.append(c)
-
-        com_file = open(f"{game}/команды_{game}.txt", "w", encoding="utf-8")
-        for i in range(len(com_list_new)):
-            if i == 0:
-                com_file.write(com_list_new[i])
-            else:
-                com_file.write("\n" + com_list_new[i])
-
-        f = open(f"{game}/{game}_тур8.txt", "w", encoding="utf-8")
-
-
-        fp = open(f"{game}/пересечение_команд_{game}.json", "r", encoding="utf-8")
-        commands_dict = json.load(fp)
-
-        for key in commands_dict.keys():
-            commands_dict[key] = commands_dict[key][0:6]
-
-        with open(f"{game}/пересечение_команд_{game}.json", "w", encoding="utf-8") as fp:
-            s = json.dumps(commands_dict, ensure_ascii=False)
-            fp.write(s)
-
-
-        data = {"message": "ok"}
-        return JsonResponse(data)
-
-
 def save_tour_8(request):
     if request.method == 'GET':
         checkbox = list(request.GET.get("data"))
@@ -4768,51 +4453,6 @@ def save_tour_8(request):
         return JsonResponse(data)
 
 
-def reset_8(request):
-    if request.method == 'GET':
-        game = request.GET.get("name")
-        file_count = open(f"{game}/{game}_туры.txt", "w", encoding="utf-8")
-        file_count.write("8")
-        file_count.close()
-
-        add_com_list = []
-        for i in range(8, 8):
-            if os.path.exists(f"{game}/{game}_{i}_доб.txt"):
-                add_com_list += [c.replace("\n", "") for c in
-                                 open(f"{game}/{game}_{i}_доб.txt", "r", encoding="utf-8").readlines()]
-        com_list = [c.replace("\n", "") for c in open(f"{game}/команды_{game}.txt", "r", encoding="utf-8").readlines()]
-        com_list_new = []
-
-        for c in com_list:
-            if c not in add_com_list:
-                com_list_new.append(c)
-
-        com_file = open(f"{game}/команды_{game}.txt", "w", encoding="utf-8")
-        for i in range(len(com_list_new)):
-            if i == 0:
-                com_file.write(com_list_new[i])
-            else:
-                com_file.write("\n" + com_list_new[i])
-
-        f = open(f"{game}/{game}_тур9.txt", "w", encoding="utf-8")
-
-
-        fp = open(f"{game}/пересечение_команд_{game}.json", "r", encoding="utf-8")
-        commands_dict = json.load(fp)
-
-        for key in commands_dict.keys():
-            commands_dict[key] = commands_dict[key][0:6]
-
-        with open(f"{game}/пересечение_команд_{game}.json", "w", encoding="utf-8") as fp:
-            s = json.dumps(commands_dict, ensure_ascii=False)
-            fp.write(s)
-
-
-        data = {"message": "ok"}
-        return JsonResponse(data)
-
-
-
 def new_files(request):
     if request.method == 'GET':
         name = request.GET.get("name")
@@ -4882,11 +4522,53 @@ def results(request, game, tour):
     return response
 
 
-def download_shedule_1(request, game):
+def download_shedule(request, game, tour):
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    filename = 'tour_shedule_1.zip'
+    filename = f'tour_shedule_{tour}.zip'
 
-    file = open(f"{game}/{game}_тур1.txt", "r", encoding="utf-8")
+    file = open(f"{game}/{game}_тур{tour}.txt", "r", encoding="utf-8")
+    file.seek(0)
+    div_name = game.split()[1]
+
+    if div_name == "МСКЛ":
+        c = ((len(file.readlines()) - 23) // 3)
+        count_photo = 0
+        while c > 0:
+            count_photo += 1
+            c -= 11
+
+        with ZipFile(BASE_DIR + "/" + game + "/" + filename, "w") as myzip:
+            myzip.write(f"{game}/tour_shedule_{tour}.png")
+            for i in range(1, count_photo + 1):
+                myzip.write(f"{game}/tour_shedule_{tour}_{i}.png")
+    else:
+        c = ((len(file.readlines()) - 2) // 3)
+        count_photo = 0
+        while c > 0:
+            count_photo += 1
+            c -= 5
+
+
+        with ZipFile(BASE_DIR + "/" + game + "/" + filename, "w") as myzip:
+            for i in range(1, count_photo + 1):
+                myzip.write(f"{game}/tour_shedule_{tour}_{i}.png")
+
+    filepath = BASE_DIR + "/" + game + "/" + filename
+    path = open(filepath, 'rb')
+    mime_type, _ = mimetypes.guess_type(filepath)
+
+    response = HttpResponse(path, content_type=mime_type)
+
+    response['Content-Disposition'] = "attachment; filename=%s" % filename
+
+    return response
+
+
+def download(request, game, tour):
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    filename = f'shedule_{tour}.zip'
+
+    file = open(f"{game}/{game}_тур{tour}.txt", "r", encoding="utf-8")
     file.seek(0)
     c = ((len(file.readlines()) - 2) // 3)
     count_photo = 0
@@ -4896,9 +4578,8 @@ def download_shedule_1(request, game):
 
 
     with ZipFile(BASE_DIR + "/" + game + "/" + filename, "w") as myzip:
-        # myzip.write(f"{game}/tour_shedule_1.png")
         for i in range(1, count_photo + 1):
-            myzip.write(f"{game}/tour_shedule_1_{i}.png")
+            myzip.write(f"{game}/shedule_{tour}_{i}.png")
 
     filepath = BASE_DIR + "/" + game + "/" + filename
     path = open(filepath, 'rb')
@@ -4911,501 +4592,192 @@ def download_shedule_1(request, game):
     return response
 
 
-def download_shedule_2(request, game):
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    filename = 'tour_shedule_2.zip'
-
-    file = open(f"{game}/{game}_тур2.txt", "r", encoding="utf-8")
-    file.seek(0)
-    div_name = game.split()[1]
-
-    if div_name == "МСКЛ":
-        c = ((len(file.readlines()) - 23) // 3)
-        count_photo = 0
-        while c > 0:
-            count_photo += 1
-            c -= 11
-
-        with ZipFile(BASE_DIR + "/" + game + "/" + filename, "w") as myzip:
-            myzip.write(f"{game}/tour_shedule_2.png")
-            for i in range(1, count_photo + 1):
-                myzip.write(f"{game}/tour_shedule_2_{i}.png")
-    else:
-        c = ((len(file.readlines()) - 2) // 3)
-        count_photo = 0
-        while c > 0:
-            count_photo += 1
-            c -= 5
-
-
-        with ZipFile(BASE_DIR + "/" + game + "/" + filename, "w") as myzip:
-            # myzip.write(f"{game}/tour_shedule_2.png")
-            for i in range(1, count_photo + 1):
-                myzip.write(f"{game}/tour_shedule_2_{i}.png")
-
-    filepath = BASE_DIR + "/" + game + "/" + filename
-    path = open(filepath, 'rb')
-    mime_type, _ = mimetypes.guess_type(filepath)
-
-    response = HttpResponse(path, content_type=mime_type)
-
-    response['Content-Disposition'] = "attachment; filename=%s" % filename
-
-    return response
-
-
-def download_shedule_3(request, game):
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    filename = 'tour_shedule_3.zip'
-
-    file = open(f"{game}/{game}_тур3.txt", "r", encoding="utf-8")
-    file.seek(0)
-    div_name = game.split()[1]
-
-    if div_name == "МСКЛ":
-        c = ((len(file.readlines()) - 23) // 3)
-        count_photo = 0
-        while c > 0:
-            count_photo += 1
-            c -= 11
-
-        with ZipFile(BASE_DIR + "/" + game + "/" + filename, "w") as myzip:
-            myzip.write(f"{game}/tour_shedule_3.png")
-            for i in range(1, count_photo + 1):
-                myzip.write(f"{game}/tour_shedule_3_{i}.png")
-    else:
-        c = ((len(file.readlines()) - 2) // 3)
-        count_photo = 0
-        while c > 0:
-            count_photo += 1
-            c -= 5
-
-
-        with ZipFile(BASE_DIR + "/" + game + "/" + filename, "w") as myzip:
-            # myzip.write(f"{game}/tour_shedule_2.png")
-            for i in range(1, count_photo + 1):
-                myzip.write(f"{game}/tour_shedule_3_{i}.png")
-
-    filepath = BASE_DIR + "/" + game + "/" + filename
-    path = open(filepath, 'rb')
-    mime_type, _ = mimetypes.guess_type(filepath)
-
-    response = HttpResponse(path, content_type=mime_type)
-
-    response['Content-Disposition'] = "attachment; filename=%s" % filename
-
-    return response
-
-
-def download_shedule_4(request, game):
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    filename = 'tour_shedule_4.zip'
-
-    file = open(f"{game}/{game}_тур4.txt", "r", encoding="utf-8")
-    file.seek(0)
-    div_name = game.split()[1]
-
-    if div_name == "МСКЛ":
-        c = ((len(file.readlines()) - 23) // 3)
-        count_photo = 0
-        while c > 0:
-            count_photo += 1
-            c -= 11
-
-        with ZipFile(BASE_DIR + "/" + game + "/" + filename, "w") as myzip:
-            myzip.write(f"{game}/tour_shedule_4.png")
-            for i in range(1, count_photo + 1):
-                myzip.write(f"{game}/tour_shedule_4_{i}.png")
-    else:
-        c = ((len(file.readlines()) - 2) // 3)
-        count_photo = 0
-        while c > 0:
-            count_photo += 1
-            c -= 5
-
-
-        with ZipFile(BASE_DIR + "/" + game + "/" + filename, "w") as myzip:
-            # myzip.write(f"{game}/tour_shedule_2.png")
-            for i in range(1, count_photo + 1):
-                myzip.write(f"{game}/tour_shedule_4_{i}.png")
-
-    filepath = BASE_DIR + "/" + game + "/" + filename
-    path = open(filepath, 'rb')
-    mime_type, _ = mimetypes.guess_type(filepath)
-
-    response = HttpResponse(path, content_type=mime_type)
-
-    response['Content-Disposition'] = "attachment; filename=%s" % filename
-
-    return response
-
-
-def download_shedule_5(request, game):
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    filename = 'tour_shedule_5.zip'
-
-    file = open(f"{game}/{game}_тур5.txt", "r", encoding="utf-8")
-    file.seek(0)
-    div_name = game.split()[1]
-
-    if div_name == "МСКЛ":
-        c = ((len(file.readlines()) - 23) // 3)
-        count_photo = 0
-        while c > 0:
-            count_photo += 1
-            c -= 11
-
-        with ZipFile(BASE_DIR + "/" + game + "/" + filename, "w") as myzip:
-            myzip.write(f"{game}/tour_shedule_5.png")
-            for i in range(1, count_photo + 1):
-                myzip.write(f"{game}/tour_shedule_5_{i}.png")
-    else:
-        c = ((len(file.readlines()) - 2) // 3)
-        count_photo = 0
-        while c > 0:
-            count_photo += 1
-            c -= 5
-
-
-        with ZipFile(BASE_DIR + "/" + game + "/" + filename, "w") as myzip:
-            # myzip.write(f"{game}/tour_shedule_2.png")
-            for i in range(1, count_photo + 1):
-                myzip.write(f"{game}/tour_shedule_5_{i}.png")
-
-    filepath = BASE_DIR + "/" + game + "/" + filename
-    path = open(filepath, 'rb')
-    mime_type, _ = mimetypes.guess_type(filepath)
-
-    response = HttpResponse(path, content_type=mime_type)
-
-    response['Content-Disposition'] = "attachment; filename=%s" % filename
-
-    return response
-
-
-def download_1(request, game):
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    filename = 'shedule_1.zip'
-
-    file = open(f"{game}/{game}_тур1.txt", "r", encoding="utf-8")
-    file.seek(0)
-    c = ((len(file.readlines()) - 2) // 3)
-    count_photo = 0
-    while c > 0:
-        count_photo += 1
-        c -= 5
-
-
-    with ZipFile(BASE_DIR + "/" + game + "/" + filename, "w") as myzip:
-        # myzip.write(f"{game}/shedule_1.png")
-        for i in range(1, count_photo + 1):
-            myzip.write(f"{game}/shedule_1_{i}.png")
-
-    filepath = BASE_DIR + "/" + game + "/" + filename
-    path = open(filepath, 'rb')
-    mime_type, _ = mimetypes.guess_type(filepath)
-
-    response = HttpResponse(path, content_type=mime_type)
-
-    response['Content-Disposition'] = "attachment; filename=%s" % filename
-
-    return response
-
-
-def download_2(request, game):
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    filename = 'shedule_2.zip'
-
-    file = open(f"{game}/{game}_тур2.txt", "r", encoding="utf-8")
-    c = ((len(file.readlines()) - 2) // 3)
-    count_photo = 0
-    while c > 0:
-        count_photo += 1
-        c -= 5
-
-    with ZipFile(BASE_DIR + "\\" + game + "\\" + filename, "w") as myzip:
-        for i in range(1, count_photo + 1):
-            myzip.write(f"{game}/shedule_2_{i}.png")
-
-    filepath = BASE_DIR + "\\" + game + "\\" + filename
-    path = open(filepath, 'rb')
-    mime_type, _ = mimetypes.guess_type(filepath)
-
-    response = HttpResponse(path, content_type=mime_type)
-
-    response['Content-Disposition'] = "attachment; filename=%s" % filename
-    return response
-
-
-def download_3(request, game):
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    filename = 'shedule_3.zip'
-
-    file = open(f"{game}/{game}_тур3.txt", "r", encoding="utf-8")
-    c = ((len(file.readlines()) - 2) // 3)
-    count_photo = 0
-    while c > 0:
-        count_photo += 1
-        c -= 5
-
-    with ZipFile(BASE_DIR + "\\" + game + "\\" + filename, "w") as myzip:
-        for i in range(1, count_photo + 1):
-            myzip.write(f"{game}/shedule_3_{i}.png")
-
-    filepath = BASE_DIR + "\\" + game + "\\" + filename
-    path = open(filepath, 'rb')
-    mime_type, _ = mimetypes.guess_type(filepath)
-
-    response = HttpResponse(path, content_type=mime_type)
-
-    response['Content-Disposition'] = "attachment; filename=%s" % filename
-    return response
-
-def download_4(request, game):
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    filename = 'shedule_4.zip'
-
-    file = open(f"{game}/{game}_тур4.txt", "r", encoding="utf-8")
-    c = ((len(file.readlines()) - 2) // 3)
-    count_photo = 0
-    while c > 0:
-        count_photo += 1
-        c -= 5
-
-    with ZipFile(BASE_DIR + "\\" + game + "\\" + filename, "w") as myzip:
-        for i in range(1, count_photo + 1):
-            myzip.write(f"{game}/shedule_4_{i}.png")
-
-    filepath = BASE_DIR + "\\" + game + "\\" + filename
-    path = open(filepath, 'rb')
-    mime_type, _ = mimetypes.guess_type(filepath)
-
-    response = HttpResponse(path, content_type=mime_type)
-
-    response['Content-Disposition'] = "attachment; filename=%s" % filename
-    return response
-
-
-def download_5(request, game):
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    filename = 'shedule_5.zip'
-
-    file = open(f"{game}/{game}_тур5.txt", "r", encoding="utf-8")
-    c = ((len(file.readlines()) - 2) // 3)
-    count_photo = 0
-    while c > 0:
-        count_photo += 1
-        c -= 5
-
-    with ZipFile(BASE_DIR + "\\" + game + "\\" + filename, "w") as myzip:
-        for i in range(1, count_photo + 1):
-            myzip.write(f"{game}/shedule_5_{i}.png")
-
-    filepath = BASE_DIR + "\\" + game + "\\" + filename
-    path = open(filepath, 'rb')
-    mime_type, _ = mimetypes.guess_type(filepath)
-
-    response = HttpResponse(path, content_type=mime_type)
-
-    response['Content-Disposition'] = "attachment; filename=%s" % filename
-    return response
-
-
-def download_6(request, game):
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    filename = 'shedule_6.zip'
-
-    file = open(f"{game}/{game}_тур6.txt", "r", encoding="utf-8")
-    c = ((len(file.readlines()) - 2) // 3)
-    count_photo = 0
-    while c > 0:
-        count_photo += 1
-        c -= 5
-
-    with ZipFile(BASE_DIR + "\\" + game + "\\" + filename, "w") as myzip:
-        for i in range(1, count_photo + 1):
-            myzip.write(f"{game}/shedule_6_{i}.png")
-
-    filepath = BASE_DIR + "\\" + game + "\\" + filename
-    path = open(filepath, 'rb')
-    mime_type, _ = mimetypes.guess_type(filepath)
-
-    response = HttpResponse(path, content_type=mime_type)
-
-    response['Content-Disposition'] = "attachment; filename=%s" % filename
-    return response
-
-
-def download_7(request, game):
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    filename = 'shedule_7.zip'
-
-    file = open(f"{game}/{game}_тур7.txt", "r", encoding="utf-8")
-    c = ((len(file.readlines()) - 2) // 3)
-    count_photo = 0
-    while c > 0:
-        count_photo += 1
-        c -= 5
-
-    with ZipFile(BASE_DIR + "\\" + game + "\\" + filename, "w") as myzip:
-        for i in range(1, count_photo + 1):
-            myzip.write(f"{game}/shedule_7_{i}.png")
-
-    filepath = BASE_DIR + "\\" + game + "\\" + filename
-    path = open(filepath, 'rb')
-    mime_type, _ = mimetypes.guess_type(filepath)
-
-    response = HttpResponse(path, content_type=mime_type)
-
-    response['Content-Disposition'] = "attachment; filename=%s" % filename
-    return response
-
-
-def download_8(request, game):
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    filename = 'shedule_8.zip'
-
-    file = open(f"{game}/{game}_тур6.txt", "r", encoding="utf-8")
-    c = ((len(file.readlines()) - 2) // 3)
-    count_photo = 0
-    while c > 0:
-        count_photo += 1
-        c -= 5
-
-    with ZipFile(BASE_DIR + "\\" + game + "\\" + filename, "w") as myzip:
-        for i in range(1, count_photo + 1):
-            myzip.write(f"{game}/shedule_8_{i}.png")
-
-    filepath = BASE_DIR + "\\" + game + "\\" + filename
-    path = open(filepath, 'rb')
-    mime_type, _ = mimetypes.guess_type(filepath)
-
-    response = HttpResponse(path, content_type=mime_type)
-
-    response['Content-Disposition'] = "attachment; filename=%s" % filename
-    return response
-
-
-def download_9(request, game):
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    filename = 'shedule_9.zip'
-
-    file = open(f"{game}/{game}_тур9.txt", "r", encoding="utf-8")
-    c = ((len(file.readlines()) - 2) // 3)
-    count_photo = 0
-    while c > 0:
-        count_photo += 1
-        c -= 5
-
-    with ZipFile(BASE_DIR + "\\" + game + "\\" + filename, "w") as myzip:
-        for i in range(1, count_photo + 1):
-            myzip.write(f"{game}/shedule_9_{i}.png")
-
-    filepath = BASE_DIR + "\\" + game + "\\" + filename
-    path = open(filepath, 'rb')
-    mime_type, _ = mimetypes.guess_type(filepath)
-
-    response = HttpResponse(path, content_type=mime_type)
-
-    response['Content-Disposition'] = "attachment; filename=%s" % filename
-    return response
-
-
-def download_10(request, game):
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    filename = 'shedule_10.zip'
-
-    file = open(f"{game}/{game}_тур10.txt", "r", encoding="utf-8")
-    c = ((len(file.readlines()) - 2) // 3)
-    count_photo = 0
-    while c > 0:
-        count_photo += 1
-        c -= 5
-
-    with ZipFile(BASE_DIR + "\\" + game + "\\" + filename, "w") as myzip:
-        for i in range(1, count_photo + 1):
-            myzip.write(f"{game}/shedule_10_{i}.png")
-
-    filepath = BASE_DIR + "\\" + game + "\\" + filename
-    path = open(filepath, 'rb')
-    mime_type, _ = mimetypes.guess_type(filepath)
-
-    response = HttpResponse(path, content_type=mime_type)
-
-    response['Content-Disposition'] = "attachment; filename=%s" % filename
-    return response
-
-
-def download_11(request, game):
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    filename = 'shedule_11.zip'
-
-    file = open(f"{game}/{game}_тур11.txt", "r", encoding="utf-8")
-    c = ((len(file.readlines()) - 2) // 3)
-    count_photo = 0
-    while c > 0:
-        count_photo += 1
-        c -= 5
-
-    with ZipFile(BASE_DIR + "\\" + game + "\\" + filename, "w") as myzip:
-        for i in range(1, count_photo + 1):
-            myzip.write(f"{game}/shedule_11_{i}.png")
-
-    filepath = BASE_DIR + "\\" + game + "\\" + filename
-    path = open(filepath, 'rb')
-    mime_type, _ = mimetypes.guess_type(filepath)
-
-    response = HttpResponse(path, content_type=mime_type)
-
-    response['Content-Disposition'] = "attachment; filename=%s" % filename
-    return response
-
-
-def download_12(request, game):
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    filename = 'shedule_12.zip'
-
-    file = open(f"{game}/{game}_тур12.txt", "r", encoding="utf-8")
-    c = ((len(file.readlines()) - 2) // 3)
-    count_photo = 0
-    while c > 0:
-        count_photo += 1
-        c -= 5
-
-    with ZipFile(BASE_DIR + "\\" + game + "\\" + filename, "w") as myzip:
-        for i in range(1, count_photo + 1):
-            myzip.write(f"{game}/shedule_12_{i}.png")
-
-    filepath = BASE_DIR + "\\" + game + "\\" + filename
-    path = open(filepath, 'rb')
-    mime_type, _ = mimetypes.guess_type(filepath)
-
-    response = HttpResponse(path, content_type=mime_type)
-
-    response['Content-Disposition'] = "attachment; filename=%s" % filename
-    return response
-
-
-def download_13(request, game):
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    filename = 'shedule_13.zip'
-
-    file = open(f"{game}/{game}_тур13.txt", "r", encoding="utf-8")
-    c = ((len(file.readlines()) - 2) // 3)
-    count_photo = 0
-    while c > 0:
-        count_photo += 1
-        c -= 5
-
-    with ZipFile(BASE_DIR + "\\" + game + "\\" + filename, "w") as myzip:
-        for i in range(1, count_photo + 1):
-            myzip.write(f"{game}/shedule_13_{i}.png")
-
-    filepath = BASE_DIR + "\\" + game + "\\" + filename
-    path = open(filepath, 'rb')
-    mime_type, _ = mimetypes.guess_type(filepath)
-
-    response = HttpResponse(path, content_type=mime_type)
-
-    response['Content-Disposition'] = "attachment; filename=%s" % filename
-    return response
+def reset(request, game, tour):
+    if request.method == 'GET':
+        file_count = open(f"{game}/{game}_туры.txt", "w", encoding="utf-8")
+        file_count.write(tour)
+        file_count.close()
+
+        add_com_list = []
+        for i in range(int(tour), 8):
+            if os.path.exists(f"{game}/{game}_{i}_доб.txt"):
+                add_com_list += [c.replace("\n", "") for c in
+                                 open(f"{game}/{game}_{i}_доб.txt", "r", encoding="utf-8").readlines()]
+        com_list = [c.replace("\n", "") for c in open(f"{game}/команды_{game}.txt", "r", encoding="utf-8").readlines()]
+        com_list_new = []
+
+        for c in com_list:
+            if c not in add_com_list:
+                com_list_new.append(c)
+
+        com_file = open(f"{game}/команды_{game}.txt", "w", encoding="utf-8")
+        for i in range(len(com_list_new)):
+            if i == 0:
+                com_file.write(com_list_new[i])
+            else:
+                com_file.write("\n" + com_list_new[i])
+
+        f = open(f"{game}/{game}_тур{int(tour) + 1}.txt", "w", encoding="utf-8")
+
+
+        fp = open(f"{game}/пересечение_команд_{game}.json", "r", encoding="utf-8")
+        commands_dict = json.load(fp)
+
+        for key in commands_dict.keys():
+            if key != "Пустышка" and len(commands_dict[key]) != 0:
+                commands_dict[key] = [commands_dict[key][0]]
+
+
+        with open(f"{game}/пересечение_команд_{game}.json", "w", encoding="utf-8") as fp:
+            s = json.dumps(commands_dict, ensure_ascii=False)
+            fp.write(s)
+
+
+        data = {"message": "ok"}
+        return JsonResponse(data)
+
+
+# def save_tour(request, game, tour):
+#     if request.method == 'GET':
+#         checkbox = list(request.GET.get("data"))
+#         game_name, div_name = game.split()
+#         file = open(f"{game}/{game}_счёт_{tour}.txt", "w", encoding="utf-8")
+#         file.write(" ".join(checkbox))
+#         file.close()
+#         file = open(f"{game}/{game}_тур{tour}.txt", "r", encoding="utf-8")
+#         file_list = []
+#         i = 0
+#
+#         for line in file.readlines():
+#             if line.count("КОМАНДЫ") or line.count("---------------") or line.count(" ") > 40:
+#                 file_list.append(line)
+#             else:
+#                 new_line = line.replace("\n", "")
+#                 l1 = new_line[:45]
+#                 new_line = l1 + " " * 20 + checkbox[i] + "\n"
+#                 file_list.append(new_line)
+#                 i += 1
+#
+#         file.close()
+#
+#         file = open(f"{game}/{game}_тур{int(tour)-1}.txt", "w", encoding="utf-8")
+#         for el in file_list:
+#             file.write(el)
+#         file.close()
+#
+#         # init dict with commands
+#
+#         file_res = open(f"{game}/результат_{int(tour)-1}_{game}.txt", "r", encoding="utf-8")
+#         com_dict = {}
+#         for line in file_res.readlines():
+#             if line.count(": ") > 0:
+#                 com_dict[line.split(": ")[0]] = int(line.split(": ")[1])
+#
+#         # count win
+#         for el in file_list[1:]:
+#             if el.count("-") < 5:
+#                 com = el[:45].strip()
+#                 score = el[45:].strip()
+#                 com_dict[com] += int(score)
+#
+#         # save results from 3 tour
+#         res = open(f"{game}/результат_{tour}_{game}.txt", "w", encoding="utf-8")
+#         for i in range(0, 10):
+#             k = 0
+#             for pair in com_dict.items():
+#                 if pair[1] == i and pair[0] != "Пустышка":
+#                     res.write(pair[0] + ": " + str(i) + "\n")
+#                     k += 1
+#             if k % 2 != 0 and i != 0:
+#                 res.write("Пустышка" + ": " + str(i) + "\n")
+#             res.write("\n")
+#         res.close()
+#
+#
+#
+#         fp = open(f"{game}/пересечение_команд_{game}.json", "r", encoding="utf-8")
+#         commands_dict = json.load(fp)
+#
+#         commands_dict["Пустышка"] = []
+#
+#         res = open(f"{game}/результат_{tour}_{game}.txt", "a", encoding="utf-8")
+#         com_file = open(f"{game}/команды_{game}.txt", "a", encoding="utf-8")
+#         com_add = request.GET.get("com").split("\n")
+#
+#         add_com_file = open(f"{game}/{game}_{int(tour)-1}_доб.txt", "w", encoding="utf-8")
+#
+#         if com_add[0] != "":
+#             for c in com_add:
+#                 if list(c).count(" ") < 7:
+#                     res.write(f"{c[:len(c) - 2]}: {c[len(c) - 1:]}\n")
+#                     com_file.write(f"\n{c[:len(c) - 2]}")
+#                     commands_dict[c[:len(c) - 2]] = []
+#                     add_com_file.write(c[:len(c) - 2] + "\n")
+#
+#         with open(f"{game}/пересечение_команд_{game}.json", "w", encoding="utf-8") as fp:
+#                 s = json.dumps(commands_dict, ensure_ascii=False)
+#                 fp.write(s)
+#
+#
+#         # new tour
+#         file_count = open(f"{game}/{game}_туры.txt", "w", encoding="utf-8")
+#         file_count.write("9")
+#         file_count.close()
+#
+#         # generate shedule (photo)
+#         font_ = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 40)
+#         font_c = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 35)
+#         base_img = Image.open('shedule/base.png')
+#         div = Image.open(f'shedule/{div_name}.png').resize((250, 278))
+#         Image.Image.paste(base_img, div, (1570, 76), mask=div)
+#         game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
+#         Image.Image.paste(base_img, game_, (1274, 90), mask=game_)
+#         drawer = ImageDraw.Draw(base_img)
+#         tour_ = int(tour)
+#         drawer.text((55, 65), "8 ТУР", font=font_, fill='white')
+#         drawer.text((55, 98), "", font=font_, fill='white')
+#
+#         height = 415
+#
+#         file = open(f"{game}/{game}_тур{tour}.txt", "r", encoding="utf-8")
+#         c = ((len(file.readlines()) - 2) // 3)
+#         count_photo = 0
+#         while c > 0:
+#             count_photo += 1
+#             c -= 5
+#
+#         file.seek(0)
+#         other = 0
+#         for line in file.readlines():
+#             if line.count("----------------------------------") > 0:
+#                 other += 1
+#         file.seek(0)
+#         file.seek(0)
+#         file.readline()
+#         file.readline()
+#
+#         base_img.save(f'{game}/shedule_{tour}.png', quality=100)
+#
+#         for i in range(1, count_photo + 1):
+#             base_img_copy = Image.open(f'{game}/shedule_{tour}.png')
+#             drawer = ImageDraw.Draw(base_img_copy)
+#             for _ in range(5):
+#                 line = file.readline()
+#                 team_1 = line[:45].strip()
+#                 total_1 = line[45:].strip()
+#                 line = file.readline()
+#                 team_2 = line[:45].strip()
+#                 total_2 = line[45:].strip()
+#                 file.readline()
+#                 drawer.text((120, height), team_1, font=font_c, fill='white')
+#                 drawer.text((1180, height), team_2, font=font_c, fill='white')
+#                 drawer.text((820, height), total_1, font=font_c, fill='white')
+#                 drawer.text((1085, height), total_2, font=font_c, fill='white')
+#                 height += 134
+#             base_img_copy.save(f'{game}/shedule_{tour}_{i}.png', quality=100)
+#             height = 415
+#         # ------ end ------
+#
+#
+#         data = {"message": "ok"}
+#         return JsonResponse(data)
