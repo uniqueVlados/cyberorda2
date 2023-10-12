@@ -3241,13 +3241,22 @@ def save_tour_1(request):
                     count_1 = int(com_add[i][len(com_add[i])-2:].strip())
                     com_2 = com_add[i+1][:len(com_add[i+1]) - 2].strip()
                     count_2 = int(com_add[i+1][len(com_add[i+1]) - 2:].strip())
-                    res.write(f"{com_1}: {count_1}\n")
-                    res.write(f"{com_2}: {count_2}\n")
-                    com_file_list.append(com_1)
-                    com_file_list.append(com_2)
-                    commands_dict[com_1] = [com_2]
-                    commands_dict[com_2] = [com_1]
-                    add_com_file.write(com_1 + "\n")
+                    if com_1 != "Пустышка":
+                        res.write(f"{com_1}: {count_1}\n")
+                        com_file_list.append(com_1)
+                        add_com_file.write(com_1 + "\n")
+                        if com_1 not in commands_dict:
+                            commands_dict[com_1] = [com_2]
+                        else:
+                            commands_dict[com_1].append(com_2)
+                    if com_2 != "Пустышка":
+                        res.write(f"{com_2}: {count_2}\n")
+                        com_file_list.append(com_2)
+                        if com_2 not in commands_dict:
+                            commands_dict[com_2] = [com_1]
+                        else:
+                            commands_dict[com_2].append(com_1)
+
                     add_com_file.write(com_2 + "\n")
             com_file.write("\n".join(com_file_list))
         with open(f"{game}/пересечение_команд_{game}.json", "w", encoding="utf-8") as fp:
