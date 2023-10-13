@@ -89,6 +89,26 @@ def rating(request):
                 'allow': current_user,
                 'commands': commands,
             }
+
+            # create table with rating
+            filename = f'рейтинг_тур{tour}.xlsx'
+            BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+            workbook = xlsxwriter.Workbook(BASE_DIR + "/" + game + " " + div + "/" + filename)
+            worksheet = workbook.add_worksheet()
+
+            i = 1
+            for c in commands:
+                worksheet.write(f'A{i}', c[0])
+                worksheet.write(f'B{i}', c[1])
+                worksheet.write(f'C{i}', c[2])
+                worksheet.write(f'D{i}', c[3])
+                worksheet.write(f'E{i}', str(c[4]) + "%")
+                i += 1
+
+            workbook.close()
+            # end
+
     return render(request, 'blog/rating.html', context)
 
 
@@ -4710,6 +4730,26 @@ def download(request, game, tour):
             myzip.write(f"{game}/shedule_{tour}_{i}.png")
 
     filepath = BASE_DIR + "/" + game + "/" + filename
+    path = open(filepath, 'rb')
+    mime_type, _ = mimetypes.guess_type(filepath)
+
+    response = HttpResponse(path, content_type=mime_type)
+
+    response['Content-Disposition'] = "attachment; filename=%s" % filename
+
+    return response
+
+
+def save_rating(request):
+    file = open(f"filter_param/{request.user.id}.txt", "r", encoding="utf-8")
+    game, div, tour, sort = file.readline().replace("\n", "").split()
+    file.close()
+
+
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    filename = f'рейтинг_тур{tour}.xlsx'
+
+    filepath = BASE_DIR + "/" + game + " " + div + "/" + filename
     path = open(filepath, 'rb')
     mime_type, _ = mimetypes.guess_type(filepath)
 

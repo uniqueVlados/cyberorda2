@@ -20,6 +20,7 @@ urlpatterns = [
     path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post-delete'),
     path('post/<int:pk>/schedule', views.schedule, name='post-schedule'),
     path('rating/', views.rating, name='rating'),
+    path('save_rating/', views.save_rating, name='save_rating'),
     # not render
     # path('save_tour/<str:game>/<str:tour>', views.save_tour, name='save-tour'),
     path('reload_filter/', views.reload_filter, name='reload_filter'),

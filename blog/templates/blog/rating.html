@@ -55,6 +55,7 @@
 </select>
 
 <a class="btn btn-primary btn-sm mt-1 mb-1" href="#" onclick="reload_filter()">Обновить</a>
+<a class="btn btn-primary btn-sm mt-1 mb-1" href="#" onclick="save_rating()">Выгрузить</a>
 
 <table class="table table-sm">
     <thead>
@@ -102,6 +103,10 @@
 
 
         location.href = window.location.href;
+    }
+
+    function save_rating(){
+            location.href = "http://31.129.102.195:8000//save_rating/";
     }
 </script>
 
