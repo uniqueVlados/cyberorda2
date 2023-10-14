@@ -5227,11 +5227,11 @@ def download_shedule(request, game, tour):
             count_photo += 1
             c -= 11
 
+        print(count_photo)
         with ZipFile(BASE_DIR + "/" + game + "/" + filename, "w") as myzip:
             myzip.write(f"{game}/tour_shedule_{tour}.png")
-            if count_photo > 1:
-                for i in range(1, count_photo + 1):
-                    myzip.write(f"{game}/tour_shedule_{tour}_{i}.png")
+            for i in range(1, count_photo + 1):
+                myzip.write(f"{game}/tour_shedule_{tour}_{i}.png")
     else:
         c = ((len(file.readlines()) - 2) // 3)
         count_photo = 0
