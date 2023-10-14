@@ -5220,7 +5220,7 @@ def download_shedule(request, game, tour):
     file.seek(0)
     div_name = game.split()[1]
 
-    if div_name == "МСКЛ" and div_name == "Восток" and div_name == "Запад":
+    if div_name == "МСКЛ" or div_name == "Восток" or div_name == "Запад":
         c = ((len(file.readlines()) - 23) // 3)
         count_photo = 0
         while c > 0:
