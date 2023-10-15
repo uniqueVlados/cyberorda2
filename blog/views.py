@@ -4568,6 +4568,7 @@ def save_tour_5(request):
         com_file = open(f"{game}/команды_{game}.txt", "a", encoding="utf-8")
         com_add = request.GET.get("com").split("\n")
 
+        print(com_add)
         add_com_file = open(f"{game}/{game}_5_доб.txt", "w", encoding="utf-8")
 
         if com_add[0] != "":
@@ -4589,59 +4590,59 @@ def save_tour_5(request):
         file_count.write("6")
         file_count.close()
 
-        # generate shedule (photo)
-        font_ = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 40)
-        font_c = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 35)
-        base_img = Image.open('shedule/base.png')
-        div = Image.open(f'shedule/{div_name}.png').resize((250, 278))
-        Image.Image.paste(base_img, div, (1570, 76), mask=div)
-        game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
-        Image.Image.paste(base_img, game_, (1274, 90), mask=game_)
-        drawer = ImageDraw.Draw(base_img)
-        tour_ = 1
-        drawer.text((55, 65), "5 ТУР", font=font_, fill='white')
-        drawer.text((55, 98), "", font=font_, fill='white')
+        if div_name != "МСКЛ" and div_name != "Восток" and div_name != "Запад":
+            # generate shedule (photo)
+            font_ = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 40)
+            font_c = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 35)
+            base_img = Image.open('shedule/base.png')
+            div = Image.open(f'shedule/{div_name}.png').resize((250, 278))
+            Image.Image.paste(base_img, div, (1570, 76), mask=div)
+            game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
+            Image.Image.paste(base_img, game_, (1274, 90), mask=game_)
+            drawer = ImageDraw.Draw(base_img)
+            drawer.text((55, 65), "3 ТУР", font=font_, fill='white')
+            drawer.text((55, 98), "", font=font_, fill='white')
 
-        height = 415
-
-        file = open(f"{game}/{game}_тур5.txt", "r", encoding="utf-8")
-        c = ((len(file.readlines()) - 2) // 3)
-        count_photo = 0
-        while c > 0:
-            count_photo += 1
-            c -= 5
-
-        file.seek(0)
-        other = 0
-        for line in file.readlines():
-            if line.count("----------------------------------") > 0:
-                other += 1
-        file.seek(0)
-        file.seek(0)
-        file.readline()
-        file.readline()
-
-        base_img.save(f'{game}/shedule_5.png', quality=100)
-
-        for i in range(1, count_photo + 1):
-            base_img_copy = Image.open(f'{game}/shedule_5.png')
-            drawer = ImageDraw.Draw(base_img_copy)
-            for _ in range(5):
-                line = file.readline()
-                team_1 = line[:45].strip()
-                total_1 = line[45:].strip()
-                line = file.readline()
-                team_2 = line[:45].strip()
-                total_2 = line[45:].strip()
-                file.readline()
-                drawer.text((120, height), team_1, font=font_c, fill='white')
-                drawer.text((1180, height), team_2, font=font_c, fill='white')
-                drawer.text((820, height), total_1, font=font_c, fill='white')
-                drawer.text((1085, height), total_2, font=font_c, fill='white')
-                height += 134
-            base_img_copy.save(f'{game}/shedule_5_{i}.png', quality=100)
             height = 415
-        # ------ end ------
+
+            file = open(f"{game}/{game}_тур5.txt", "r", encoding="utf-8")
+            c = ((len(file.readlines()) - 2) // 3)
+            count_photo = 0
+            while c > 0:
+                count_photo += 1
+                c -= 5
+
+            file.seek(0)
+            other = 0
+            for line in file.readlines():
+                if line.count("----------------------------------") > 0:
+                    other += 1
+            file.seek(0)
+            file.seek(0)
+            file.readline()
+            file.readline()
+
+            base_img.save(f'{game}/shedule_5.png', quality=100)
+
+            for i in range(1, count_photo + 1):
+                base_img_copy = Image.open(f'{game}/shedule_5.png')
+                drawer = ImageDraw.Draw(base_img_copy)
+                for _ in range(5):
+                    line = file.readline()
+                    team_1 = line[:45].strip()
+                    total_1 = line[45:].strip()
+                    line = file.readline()
+                    team_2 = line[:45].strip()
+                    total_2 = line[45:].strip()
+                    file.readline()
+                    drawer.text((120, height), team_1, font=font_c, fill='white')
+                    drawer.text((1180, height), team_2, font=font_c, fill='white')
+                    drawer.text((820, height), total_1, font=font_c, fill='white')
+                    drawer.text((1085, height), total_2, font=font_c, fill='white')
+                    height += 134
+                base_img_copy.save(f'{game}/shedule_5_{i}.png', quality=100)
+                height = 415
+            # ------ end ------
 
 
         data = {"message": "ok"}
