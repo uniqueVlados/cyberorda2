@@ -38,4 +38,6 @@ urlpatterns = [
     path('del_dir_of_game/', views.del_dir_of_game, name='del_dir_of_game'),
     path('download/<str:game>/<str:tour>', views.download, name='download'),
     path('download_shedule/<str:game>/<str:tour>', views.download_shedule, name='download_shedule'),
+    path('upload_rating/', views.upload_rating, name = "upload_rating" ),
+    path('download_rating/', views.download_rating, name = "download_rating" ),
 ]

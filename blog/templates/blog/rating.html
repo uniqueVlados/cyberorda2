@@ -57,6 +57,19 @@
 <a class="btn btn-primary btn-sm mt-1 mb-1" href="#" onclick="reload_filter()">Обновить</a>
 <a class="btn btn-primary btn-sm mt-1 mb-1" href="#" onclick="save_rating()">Выгрузить</a>
 
+
+<form method = "post" class="col-md-6" enctype="multipart/form-data" action="{% url 'upload_rating' %}">
+{% csrf_token %}
+<input type="file" name="file">
+<input type="submit" class="btn btn-primary btn-sm" value="Загрузить">
+</form>
+
+
+
+<a class="btn btn-primary btn-sm mt-1 mb-2 col-md-2" href="#" onclick="download_rating()">Скачать рейтинг (фото)</a>
+
+
+
 <table class="table table-sm">
     <thead>
     <tr class="table-active">
@@ -106,7 +119,11 @@
     }
 
     function save_rating(){
-            location.href = "http://31.129.102.195:8000//save_rating/";
+            location.href = "http://31.129.102.195:8000/save_rating/";
+    }
+
+    function download_rating(){
+            location.href = "http://31.129.102.195:8000/download_rating/";
     }
 </script>
 

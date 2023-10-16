@@ -6,6 +6,7 @@ from random import shuffle
 from PIL import Image, ImageDraw, ImageFont
 from zipfile import ZipFile
 import xlsxwriter
+import openpyxl
 
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -23,7 +24,62 @@ from django.http import JsonResponse
 from django.http import HttpResponse
 from django.template import loader
 from django.http import FileResponse
+from .forms import RatingForm
+from django.http import HttpResponseRedirect
 
+
+def upload_rating(request):
+    if request.method == 'POST':
+        form = RatingForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            uploaded_file = form.cleaned_data['file']
+
+            file = open(f"filter_param/{request.user.id}.txt", "r", encoding="utf-8")
+            game, div, tour, sort = file.readline().replace("\n", "").split()
+            file.close()
+
+
+            new_filename = f"{request.user.id} {game} {div} {tour} {sort}.xlsx"
+
+            new_file_path = os.path.join('media/files/', new_filename)
+
+            with open(new_file_path, 'wb') as destination:
+                for chunk in uploaded_file.chunks():
+                    destination.write(chunk)
+
+            workbook = openpyxl.load_workbook(f'media/files/{request.user.id} {game} {div} {tour} {sort}.xlsx')
+            sheet = workbook.active
+
+            # tour_rating
+            font = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 40)
+            base_img = Image.open('shedule/back_results.png')
+            drawer = ImageDraw.Draw(base_img)
+
+            height = 450
+
+            for row in sheet.iter_rows(values_only=True):
+                drawer.text((248, height), str(row[0]), font=font, fill='white')
+                drawer.text((440, height), str(row[1]), font=font, fill='white')
+                drawer.text((1340, height), str(row[2]), font=font, fill='white')
+                drawer.text((1505, height), str(row[3]), font=font, fill='white')
+                drawer.text((1623, height), str(row[4]), font=font, fill='white')
+                height += 70
+
+            base_img.save(f'{game + " " + div}/rating_{game + " " + div}_тур{tour}.png', quality=100)
+
+            workbook.close()
+
+            return HttpResponseRedirect("/rating")
+    else:
+        form = RatingForm
+        current_user = request.user.groups.filter(name='орда').exists()
+        context = {
+            'posts': Post.objects.filter(author_id=request.user.id),
+            'allow': current_user,
+            'commands': [],
+        }
+    return render(request, 'blog/rating.html', context)
 
 
 def home(request):
@@ -5381,6 +5437,27 @@ def reset(request, game, tour):
 
         data = {"message": "ok"}
         return JsonResponse(data)
+
+
+def download_rating(request):
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+    file = open(f"filter_param/{request.user.id}.txt", "r", encoding="utf-8")
+    game, div, tour, sort = file.readline().replace("\n", "").split()
+    file.close()
+
+    filename = f'rating_{game} {div}_тур{tour}.png'
+
+    filepath = BASE_DIR + "/" + game + " " + div + "/" + filename
+    path = open(filepath, 'rb')
+    mime_type, _ = mimetypes.guess_type(filepath)
+
+    response = HttpResponse(path, content_type=mime_type)
+
+    response['Content-Disposition'] = "attachment; filename=%s" % filename
+
+    return response
+
 
 
 # def save_tour(request, game, tour):

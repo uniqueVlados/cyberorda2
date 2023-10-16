@@ -15,3 +15,13 @@ class Post(models.Model):
 
     def get_absolute_url(self):
         return reverse('post-detail', kwargs={'pk': self.pk})
+
+
+class Rating(models.Model):
+    file = models.FileField(upload_to='files/', null=True)
+
+    def __repr__(self):
+        return 'File(%s)' % (self.file)
+
+    def __str__ (self):
+        return self.file
