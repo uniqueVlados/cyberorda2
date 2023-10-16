@@ -5365,6 +5365,20 @@ def reset(request, game, tour):
             fp.write(s)
 
 
+        print(tour)
+
+        for i in range(int(tour) + 1, 10):
+            file = open(f"{game}/{game}_тур{tour}.txt", "w", encoding="utf-8")
+            file.close()
+            file = open(f"{game}/{game}_{tour}_доб.txt", "w", encoding="utf-8")
+            file.close()
+
+        for i in range(int(tour), 10):
+            file = open(f"{game}/результат_{tour}_{game}.txt", "w", encoding="utf-8")
+            file.close()
+            file = open(f"{game}/{game}_счёт_{tour}.txt", "w", encoding="utf-8")
+            file.close()
+
         data = {"message": "ok"}
         return JsonResponse(data)
 
