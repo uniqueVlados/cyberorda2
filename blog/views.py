@@ -2224,38 +2224,38 @@ def schedule(request, pk):
             if len(com_d[5]) % 2 != 0:
                 com6_1.append([com_d[5][-1], "Пустышка"])
 
-            file = open(f"{posts[0].title}/{posts[0].title}_тур6.txt", "r", encoding="utf-8")
-            if len(file.read()) == 0:
-                file = open(f"{posts[0].title}/{posts[0].title}_тур6.txt", "w", encoding="utf-8")
-                num = 1
-                title = "КОМАНДЫ" + " " * 35 + "|СЧЁТ"
-                file.write(title + "\n")
+            # file = open(f"{posts[0].title}/{posts[0].title}_тур6.txt", "r", encoding="utf-8")
+            # if len(file.read()) == 0:
+            file = open(f"{posts[0].title}/{posts[0].title}_тур6.txt", "w", encoding="utf-8")
+            num = 1
+            title = "КОМАНДЫ" + " " * 35 + "|СЧЁТ"
+            file.write(title + "\n")
+            file.write("-" * len(title) + "\n")
+            for com in com6_1:
+                file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                file.write(com[1].replace("\n", "").ljust(37) + "\n")
                 file.write("-" * len(title) + "\n")
-                for com in com6_1:
-                    file.write(com[0].replace("\n", "").ljust(37) + "\n")
-                    file.write(com[1].replace("\n", "").ljust(37) + "\n")
-                    file.write("-" * len(title) + "\n")
-                for com in com6_2:
-                    file.write(com[0].replace("\n", "").ljust(37) + "\n")
-                    file.write(com[1].replace("\n", "").ljust(37) + "\n")
-                    file.write("-" * len(title) + "\n")
-                for com in com6_3:
-                    file.write(com[0].replace("\n", "").ljust(37) + "\n")
-                    file.write(com[1].replace("\n", "").ljust(37) + "\n")
-                    file.write("-" * len(title) + "\n")
-                for com in com6_4:
-                    file.write(com[0].replace("\n", "").ljust(37) + "\n")
-                    file.write(com[1].replace("\n", "").ljust(37) + "\n")
-                    file.write("-" * len(title) + "\n")
-                for com in com6_5:
-                    file.write(com[0].replace("\n", "").ljust(37) + "\n")
-                    file.write(com[1].replace("\n", "").ljust(37) + "\n")
-                    file.write("-" * len(title) + "\n")
-                for com in com6_6:
-                    file.write(com[0].replace("\n", "").ljust(37) + "\n")
-                    file.write(com[1].replace("\n", "").ljust(37) + "\n")
-                    file.write("-" * len(title) + "\n")
-                file.close()
+            for com in com6_2:
+                file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                file.write("-" * len(title) + "\n")
+            for com in com6_3:
+                file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                file.write("-" * len(title) + "\n")
+            for com in com6_4:
+                file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                file.write("-" * len(title) + "\n")
+            for com in com6_5:
+                file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                file.write("-" * len(title) + "\n")
+            for com in com6_6:
+                file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                file.write("-" * len(title) + "\n")
+            file.close()
 
             fp = open(f"{posts[0].title}/пересечение_команд_{posts[0].title}.json", "r", encoding="utf-8")
             commands_dict = json.load(fp)
