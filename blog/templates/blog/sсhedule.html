@@ -1223,28 +1223,26 @@
                 }
             }
 
-            if (count_1 == count_0 || count_1 == 0) {
-                 $.ajax({
-                    url: '/save_tour_1/',
-                    type: 'GET',
-                    dataType: 'json',
-                    data: {'data': arr, 'name': game, 'com': com, 'del': del},
-                    success: function(response) {
-                        console.log(response);
-                    },
-                    error: function(error) {
-                        console.error('Ошибка:', error);
-                    }
-                });
-            
-                var elem = document.getElementById("tour_save_1");
-                elem.className = "btn btn-warning btn-sm mt-1 mb-1";
-                elem.textContent = 'Обновить';
-                elem.setAttribute('onclick', 'update()');
-                document.getElementById('show1').hidden = true;
-                document.getElementById('com1').hidden = true;
-                document.getElementById('p1').hidden = true;
-            }
+             $.ajax({
+                url: '/save_tour_1/',
+                type: 'GET',
+                dataType: 'json',
+                data: {'data': arr, 'name': game, 'com': com, 'del': del},
+                success: function(response) {
+                    console.log(response);
+                },
+                error: function(error) {
+                    console.error('Ошибка:', error);
+                }
+            });
+
+            var elem = document.getElementById("tour_save_1");
+            elem.className = "btn btn-warning btn-sm mt-1 mb-1";
+            elem.textContent = 'Обновить';
+            elem.setAttribute('onclick', 'update()');
+            document.getElementById('show1').hidden = true;
+            document.getElementById('com1').hidden = true;
+            document.getElementById('p1').hidden = true;
         }
 
 
@@ -1268,7 +1266,6 @@
                 }
             }
 
-             if (count_1 == count_0 || count_1 == 0) {
                  $.ajax({
                     url: '/save_tour_2/',
                     type: 'GET',
@@ -1289,8 +1286,6 @@
                 document.getElementById('show2').hidden = true;
                 document.getElementById('com2').hidden = true;
                 document.getElementById('p2').hidden = true;
-            }
-
         }
 
 
@@ -1314,28 +1309,26 @@
                 }
             }
 
-             if (count_1 == count_0 || count_1 == 0) {
-                 $.ajax({
-                    url: '/save_tour_3/',
-                    type: 'GET',
-                    dataType: 'json',
-                    data: {'data': arr, 'name': game, 'com': com, 'del': del},
-                    success: function(response) {
-                        console.log(response);
-                    },
-                    error: function(error) {
-                        console.error('Ошибка:', error);
-                    }
-                });
+             $.ajax({
+                url: '/save_tour_3/',
+                type: 'GET',
+                dataType: 'json',
+                data: {'data': arr, 'name': game, 'com': com, 'del': del},
+                success: function(response) {
+                    console.log(response);
+                },
+                error: function(error) {
+                    console.error('Ошибка:', error);
+                }
+            });
 
-                var elem = document.getElementById("tour_save_3");
-                elem.className = "btn btn-warning btn-sm mt-1 mb-1";
-                elem.textContent = 'Обновить';
-                elem.setAttribute('onclick', 'update()');
-                document.getElementById('show3').hidden = true;
-                document.getElementById('com3').hidden = true;
-                document.getElementById('p3').hidden = true;
-            }
+            var elem = document.getElementById("tour_save_3");
+            elem.className = "btn btn-warning btn-sm mt-1 mb-1";
+            elem.textContent = 'Обновить';
+            elem.setAttribute('onclick', 'update()');
+            document.getElementById('show3').hidden = true;
+            document.getElementById('com3').hidden = true;
+            document.getElementById('p3').hidden = true;
 
         }
 
@@ -1359,28 +1352,26 @@
                 }
             }
 
-             if (count_1 == count_0 || count_1 == 0) {
-                 $.ajax({
-                    url: '/save_tour_4/',
-                    type: 'GET',
-                    dataType: 'json',
-                    data: {'data': arr, 'name': game, 'com': com, 'del': del},
-                    success: function(response) {
-                        console.log(response);
-                    },
-                    error: function(error) {
-                        console.error('Ошибка:', error);
-                    }
-                });
+             $.ajax({
+                url: '/save_tour_4/',
+                type: 'GET',
+                dataType: 'json',
+                data: {'data': arr, 'name': game, 'com': com, 'del': del},
+                success: function(response) {
+                    console.log(response);
+                },
+                error: function(error) {
+                    console.error('Ошибка:', error);
+                }
+            });
 
-                var elem = document.getElementById("tour_save_4");
-                elem.className = "btn btn-warning btn-sm mt-1 mb-1";
-                elem.textContent = 'Обновить';
-                elem.setAttribute('onclick', 'update()');
-                document.getElementById('show4').hidden = true;
-                document.getElementById('com4').hidden = true;
-                document.getElementById('p4').hidden = true;
-            }
+            var elem = document.getElementById("tour_save_4");
+            elem.className = "btn btn-warning btn-sm mt-1 mb-1";
+            elem.textContent = 'Обновить';
+            elem.setAttribute('onclick', 'update()');
+            document.getElementById('show4').hidden = true;
+            document.getElementById('com4').hidden = true;
+            document.getElementById('p4').hidden = true;
 
         }
 
@@ -1404,28 +1395,26 @@
                 }
             }
 
-             if (count_1 == count_0 || count_1 == 0) {
-                 $.ajax({
-                    url: '/save_tour_5/',
-                    type: 'GET',
-                    dataType: 'json',
-                    data: {'data': arr, 'name': game, 'com': com, 'del': del},
-                    success: function(response) {
-                        console.log(response);
-                    },
-                    error: function(error) {
-                        console.error('Ошибка:', error);
-                    }
-                });
+             $.ajax({
+                url: '/save_tour_5/',
+                type: 'GET',
+                dataType: 'json',
+                data: {'data': arr, 'name': game, 'com': com, 'del': del},
+                success: function(response) {
+                    console.log(response);
+                },
+                error: function(error) {
+                    console.error('Ошибка:', error);
+                }
+            });
 
-                var elem = document.getElementById("tour_save_5");
-                elem.className = "btn btn-warning btn-sm mt-1 mb-1";
-                elem.textContent = 'Обновить';
-                elem.setAttribute('onclick', 'update()');
-                document.getElementById('show5').hidden = true;
-                document.getElementById('com5').hidden = true;
-                document.getElementById('p5').hidden = true;
-            }
+            var elem = document.getElementById("tour_save_5");
+            elem.className = "btn btn-warning btn-sm mt-1 mb-1";
+            elem.textContent = 'Обновить';
+            elem.setAttribute('onclick', 'update()');
+            document.getElementById('show5').hidden = true;
+            document.getElementById('com5').hidden = true;
+            document.getElementById('p5').hidden = true;
 
         }
 
@@ -1449,28 +1438,26 @@
                 }
             }
 
-             if (count_1 == count_0 || count_1 == 0) {
-                 $.ajax({
-                    url: '/save_tour_6/',
-                    type: 'GET',
-                    dataType: 'json',
-                    data: {'data': arr, 'name': game, 'com': com, 'del': del},
-                    success: function(response) {
-                        console.log(response);
-                    },
-                    error: function(error) {
-                        console.error('Ошибка:', error);
-                    }
-                });
+             $.ajax({
+                url: '/save_tour_6/',
+                type: 'GET',
+                dataType: 'json',
+                data: {'data': arr, 'name': game, 'com': com, 'del': del},
+                success: function(response) {
+                    console.log(response);
+                },
+                error: function(error) {
+                    console.error('Ошибка:', error);
+                }
+            });
 
-                var elem = document.getElementById("tour_save_6");
-                elem.className = "btn btn-warning btn-sm mt-1 mb-1";
-                elem.textContent = 'Обновить';
-                elem.setAttribute('onclick', 'update()');
-                document.getElementById('show6').hidden = true;
-                document.getElementById('com6').hidden = true;
-                document.getElementById('p6').hidden = true;
-            }
+            var elem = document.getElementById("tour_save_6");
+            elem.className = "btn btn-warning btn-sm mt-1 mb-1";
+            elem.textContent = 'Обновить';
+            elem.setAttribute('onclick', 'update()');
+            document.getElementById('show6').hidden = true;
+            document.getElementById('com6').hidden = true;
+            document.getElementById('p6').hidden = true;
 
         }
 
@@ -1495,28 +1482,26 @@
                 }
             }
 
-             if (count_1 == count_0 || count_1 == 0) {
-                 $.ajax({
-                    url: '/save_tour_7/',
-                    type: 'GET',
-                    dataType: 'json',
-                    data: {'data': arr, 'name': game, 'com': com, 'del': del},
-                    success: function(response) {
-                        console.log(response);
-                    },
-                    error: function(error) {
-                        console.error('Ошибка:', error);
-                    }
-                });
+             $.ajax({
+                url: '/save_tour_7/',
+                type: 'GET',
+                dataType: 'json',
+                data: {'data': arr, 'name': game, 'com': com, 'del': del},
+                success: function(response) {
+                    console.log(response);
+                },
+                error: function(error) {
+                    console.error('Ошибка:', error);
+                }
+            });
 
-                var elem = document.getElementById("tour_save_7");
-                elem.className = "btn btn-warning btn-sm mt-1 mb-1";
-                elem.textContent = 'Обновить';
-                elem.setAttribute('onclick', 'update()');
-                document.getElementById('show7').hidden = true;
-                document.getElementById('com7').hidden = true;
-                document.getElementById('p7').hidden = true;
-            }
+            var elem = document.getElementById("tour_save_7");
+            elem.className = "btn btn-warning btn-sm mt-1 mb-1";
+            elem.textContent = 'Обновить';
+            elem.setAttribute('onclick', 'update()');
+            document.getElementById('show7').hidden = true;
+            document.getElementById('com7').hidden = true;
+            document.getElementById('p7').hidden = true;
 
         }
 
@@ -1540,28 +1525,26 @@
                 }
             }
 
-             if (count_1 == count_0 || count_1 == 0) {
-                 $.ajax({
-                    url: '/save_tour_8/',
-                    type: 'GET',
-                    dataType: 'json',
-                    data: {'data': arr, 'name': game, 'com': com, 'del': del},
-                    success: function(response) {
-                        console.log(response);
-                    },
-                    error: function(error) {
-                        console.error('Ошибка:', error);
-                    }
-                });
+             $.ajax({
+                url: '/save_tour_8/',
+                type: 'GET',
+                dataType: 'json',
+                data: {'data': arr, 'name': game, 'com': com, 'del': del},
+                success: function(response) {
+                    console.log(response);
+                },
+                error: function(error) {
+                    console.error('Ошибка:', error);
+                }
+            });
 
-                var elem = document.getElementById("tour_save_8");
-                elem.className = "btn btn-warning btn-sm mt-1 mb-1";
-                elem.textContent = 'Обновить';
-                elem.setAttribute('onclick', 'update()');
-                document.getElementById('show8').hidden = true;
-                document.getElementById('com8').hidden = true;
-                document.getElementById('p8').hidden = true;
-            }
+            var elem = document.getElementById("tour_save_8");
+            elem.className = "btn btn-warning btn-sm mt-1 mb-1";
+            elem.textContent = 'Обновить';
+            elem.setAttribute('onclick', 'update()');
+            document.getElementById('show8').hidden = true;
+            document.getElementById('com8').hidden = true;
+            document.getElementById('p8').hidden = true;
 
         }
 
@@ -1592,6 +1575,14 @@
 
             location.href = window.location.href;
         }
+
+
+
+
+
+
+
+
 
 <!--        function save_tour(game, tour) {-->
 <!--            let arr = ""-->
