@@ -5421,8 +5421,6 @@ def reset(request, game, tour):
             fp.write(s)
 
 
-        print(tour)
-
         for i in range(int(tour) + 1, 10):
             file = open(f"{game}/{game}_тур{tour}.txt", "w", encoding="utf-8")
             file.close()
