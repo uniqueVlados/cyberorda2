@@ -52,18 +52,18 @@ def upload_rating(request):
             sheet = workbook.active
 
             # tour_rating
-            font = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 40)
+            font = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 35)
             base_img = Image.open('shedule/back_results.png')
             drawer = ImageDraw.Draw(base_img)
 
-            height = 450
+            height = 454
 
             for row in sheet.iter_rows(values_only=True):
-                drawer.text((248, height), str(row[0]), font=font, fill='white')
+                drawer.text((252, height), str(row[0]), font=font, fill='white')
                 drawer.text((440, height), str(row[1]), font=font, fill='white')
-                drawer.text((1340, height), str(row[2]), font=font, fill='white')
-                drawer.text((1505, height), str(row[3]), font=font, fill='white')
-                drawer.text((1623, height), str(row[4]), font=font, fill='white')
+                drawer.text((1342, height), str(row[2]), font=font, fill='white')
+                drawer.text((1506, height), str(row[3]), font=font, fill='white')
+                drawer.text((1631, height), str(row[4]), font=font, fill='white')
                 height += 70
 
             base_img.save(f'{game + " " + div}/rating_{game + " " + div}_тур{tour}.png', quality=100)
