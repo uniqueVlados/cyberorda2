@@ -63,7 +63,7 @@ def upload_rating(request):
                 drawer.text((440, height), str(row[1]), font=font, fill='white')
                 drawer.text((1342, height), str(row[2]), font=font, fill='white')
                 drawer.text((1506, height), str(row[3]), font=font, fill='white')
-                drawer.text((1631, height), str(row[4]), font=font, fill='white')
+                drawer.text((1640, height), str(row[4]), font=font, fill='white')
                 height += 70
 
             base_img.save(f'{game + " " + div}/rating_{game + " " + div}_тур{tour}.png', quality=100)
@@ -128,7 +128,7 @@ def rating(request):
                 if line != "" and line.find("Пустышка") == -1:
                     com_, res = line.split(": ")
                     res = int(res)
-                    commands.append([0, com_, res, int(tour) - res, round(res/int(tour) * 100, 1)])
+                    commands.append([0, com_, res, int(tour) - res, int(res/int(tour) * 100)])
 
             if sort == "Убывание":
                 commands.sort(key=lambda x: x[-1], reverse=True)
