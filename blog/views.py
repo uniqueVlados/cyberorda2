@@ -63,7 +63,7 @@ def upload_rating(request):
                 drawer.text((440, height), str(row[1]), font=font, fill='white')
                 drawer.text((1342, height), str(row[2]), font=font, fill='white')
                 drawer.text((1506, height), str(row[3]), font=font, fill='white')
-                drawer.text((1644, height), str(row[4]), font=font, fill='white')
+                drawer.text((1647, height), str(row[4]), font=font, fill='white')
                 height += 70
 
             base_img.save(f'{game + " " + div}/rating_{game + " " + div}_тур{tour}.png', quality=100)
