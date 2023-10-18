@@ -11,6 +11,12 @@ import openpyxl
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
+from .models import Post
+from users.models import User
+from django.http import JsonResponse
+from django.http import HttpResponse
+from .forms import RatingForm
+from django.http import HttpResponseRedirect
 from django.views.generic import (
     ListView,
     DetailView,
@@ -18,15 +24,61 @@ from django.views.generic import (
     UpdateView,
     DeleteView
 )
-from .models import Post
-from users.models import User
-from django.http import JsonResponse
-from django.http import HttpResponse
-from django.template import loader
-from django.http import FileResponse
-from .forms import RatingForm
-from django.http import HttpResponseRedirect
 
+
+class PostListView(ListView):
+    model = Post
+    template_name = 'blog/home.html'
+    context_object_name = 'posts'
+    ordering = ['-date_posted']
+    paginate_by = 5
+
+
+class UserPostListView(ListView):
+    model = Post
+    template_name = 'blog/user_posts.html'
+    context_object_name = 'posts'
+    paginate_by = 5
+
+    def get_queryset(self):
+        user = get_object_or_404(User, username=self.kwargs.get('username'))
+        return Post.objects.filter(author=user).order_by('-date_posted')
+
+
+class PostDetailView(DetailView):
+    model = Post
+
+class PostCreateView(LoginRequiredMixin, CreateView):
+    model = Post
+    fields = ['title', 'content']
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Post
+    fields = ['title', 'content']
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        post = self.get_object()
+        if self.request.user == post.author:
+            return True
+        return False
+
+class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Post
+    success_url = '/'
+
+    def test_func(self):
+        post = self.get_object()
+        if self.request.user == post.author:
+            return True
+        return False
 
 def upload_rating(request):
     if request.method == 'POST':
@@ -81,7 +133,6 @@ def upload_rating(request):
         }
     return render(request, 'blog/rating.html', context)
 
-
 def home(request):
     current_user = request.user.groups.filter(name='орда').exists()
     context = {
@@ -90,7 +141,6 @@ def home(request):
     }
     return render(request, 'blog/home.html', context)
 
-
 def my_home(request):
     current_user = request.user.groups.filter(name='орда').exists()
     context = {
@@ -98,7 +148,6 @@ def my_home(request):
         'allow': current_user,
     }
     return render(request, 'blog/home.html', context)
-
 
 def rating(request):
     current_user = request.user.groups.filter(name='орда').exists()
@@ -167,7 +216,6 @@ def rating(request):
 
     return render(request, 'blog/rating.html', context)
 
-
 def reload_filter(request):
     if request.method == 'GET':
         game = request.GET.get("game")
@@ -181,65 +229,6 @@ def reload_filter(request):
 
         data = {"message": "ok"}
         return JsonResponse(data)
-
-
-class PostListView(ListView):
-    model = Post
-    template_name = 'blog/home.html'
-    context_object_name = 'posts'
-    ordering = ['-date_posted']
-    paginate_by = 5
-
-
-class UserPostListView(ListView):
-    model = Post
-    template_name = 'blog/user_posts.html'
-    context_object_name = 'posts'
-    paginate_by = 5
-
-    def get_queryset(self):
-        user = get_object_or_404(User, username=self.kwargs.get('username'))
-        return Post.objects.filter(author=user).order_by('-date_posted')
-
-
-class PostDetailView(DetailView):
-    model = Post
-
-
-class PostCreateView(LoginRequiredMixin, CreateView):
-    model = Post
-    fields = ['title', 'content']
-
-    def form_valid(self, form):
-        form.instance.author = self.request.user
-        return super().form_valid(form)
-
-
-class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = Post
-    fields = ['title', 'content']
-
-    def form_valid(self, form):
-        form.instance.author = self.request.user
-        return super().form_valid(form)
-
-    def test_func(self):
-        post = self.get_object()
-        if self.request.user == post.author:
-            return True
-        return False
-
-
-class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    model = Post
-    success_url = '/'
-
-    def test_func(self):
-        post = self.get_object()
-        if self.request.user == post.author:
-            return True
-        return False
-
 
 def schedule(request, pk):
     posts = Post.objects.filter(id=pk)
@@ -851,141 +840,8 @@ def schedule(request, pk):
                 s = json.dumps(commands_dict, ensure_ascii=False)
                 fp.write(s)
 
-            # tour_shedule
-            font_ = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 40)
-            font_c = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 35)
-            game_name = posts[0].title.split()[0]
-            div_name = posts[0].title.split()[1]
-
-            if posts[0].title.split()[1] == "МСКЛ" or posts[0].title.split()[1] == "Восток" or \
-                    posts[0].title.split()[1] == "Запад":
-                base_img = Image.open('shedule/back1.png')
-                game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
-                Image.Image.paste(base_img, game_, (1650, 90), mask=game_)
-                drawer = ImageDraw.Draw(base_img)
-
-                height = 402
-
-                file = open(f"{posts[0].title}/{posts[0].title}_тур9.txt", "r", encoding="utf-8")
-                file_list = []
-                for line in file.readlines()[2:]:
-                    if line.count("----------"):
-                        pass
-                    else:
-                        file_list.append(line.replace("\n", "").strip())
-
-                # shuffle(file_list)
-
-                file = open(f"{posts[0].title}/{posts[0].title}_тур9.txt", "w", encoding="utf-8")
-                num = 1
-                title = "КОМАНДЫ" + " " * 35 + "|СЧЁТ\n"
-                file.write(title)
-                file.write("-" * len(title) + "\n")
-                for command in file_list:
-                    file.write(command.replace("\n", "").ljust(35) + "\n")
-                    if num % 2 == 0:
-                        file.write("-" * len(title) + "\n")
-                    num += 1
-
-                file = open(f"{posts[0].title}/{posts[0].title}_тур9.txt", "r", encoding="utf-8")
-                file.seek(0)
-                c = ((len(file.readlines()) - 23) // 3)
-                count_photo = 0
-                while c > 0:
-                    count_photo += 1
-                    c -= 11
-
-                file.seek(0)
-                other = 0
-                for line in file.readlines():
-                    if line.count("----------------------------------") > 0:
-                        other += 1
-                file.seek(0)
-                file.seek(0)
-                file.readline()
-                file.readline()
-
-                for _ in range(7):
-                    line = file.readline()
-                    team_1 = line[:45].strip()
-                    total_1 = line[45:].strip()
-                    line = file.readline()
-                    team_2 = line[:45].strip()
-                    total_2 = line[45:].strip()
-                    file.readline()
-                    drawer.text((150, height), team_1, font=font_c, fill='white')
-                    drawer.text((1180, height), team_2, font=font_c, fill='white')
-                    height += 90
-
-                base_img.save(f'{posts[0].title}/tour_shedule_9.png', quality=100)
-
-                for i in range(1, count_photo + 1):
-                    height = 65
-                    base_img_copy = Image.open('shedule/back2.png')
-                    drawer = ImageDraw.Draw(base_img_copy)
-                    for _ in range(11):
-                        line = file.readline()
-                        team_1 = line[:45].strip()
-                        line = file.readline()
-                        team_2 = line[:45].strip()
-                        file.readline()
-                        drawer.text((120, height), team_1, font=font_c, fill='white')
-                        drawer.text((1180, height), team_2, font=font_c, fill='white')
-                        height += 90.5
-                    base_img_copy.save(f'{posts[0].title}/tour_shedule_9_{i}.png', quality=100)
-                    height = 63
-
-            else:
-
-                base_img = Image.open('shedule/shedule.png')
-                div = Image.open(f'shedule/{div_name}.png').resize((250, 278))
-                Image.Image.paste(base_img, div, (1570, 76), mask=div)
-                game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
-                Image.Image.paste(base_img, game_, (1274, 90), mask=game_)
-                drawer = ImageDraw.Draw(base_img)
-                tour_ = 9
-                drawer.text((55, 65), str(tour_) + " ТУР", font=font_, fill='white')
-                drawer.text((55, 98), "", font=font_, fill='white')
-
-                height = 415
-
-                file = open(f"{posts[0].title}/{posts[0].title}_тур9.txt", "r", encoding="utf-8")
-                file.seek(0)
-                c = ((len(file.readlines()) - 2) // 3)
-                count_photo = 0
-                while c > 0:
-                    count_photo += 1
-                    c -= 5
-
-                file.seek(0)
-                other = 0
-                for line in file.readlines():
-                    if line.count("----------------------------------") > 0:
-                        other += 1
-                file.seek(0)
-                file.seek(0)
-                file.readline()
-                file.readline()
-
-                base_img.save(f'{posts[0].title}/tour_shedule_9.png', quality=100)
-
-                for i in range(1, count_photo + 1):
-                    base_img_copy = Image.open(f'{posts[0].title}/tour_shedule_9.png')
-                    drawer = ImageDraw.Draw(base_img_copy)
-                    for _ in range(5):
-                        line = file.readline()
-                        team_1 = line[:45].strip()
-                        total_1 = line[45:].strip()
-                        line = file.readline()
-                        team_2 = line[:45].strip()
-                        total_2 = line[45:].strip()
-                        file.readline()
-                        drawer.text((150, height), team_1, font=font_c, fill='white')
-                        drawer.text((1210, height), team_2, font=font_c, fill='white')
-                        height += 134
-                    base_img_copy.save(f'{posts[0].title}/tour_shedule_9_{i}.png', quality=100)
-                    height = 415
-                # ------ end ------
+            game = posts[0].title
+            tour_shedule(game, 9)
 
             return render(request, 'blog/sсhedule.html',
                           {'title': 'Орда', 'name': posts[0].title, 'count_tour': int(count_tour),
@@ -1403,140 +1259,8 @@ def schedule(request, pk):
                 s = json.dumps(commands_dict, ensure_ascii=False)
                 fp.write(s)
 
-            # tour_shedule
-            font_ = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 40)
-            font_c = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 35)
-            game_name = posts[0].title.split()[0]
-            div_name = posts[0].title.split()[1]
-
-            if posts[0].title.split()[1] == "МСКЛ" or posts[0].title.split()[1] == "Восток" or posts[0].title.split()[1] == "Запад":
-                base_img = Image.open('shedule/back1.png')
-                game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
-                Image.Image.paste(base_img, game_, (1650, 90), mask=game_)
-                drawer = ImageDraw.Draw(base_img)
-
-                height = 402
-
-                file = open(f"{posts[0].title}/{posts[0].title}_тур8.txt", "r", encoding="utf-8")
-                file_list = []
-                for line in file.readlines()[2:]:
-                    if line.count("----------"):
-                        pass
-                    else:
-                        file_list.append(line.replace("\n", "").strip())
-
-                # shuffle(file_list)
-
-                file = open(f"{posts[0].title}/{posts[0].title}_тур8.txt", "w", encoding="utf-8")
-                num = 1
-                title = "КОМАНДЫ" + " " * 35 + "|СЧЁТ\n"
-                file.write(title)
-                file.write("-" * len(title) + "\n")
-                for command in file_list:
-                    file.write(command.replace("\n", "").ljust(35) + "\n")
-                    if num % 2 == 0:
-                        file.write("-" * len(title) + "\n")
-                    num += 1
-
-                file = open(f"{posts[0].title}/{posts[0].title}_тур8.txt", "r", encoding="utf-8")
-                file.seek(0)
-                c = ((len(file.readlines()) - 23) // 3)
-                count_photo = 0
-                while c > 0:
-                    count_photo += 1
-                    c -= 11
-
-                file.seek(0)
-                other = 0
-                for line in file.readlines():
-                    if line.count("----------------------------------") > 0:
-                        other += 1
-                file.seek(0)
-                file.seek(0)
-                file.readline()
-                file.readline()
-
-                for _ in range(7):
-                    line = file.readline()
-                    team_1 = line[:45].strip()
-                    total_1 = line[45:].strip()
-                    line = file.readline()
-                    team_2 = line[:45].strip()
-                    total_2 = line[45:].strip()
-                    file.readline()
-                    drawer.text((150, height), team_1, font=font_c, fill='white')
-                    drawer.text((1180, height), team_2, font=font_c, fill='white')
-                    height += 90
-
-                base_img.save(f'{posts[0].title}/tour_shedule_8.png', quality=100)
-
-                for i in range(1, count_photo + 1):
-                    height = 65
-                    base_img_copy = Image.open('shedule/back2.png')
-                    drawer = ImageDraw.Draw(base_img_copy)
-                    for _ in range(11):
-                        line = file.readline()
-                        team_1 = line[:45].strip()
-                        line = file.readline()
-                        team_2 = line[:45].strip()
-                        file.readline()
-                        drawer.text((120, height), team_1, font=font_c, fill='white')
-                        drawer.text((1180, height), team_2, font=font_c, fill='white')
-                        height += 90.5
-                    base_img_copy.save(f'{posts[0].title}/tour_shedule_8_{i}.png', quality=100)
-                    height = 63
-
-            else:
-
-                base_img = Image.open('shedule/shedule.png')
-                div = Image.open(f'shedule/{div_name}.png').resize((250, 278))
-                Image.Image.paste(base_img, div, (1570, 76), mask=div)
-                game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
-                Image.Image.paste(base_img, game_, (1274, 90), mask=game_)
-                drawer = ImageDraw.Draw(base_img)
-                tour_ = 8
-                drawer.text((55, 65), str(tour_) + " ТУР", font=font_, fill='white')
-                drawer.text((55, 98), "", font=font_, fill='white')
-
-                height = 415
-
-                file = open(f"{posts[0].title}/{posts[0].title}_тур8.txt", "r", encoding="utf-8")
-                file.seek(0)
-                c = ((len(file.readlines()) - 2) // 3)
-                count_photo = 0
-                while c > 0:
-                    count_photo += 1
-                    c -= 5
-
-                file.seek(0)
-                other = 0
-                for line in file.readlines():
-                    if line.count("----------------------------------") > 0:
-                        other += 1
-                file.seek(0)
-                file.seek(0)
-                file.readline()
-                file.readline()
-
-                base_img.save(f'{posts[0].title}/tour_shedule_8.png', quality=100)
-
-                for i in range(1, count_photo + 1):
-                    base_img_copy = Image.open(f'{posts[0].title}/tour_shedule_8.png')
-                    drawer = ImageDraw.Draw(base_img_copy)
-                    for _ in range(5):
-                        line = file.readline()
-                        team_1 = line[:45].strip()
-                        total_1 = line[45:].strip()
-                        line = file.readline()
-                        team_2 = line[:45].strip()
-                        total_2 = line[45:].strip()
-                        file.readline()
-                        drawer.text((150, height), team_1, font=font_c, fill='white')
-                        drawer.text((1210, height), team_2, font=font_c, fill='white')
-                        height += 134
-                    base_img_copy.save(f'{posts[0].title}/tour_shedule_8_{i}.png', quality=100)
-                    height = 415
-                # ------ end ------
+            game = posts[0].title
+            tour_shedule(game, 8)
 
 
             return render(request, 'blog/sсhedule.html',
@@ -1889,140 +1613,8 @@ def schedule(request, pk):
                 s = json.dumps(commands_dict, ensure_ascii=False)
                 fp.write(s)
 
-            # tour_shedule
-            font_ = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 40)
-            font_c = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 35)
-            game_name = posts[0].title.split()[0]
-            div_name = posts[0].title.split()[1]
-
-            if posts[0].title.split()[1] == "МСКЛ" or posts[0].title.split()[1] == "Восток" or posts[0].title.split()[1] == "Запад":
-                base_img = Image.open('shedule/back1.png')
-                game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
-                Image.Image.paste(base_img, game_, (1650, 90), mask=game_)
-                drawer = ImageDraw.Draw(base_img)
-
-                height = 402
-
-                file = open(f"{posts[0].title}/{posts[0].title}_тур7.txt", "r", encoding="utf-8")
-                file_list = []
-                for line in file.readlines()[2:]:
-                    if line.count("----------"):
-                        pass
-                    else:
-                        file_list.append(line.replace("\n", "").strip())
-
-                # shuffle(file_list)
-
-                file = open(f"{posts[0].title}/{posts[0].title}_тур7.txt", "w", encoding="utf-8")
-                num = 1
-                title = "КОМАНДЫ" + " " * 35 + "|СЧЁТ\n"
-                file.write(title)
-                file.write("-" * len(title) + "\n")
-                for command in file_list:
-                    file.write(command.replace("\n", "").ljust(35) + "\n")
-                    if num % 2 == 0:
-                        file.write("-" * len(title) + "\n")
-                    num += 1
-
-                file = open(f"{posts[0].title}/{posts[0].title}_тур7.txt", "r", encoding="utf-8")
-                file.seek(0)
-                c = ((len(file.readlines()) - 23) // 3)
-                count_photo = 0
-                while c > 0:
-                    count_photo += 1
-                    c -= 11
-
-                file.seek(0)
-                other = 0
-                for line in file.readlines():
-                    if line.count("----------------------------------") > 0:
-                        other += 1
-                file.seek(0)
-                file.seek(0)
-                file.readline()
-                file.readline()
-
-                for _ in range(7):
-                    line = file.readline()
-                    team_1 = line[:45].strip()
-                    total_1 = line[45:].strip()
-                    line = file.readline()
-                    team_2 = line[:45].strip()
-                    total_2 = line[45:].strip()
-                    file.readline()
-                    drawer.text((150, height), team_1, font=font_c, fill='white')
-                    drawer.text((1180, height), team_2, font=font_c, fill='white')
-                    height += 90
-
-                base_img.save(f'{posts[0].title}/tour_shedule_7.png', quality=100)
-
-                for i in range(1, count_photo + 1):
-                    height = 65
-                    base_img_copy = Image.open('shedule/back2.png')
-                    drawer = ImageDraw.Draw(base_img_copy)
-                    for _ in range(11):
-                        line = file.readline()
-                        team_1 = line[:45].strip()
-                        line = file.readline()
-                        team_2 = line[:45].strip()
-                        file.readline()
-                        drawer.text((120, height), team_1, font=font_c, fill='white')
-                        drawer.text((1180, height), team_2, font=font_c, fill='white')
-                        height += 90.5
-                    base_img_copy.save(f'{posts[0].title}/tour_shedule_7_{i}.png', quality=100)
-                    height = 63
-
-            else:
-
-                base_img = Image.open('shedule/shedule.png')
-                div = Image.open(f'shedule/{div_name}.png').resize((250, 278))
-                Image.Image.paste(base_img, div, (1570, 76), mask=div)
-                game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
-                Image.Image.paste(base_img, game_, (1274, 90), mask=game_)
-                drawer = ImageDraw.Draw(base_img)
-                tour_ = 7
-                drawer.text((55, 65), str(tour_) + " ТУР", font=font_, fill='white')
-                drawer.text((55, 98), "", font=font_, fill='white')
-
-                height = 415
-
-                file = open(f"{posts[0].title}/{posts[0].title}_тур7.txt", "r", encoding="utf-8")
-                file.seek(0)
-                c = ((len(file.readlines()) - 2) // 3)
-                count_photo = 0
-                while c > 0:
-                    count_photo += 1
-                    c -= 5
-
-                file.seek(0)
-                other = 0
-                for line in file.readlines():
-                    if line.count("----------------------------------") > 0:
-                        other += 1
-                file.seek(0)
-                file.seek(0)
-                file.readline()
-                file.readline()
-
-                base_img.save(f'{posts[0].title}/tour_shedule_7.png', quality=100)
-
-                for i in range(1, count_photo + 1):
-                    base_img_copy = Image.open(f'{posts[0].title}/tour_shedule_7.png')
-                    drawer = ImageDraw.Draw(base_img_copy)
-                    for _ in range(5):
-                        line = file.readline()
-                        team_1 = line[:45].strip()
-                        total_1 = line[45:].strip()
-                        line = file.readline()
-                        team_2 = line[:45].strip()
-                        total_2 = line[45:].strip()
-                        file.readline()
-                        drawer.text((150, height), team_1, font=font_c, fill='white')
-                        drawer.text((1210, height), team_2, font=font_c, fill='white')
-                        height += 134
-                    base_img_copy.save(f'{posts[0].title}/tour_shedule_7_{i}.png', quality=100)
-                    height = 415
-                # ------ end ------
+            game = posts[0].title
+            tour_shedule(game, 7)
 
             return render(request, 'blog/sсhedule.html', {'title': 'Орда', 'name': posts[0].title, 'count_tour': int(count_tour),
                        'tour1': com_1,
@@ -2320,140 +1912,8 @@ def schedule(request, pk):
                 s = json.dumps(commands_dict, ensure_ascii=False)
                 fp.write(s)
 
-            # tour_shedule
-            font_ = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 40)
-            font_c = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 35)
-            game_name = posts[0].title.split()[0]
-            div_name = posts[0].title.split()[1]
-
-            if posts[0].title.split()[1] == "МСКЛ" or posts[0].title.split()[1] == "Восток" or posts[0].title.split()[1] == "Запад":
-                base_img = Image.open('shedule/back1.png')
-                game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
-                Image.Image.paste(base_img, game_, (1650, 90), mask=game_)
-                drawer = ImageDraw.Draw(base_img)
-
-                height = 402
-
-                file = open(f"{posts[0].title}/{posts[0].title}_тур6.txt", "r", encoding="utf-8")
-                file_list = []
-                for line in file.readlines()[2:]:
-                    if line.count("----------"):
-                        pass
-                    else:
-                        file_list.append(line.replace("\n", "").strip())
-
-                # shuffle(file_list)
-
-                file = open(f"{posts[0].title}/{posts[0].title}_тур6.txt", "w", encoding="utf-8")
-                num = 1
-                title = "КОМАНДЫ" + " " * 35 + "|СЧЁТ\n"
-                file.write(title)
-                file.write("-" * len(title) + "\n")
-                for command in file_list:
-                    file.write(command.replace("\n", "").ljust(35) + "\n")
-                    if num % 2 == 0:
-                        file.write("-" * len(title) + "\n")
-                    num += 1
-
-                file = open(f"{posts[0].title}/{posts[0].title}_тур6.txt", "r", encoding="utf-8")
-                file.seek(0)
-                c = ((len(file.readlines()) - 23) // 3)
-                count_photo = 0
-                while c > 0:
-                    count_photo += 1
-                    c -= 11
-
-                file.seek(0)
-                other = 0
-                for line in file.readlines():
-                    if line.count("----------------------------------") > 0:
-                        other += 1
-                file.seek(0)
-                file.seek(0)
-                file.readline()
-                file.readline()
-
-                for _ in range(7):
-                    line = file.readline()
-                    team_1 = line[:45].strip()
-                    total_1 = line[45:].strip()
-                    line = file.readline()
-                    team_2 = line[:45].strip()
-                    total_2 = line[45:].strip()
-                    file.readline()
-                    drawer.text((150, height), team_1, font=font_c, fill='white')
-                    drawer.text((1180, height), team_2, font=font_c, fill='white')
-                    height += 90
-
-                base_img.save(f'{posts[0].title}/tour_shedule_6.png', quality=100)
-
-                for i in range(1, count_photo + 1):
-                    height = 65
-                    base_img_copy = Image.open('shedule/back2.png')
-                    drawer = ImageDraw.Draw(base_img_copy)
-                    for _ in range(11):
-                        line = file.readline()
-                        team_1 = line[:45].strip()
-                        line = file.readline()
-                        team_2 = line[:45].strip()
-                        file.readline()
-                        drawer.text((120, height), team_1, font=font_c, fill='white')
-                        drawer.text((1180, height), team_2, font=font_c, fill='white')
-                        height += 90.5
-                    base_img_copy.save(f'{posts[0].title}/tour_shedule_6_{i}.png', quality=100)
-                    height = 63
-
-            else:
-
-                base_img = Image.open('shedule/shedule.png')
-                div = Image.open(f'shedule/{div_name}.png').resize((250, 278))
-                Image.Image.paste(base_img, div, (1570, 76), mask=div)
-                game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
-                Image.Image.paste(base_img, game_, (1274, 90), mask=game_)
-                drawer = ImageDraw.Draw(base_img)
-                tour_ = 6
-                drawer.text((55, 65), str(tour_) + " ТУР", font=font_, fill='white')
-                drawer.text((55, 98), "", font=font_, fill='white')
-
-                height = 415
-
-                file = open(f"{posts[0].title}/{posts[0].title}_тур6.txt", "r", encoding="utf-8")
-                file.seek(0)
-                c = ((len(file.readlines()) - 2) // 3)
-                count_photo = 0
-                while c > 0:
-                    count_photo += 1
-                    c -= 5
-
-                file.seek(0)
-                other = 0
-                for line in file.readlines():
-                    if line.count("----------------------------------") > 0:
-                        other += 1
-                file.seek(0)
-                file.seek(0)
-                file.readline()
-                file.readline()
-
-                base_img.save(f'{posts[0].title}/tour_shedule_6.png', quality=100)
-
-                for i in range(1, count_photo + 1):
-                    base_img_copy = Image.open(f'{posts[0].title}/tour_shedule_6.png')
-                    drawer = ImageDraw.Draw(base_img_copy)
-                    for _ in range(5):
-                        line = file.readline()
-                        team_1 = line[:45].strip()
-                        total_1 = line[45:].strip()
-                        line = file.readline()
-                        team_2 = line[:45].strip()
-                        total_2 = line[45:].strip()
-                        file.readline()
-                        drawer.text((150, height), team_1, font=font_c, fill='white')
-                        drawer.text((1210, height), team_2, font=font_c, fill='white')
-                        height += 134
-                    base_img_copy.save(f'{posts[0].title}/tour_shedule_6_{i}.png', quality=100)
-                    height = 415
-                # ------ end ------
+            game = posts[0].title
+            tour_shedule(game, 6)
 
             return render(request, 'blog/sсhedule.html',
                           {'title': 'Орда', 'name': posts[0].title, 'count_tour': int(count_tour),
@@ -2681,140 +2141,8 @@ def schedule(request, pk):
                 s = json.dumps(commands_dict, ensure_ascii=False)
                 fp.write(s)
 
-                # tour_shedule
-                font_ = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 40)
-                font_c = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 35)
-                game_name = posts[0].title.split()[0]
-                div_name = posts[0].title.split()[1]
-
-                if posts[0].title.split()[1] == "МСКЛ" or posts[0].title.split()[1] == "Восток" or posts[0].title.split()[1] == "Запад":
-                    base_img = Image.open('shedule/back1.png')
-                    game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
-                    Image.Image.paste(base_img, game_, (1650, 90), mask=game_)
-                    drawer = ImageDraw.Draw(base_img)
-
-                    height = 402
-
-                    file = open(f"{posts[0].title}/{posts[0].title}_тур5.txt", "r", encoding="utf-8")
-                    file_list = []
-                    for line in file.readlines()[2:]:
-                        if line.count("----------"):
-                            pass
-                        else:
-                            file_list.append(line.replace("\n", "").strip())
-
-                    # shuffle(file_list)
-
-                    file = open(f"{posts[0].title}/{posts[0].title}_тур5.txt", "w", encoding="utf-8")
-                    num = 1
-                    title = "КОМАНДЫ" + " " * 35 + "|СЧЁТ\n"
-                    file.write(title)
-                    file.write("-" * len(title) + "\n")
-                    for command in file_list:
-                        file.write(command.replace("\n", "").ljust(35) + "\n")
-                        if num % 2 == 0:
-                            file.write("-" * len(title) + "\n")
-                        num += 1
-
-                    file = open(f"{posts[0].title}/{posts[0].title}_тур5.txt", "r", encoding="utf-8")
-                    file.seek(0)
-                    c = ((len(file.readlines()) - 23) // 3)
-                    count_photo = 0
-                    while c > 0:
-                        count_photo += 1
-                        c -= 11
-
-                    file.seek(0)
-                    other = 0
-                    for line in file.readlines():
-                        if line.count("----------------------------------") > 0:
-                            other += 1
-                    file.seek(0)
-                    file.seek(0)
-                    file.readline()
-                    file.readline()
-
-                    for _ in range(7):
-                        line = file.readline()
-                        team_1 = line[:45].strip()
-                        total_1 = line[45:].strip()
-                        line = file.readline()
-                        team_2 = line[:45].strip()
-                        total_2 = line[45:].strip()
-                        file.readline()
-                        drawer.text((150, height), team_1, font=font_c, fill='white')
-                        drawer.text((1180, height), team_2, font=font_c, fill='white')
-                        height += 90
-
-                    base_img.save(f'{posts[0].title}/tour_shedule_5.png', quality=100)
-
-                    for i in range(1, count_photo + 1):
-                        height = 65
-                        base_img_copy = Image.open('shedule/back2.png')
-                        drawer = ImageDraw.Draw(base_img_copy)
-                        for _ in range(11):
-                            line = file.readline()
-                            team_1 = line[:45].strip()
-                            line = file.readline()
-                            team_2 = line[:45].strip()
-                            file.readline()
-                            drawer.text((120, height), team_1, font=font_c, fill='white')
-                            drawer.text((1180, height), team_2, font=font_c, fill='white')
-                            height += 90.5
-                        base_img_copy.save(f'{posts[0].title}/tour_shedule_5_{i}.png', quality=100)
-                        height = 63
-
-                else:
-
-                    base_img = Image.open('shedule/shedule.png')
-                    div = Image.open(f'shedule/{div_name}.png').resize((250, 278))
-                    Image.Image.paste(base_img, div, (1570, 76), mask=div)
-                    game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
-                    Image.Image.paste(base_img, game_, (1274, 90), mask=game_)
-                    drawer = ImageDraw.Draw(base_img)
-                    tour_ = 5
-                    drawer.text((55, 65), str(tour_) + " ТУР", font=font_, fill='white')
-                    drawer.text((55, 98), "", font=font_, fill='white')
-
-                    height = 415
-
-                    file = open(f"{posts[0].title}/{posts[0].title}_тур5.txt", "r", encoding="utf-8")
-                    file.seek(0)
-                    c = ((len(file.readlines()) - 2) // 3)
-                    count_photo = 0
-                    while c > 0:
-                        count_photo += 1
-                        c -= 5
-
-                    file.seek(0)
-                    other = 0
-                    for line in file.readlines():
-                        if line.count("----------------------------------") > 0:
-                            other += 1
-                    file.seek(0)
-                    file.seek(0)
-                    file.readline()
-                    file.readline()
-
-                    base_img.save(f'{posts[0].title}/tour_shedule_5.png', quality=100)
-
-                    for i in range(1, count_photo + 1):
-                        base_img_copy = Image.open(f'{posts[0].title}/tour_shedule_5.png')
-                        drawer = ImageDraw.Draw(base_img_copy)
-                        for _ in range(5):
-                            line = file.readline()
-                            team_1 = line[:45].strip()
-                            total_1 = line[45:].strip()
-                            line = file.readline()
-                            team_2 = line[:45].strip()
-                            total_2 = line[45:].strip()
-                            file.readline()
-                            drawer.text((150, height), team_1, font=font_c, fill='white')
-                            drawer.text((1210, height), team_2, font=font_c, fill='white')
-                            height += 134
-                        base_img_copy.save(f'{posts[0].title}/tour_shedule_5_{i}.png', quality=100)
-                        height = 415
-                    # ------ end ------
+            game = posts[0].title
+            tour_shedule(game, 5)
 
             return render(request, 'blog/sсhedule.html',
                           {'title': 'Орда', 'name': posts[0].title, 'count_tour': int(count_tour),
@@ -3018,140 +2346,8 @@ def schedule(request, pk):
                 s = json.dumps(commands_dict, ensure_ascii=False)
                 fp.write(s)
 
-                # tour_shedule
-                font_ = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 40)
-                font_c = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 35)
-                game_name = posts[0].title.split()[0]
-                div_name = posts[0].title.split()[1]
-
-                if posts[0].title.split()[1] == "МСКЛ" or posts[0].title.split()[1] == "Восток" or posts[0].title.split()[1] == "Запад":
-                    base_img = Image.open('shedule/back1.png')
-                    game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
-                    Image.Image.paste(base_img, game_, (1650, 90), mask=game_)
-                    drawer = ImageDraw.Draw(base_img)
-
-                    height = 402
-
-                    file = open(f"{posts[0].title}/{posts[0].title}_тур4.txt", "r", encoding="utf-8")
-                    file_list = []
-                    for line in file.readlines()[2:]:
-                        if line.count("----------"):
-                            pass
-                        else:
-                            file_list.append(line.replace("\n", "").strip())
-
-                    # shuffle(file_list)
-
-                    file = open(f"{posts[0].title}/{posts[0].title}_тур4.txt", "w", encoding="utf-8")
-                    num = 1
-                    title = "КОМАНДЫ" + " " * 35 + "|СЧЁТ\n"
-                    file.write(title)
-                    file.write("-" * len(title) + "\n")
-                    for command in file_list:
-                        file.write(command.replace("\n", "").ljust(35) + "\n")
-                        if num % 2 == 0:
-                            file.write("-" * len(title) + "\n")
-                        num += 1
-
-                    file = open(f"{posts[0].title}/{posts[0].title}_тур4.txt", "r", encoding="utf-8")
-                    file.seek(0)
-                    c = ((len(file.readlines()) - 23) // 3)
-                    count_photo = 0
-                    while c > 0:
-                        count_photo += 1
-                        c -= 11
-
-                    file.seek(0)
-                    other = 0
-                    for line in file.readlines():
-                        if line.count("----------------------------------") > 0:
-                            other += 1
-                    file.seek(0)
-                    file.seek(0)
-                    file.readline()
-                    file.readline()
-
-                    for _ in range(7):
-                        line = file.readline()
-                        team_1 = line[:45].strip()
-                        total_1 = line[45:].strip()
-                        line = file.readline()
-                        team_2 = line[:45].strip()
-                        total_2 = line[45:].strip()
-                        file.readline()
-                        drawer.text((150, height), team_1, font=font_c, fill='white')
-                        drawer.text((1180, height), team_2, font=font_c, fill='white')
-                        height += 90
-
-                    base_img.save(f'{posts[0].title}/tour_shedule_4.png', quality=100)
-
-                    for i in range(1, count_photo + 1):
-                        height = 65
-                        base_img_copy = Image.open('shedule/back2.png')
-                        drawer = ImageDraw.Draw(base_img_copy)
-                        for _ in range(11):
-                            line = file.readline()
-                            team_1 = line[:45].strip()
-                            line = file.readline()
-                            team_2 = line[:45].strip()
-                            file.readline()
-                            drawer.text((120, height), team_1, font=font_c, fill='white')
-                            drawer.text((1180, height), team_2, font=font_c, fill='white')
-                            height += 90.5
-                        base_img_copy.save(f'{posts[0].title}/tour_shedule_4_{i}.png', quality=100)
-                        height = 63
-
-                else:
-
-                    base_img = Image.open('shedule/shedule.png')
-                    div = Image.open(f'shedule/{div_name}.png').resize((250, 278))
-                    Image.Image.paste(base_img, div, (1570, 76), mask=div)
-                    game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
-                    Image.Image.paste(base_img, game_, (1274, 90), mask=game_)
-                    drawer = ImageDraw.Draw(base_img)
-                    tour_ = 4
-                    drawer.text((55, 65), str(tour_) + " ТУР", font=font_, fill='white')
-                    drawer.text((55, 98), "", font=font_, fill='white')
-
-                    height = 415
-
-                    file = open(f"{posts[0].title}/{posts[0].title}_тур4.txt", "r", encoding="utf-8")
-                    file.seek(0)
-                    c = ((len(file.readlines()) - 2) // 3)
-                    count_photo = 0
-                    while c > 0:
-                        count_photo += 1
-                        c -= 5
-
-                    file.seek(0)
-                    other = 0
-                    for line in file.readlines():
-                        if line.count("----------------------------------") > 0:
-                            other += 1
-                    file.seek(0)
-                    file.seek(0)
-                    file.readline()
-                    file.readline()
-
-                    base_img.save(f'{posts[0].title}/tour_shedule_4.png', quality=100)
-
-                    for i in range(1, count_photo + 1):
-                        base_img_copy = Image.open(f'{posts[0].title}/tour_shedule_4.png')
-                        drawer = ImageDraw.Draw(base_img_copy)
-                        for _ in range(5):
-                            line = file.readline()
-                            team_1 = line[:45].strip()
-                            total_1 = line[45:].strip()
-                            line = file.readline()
-                            team_2 = line[:45].strip()
-                            total_2 = line[45:].strip()
-                            file.readline()
-                            drawer.text((150, height), team_1, font=font_c, fill='white')
-                            drawer.text((1210, height), team_2, font=font_c, fill='white')
-                            height += 134
-                        base_img_copy.save(f'{posts[0].title}/tour_shedule_4_{i}.png', quality=100)
-                        height = 415
-                    # ------ end ------
+            game = posts[0].title
+            tour_shedule(game, 4)
 
 
             return render(request, 'blog/sсhedule.html',
@@ -3309,140 +2505,8 @@ def schedule(request, pk):
                 s = json.dumps(commands_dict, ensure_ascii=False)
                 fp.write(s)
 
-            # tour_shedule
-            font_ = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 40)
-            font_c = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 35)
-            game_name = posts[0].title.split()[0]
-            div_name = posts[0].title.split()[1]
-
-            if posts[0].title.split()[1] == "МСКЛ" or posts[0].title.split()[1] == "Восток" or posts[0].title.split()[1] == "Запад":
-                base_img = Image.open('shedule/back1.png')
-                game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
-                Image.Image.paste(base_img, game_, (1650, 90), mask=game_)
-                drawer = ImageDraw.Draw(base_img)
-
-                height = 402
-
-                file = open(f"{posts[0].title}/{posts[0].title}_тур3.txt", "r", encoding="utf-8")
-                file_list = []
-                for line in file.readlines()[2:]:
-                    if line.count("----------"):
-                        pass
-                    else:
-                        file_list.append(line.replace("\n", "").strip())
-
-                # shuffle(file_list)
-
-                file = open(f"{posts[0].title}/{posts[0].title}_тур3.txt", "w", encoding="utf-8")
-                num = 1
-                title = "КОМАНДЫ" + " " * 35 + "|СЧЁТ\n"
-                file.write(title)
-                file.write("-" * len(title) + "\n")
-                for command in file_list:
-                    file.write(command.replace("\n", "").ljust(35) + "\n")
-                    if num % 2 == 0:
-                        file.write("-" * len(title) + "\n")
-                    num += 1
-
-                file = open(f"{posts[0].title}/{posts[0].title}_тур3.txt", "r", encoding="utf-8")
-                file.seek(0)
-                c = ((len(file.readlines()) - 23) // 3)
-                count_photo = 0
-                while c > 0:
-                    count_photo += 1
-                    c -= 11
-
-                file.seek(0)
-                other = 0
-                for line in file.readlines():
-                    if line.count("----------------------------------") > 0:
-                        other += 1
-                file.seek(0)
-                file.seek(0)
-                file.readline()
-                file.readline()
-
-                for _ in range(7):
-                    line = file.readline()
-                    team_1 = line[:45].strip()
-                    total_1 = line[45:].strip()
-                    line = file.readline()
-                    team_2 = line[:45].strip()
-                    total_2 = line[45:].strip()
-                    file.readline()
-                    drawer.text((150, height), team_1, font=font_c, fill='white')
-                    drawer.text((1180, height), team_2, font=font_c, fill='white')
-                    height += 90
-
-                base_img.save(f'{posts[0].title}/tour_shedule_3.png', quality=100)
-
-                for i in range(1, count_photo + 1):
-                    height = 65
-                    base_img_copy = Image.open('shedule/back2.png')
-                    drawer = ImageDraw.Draw(base_img_copy)
-                    for _ in range(11):
-                        line = file.readline()
-                        team_1 = line[:45].strip()
-                        line = file.readline()
-                        team_2 = line[:45].strip()
-                        file.readline()
-                        drawer.text((120, height), team_1, font=font_c, fill='white')
-                        drawer.text((1180, height), team_2, font=font_c, fill='white')
-                        height += 90.5
-                    base_img_copy.save(f'{posts[0].title}/tour_shedule_3_{i}.png', quality=100)
-                    height = 63
-
-            else:
-
-                base_img = Image.open('shedule/shedule.png')
-                div = Image.open(f'shedule/{div_name}.png').resize((250, 278))
-                Image.Image.paste(base_img, div, (1570, 76), mask=div)
-                game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
-                Image.Image.paste(base_img, game_, (1274, 90), mask=game_)
-                drawer = ImageDraw.Draw(base_img)
-                tour_ = 3
-                drawer.text((55, 65), str(tour_) + " ТУР", font=font_, fill='white')
-                drawer.text((55, 98), "", font=font_, fill='white')
-
-                height = 415
-
-                file = open(f"{posts[0].title}/{posts[0].title}_тур3.txt", "r", encoding="utf-8")
-                file.seek(0)
-                c = ((len(file.readlines()) - 2) // 3)
-                count_photo = 0
-                while c > 0:
-                    count_photo += 1
-                    c -= 5
-
-                file.seek(0)
-                other = 0
-                for line in file.readlines():
-                    if line.count("----------------------------------") > 0:
-                        other += 1
-                file.seek(0)
-                file.seek(0)
-                file.readline()
-                file.readline()
-
-                base_img.save(f'{posts[0].title}/tour_shedule_3.png', quality=100)
-
-                for i in range(1, count_photo + 1):
-                    base_img_copy = Image.open(f'{posts[0].title}/tour_shedule_3.png')
-                    drawer = ImageDraw.Draw(base_img_copy)
-                    for _ in range(5):
-                        line = file.readline()
-                        team_1 = line[:45].strip()
-                        total_1 = line[45:].strip()
-                        line = file.readline()
-                        team_2 = line[:45].strip()
-                        total_2 = line[45:].strip()
-                        file.readline()
-                        drawer.text((150, height), team_1, font=font_c, fill='white')
-                        drawer.text((1210, height), team_2, font=font_c, fill='white')
-                        height += 134
-                    base_img_copy.save(f'{posts[0].title}/tour_shedule_3_{i}.png', quality=100)
-                    height = 415
-                # ------ end ------
+            game = posts[0].title
+            tour_shedule(game, 3)
 
             return render(request, 'blog/sсhedule.html',
                           {'title': 'Орда', 'name': posts[0].title, 'count_tour': int(count_tour),
@@ -3541,141 +2605,8 @@ def schedule(request, pk):
                 s = json.dumps(commands_dict, ensure_ascii=False)
                 fp.write(s)
 
-                # tour_shedule
-                font_ = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 40)
-                font_c = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 35)
-                game_name = posts[0].title.split()[0]
-                div_name = posts[0].title.split()[1]
-
-                if posts[0].title.split()[1] == "МСКЛ" or posts[0].title.split()[1] == "Восток" or posts[0].title.split()[1] == "Запад":
-                    base_img = Image.open('shedule/back1.png')
-                    game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
-                    Image.Image.paste(base_img, game_, (1650, 90), mask=game_)
-                    drawer = ImageDraw.Draw(base_img)
-
-                    height = 402
-
-                    file = open(f"{posts[0].title}/{posts[0].title}_тур2.txt", "r", encoding="utf-8")
-                    file_list = []
-                    for line in file.readlines()[2:]:
-                        if line.count("----------"):
-                            pass
-                        else:
-                            file_list.append(line.replace("\n", "").strip())
-
-                    # shuffle(file_list)
-
-                    file = open(f"{posts[0].title}/{posts[0].title}_тур2.txt", "w", encoding="utf-8")
-                    num = 1
-                    title = "КОМАНДЫ" + " " * 35 + "|СЧЁТ\n"
-                    file.write(title)
-                    file.write("-" * len(title) + "\n")
-                    for command in file_list:
-                        file.write(command.replace("\n", "").ljust(35) + "\n")
-                        if num % 2 == 0:
-                            file.write("-" * len(title) + "\n")
-                        num += 1
-
-                    file = open(f"{posts[0].title}/{posts[0].title}_тур2.txt", "r", encoding="utf-8")
-                    file.seek(0)
-                    c = ((len(file.readlines()) - 23) // 3)
-                    count_photo = 0
-                    while c > 0:
-                        count_photo += 1
-                        c -= 11
-
-                    file.seek(0)
-                    other = 0
-                    for line in file.readlines():
-                        if line.count("----------------------------------") > 0:
-                            other += 1
-                    file.seek(0)
-                    file.seek(0)
-                    file.readline()
-                    file.readline()
-
-                    for _ in range(7):
-                        line = file.readline()
-                        team_1 = line[:45].strip()
-                        total_1 = line[45:].strip()
-                        line = file.readline()
-                        team_2 = line[:45].strip()
-                        total_2 = line[45:].strip()
-                        file.readline()
-                        drawer.text((150, height), team_1, font=font_c, fill='white')
-                        drawer.text((1180, height), team_2, font=font_c, fill='white')
-                        height += 90
-
-                    base_img.save(f'{posts[0].title}/tour_shedule_2.png', quality=100)
-
-                    for i in range(1, count_photo + 1):
-                        height = 65
-                        base_img_copy = Image.open('shedule/back2.png')
-                        drawer = ImageDraw.Draw(base_img_copy)
-                        for _ in range(11):
-                            line = file.readline()
-                            team_1 = line[:45].strip()
-                            line = file.readline()
-                            team_2 = line[:45].strip()
-                            file.readline()
-                            drawer.text((120, height), team_1, font=font_c, fill='white')
-                            drawer.text((1180, height), team_2, font=font_c, fill='white')
-                            height += 90.5
-                        base_img_copy.save(f'{posts[0].title}/tour_shedule_2_{i}.png', quality=100)
-                        height = 63
-
-                else:
-
-                    base_img = Image.open('shedule/shedule.png')
-                    div = Image.open(f'shedule/{div_name}.png').resize((250, 278))
-                    Image.Image.paste(base_img, div, (1570, 76), mask=div)
-                    game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
-                    Image.Image.paste(base_img, game_, (1274, 90), mask=game_)
-                    drawer = ImageDraw.Draw(base_img)
-                    tour_ = 2
-                    drawer.text((55, 65), str(tour_) + " ТУР", font=font_, fill='white')
-                    drawer.text((55, 98), "", font=font_, fill='white')
-
-                    height = 415
-
-                    file = open(f"{posts[0].title}/{posts[0].title}_тур2.txt", "r", encoding="utf-8")
-                    file.seek(0)
-                    c = ((len(file.readlines()) - 2) // 3)
-                    count_photo = 0
-                    while c > 0:
-                        count_photo += 1
-                        c -= 5
-
-                    file.seek(0)
-                    other = 0
-                    for line in file.readlines():
-                        if line.count("----------------------------------") > 0:
-                            other += 1
-                    file.seek(0)
-                    file.seek(0)
-                    file.readline()
-                    file.readline()
-
-                    base_img.save(f'{posts[0].title}/tour_shedule_2.png', quality=100)
-
-
-                    for i in range(1, count_photo + 1):
-                        base_img_copy = Image.open(f'{posts[0].title}/tour_shedule_2.png')
-                        drawer = ImageDraw.Draw(base_img_copy)
-                        for _ in range(5):
-                            line = file.readline()
-                            team_1 = line[:45].strip()
-                            total_1 = line[45:].strip()
-                            line = file.readline()
-                            team_2 = line[:45].strip()
-                            total_2 = line[45:].strip()
-                            file.readline()
-                            drawer.text((150, height), team_1, font=font_c, fill='white')
-                            drawer.text((1210, height), team_2, font=font_c, fill='white')
-                            height += 134
-                        base_img_copy.save(f'{posts[0].title}/tour_shedule_2_{i}.png', quality=100)
-                        height = 415
-                    # ------ end ------
+            game = posts[0].title
+            tour_shedule(game, 2)
 
             return render(request, 'blog/sсhedule.html',
                           {'title': 'Орда', 'name': posts[0].title, 'count_tour': int(count_tour),
@@ -3689,12 +2620,6 @@ def schedule(request, pk):
             commands_dict["Пустышка"] = []
 
 
-            # for i in range(0, len(com_1)):
-            #     if com_1[i][1][:45].strip() not in commands_dict[com_1[i][0][:45].strip()]:
-            #         commands_dict[com_1[i][0][:45].strip()].append(com_1[i][1][:45].replace("\n", "").strip())
-            #     if com_1[i][0][:45].strip() not in commands_dict[com_1[i][1][:45].strip()]:
-            #         commands_dict[com_1[i][1][:45].strip()].append(com_1[i][0][:45].strip())
-
             for i in range(0, len(com_1)):
                 commands_dict[com_1[i][0][:45].strip()] = [com_1[i][1][:45].strip()]
                 commands_dict[com_1[i][1][:45].strip()] = [com_1[i][0][:45].strip()]
@@ -3703,64 +2628,8 @@ def schedule(request, pk):
                 s = json.dumps(commands_dict, ensure_ascii=False)
                 fp.write(s)
 
-                # tour_shedule
-                if posts[0].title.split()[1] == "МСКЛ" or posts[0].title.split()[1] == "Восток" or posts[0].title.split()[1] == "Запад":
-                    pass
-                else:
-                    font_ = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 40)
-                    font_c = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 35)
-                    game_name = posts[0].title.split()[0]
-                    div_name = posts[0].title.split()[1]
-
-                    base_img = Image.open('shedule/shedule.png')
-                    div = Image.open(f'shedule/{div_name}.png').resize((250, 278))
-                    Image.Image.paste(base_img, div, (1570, 76), mask=div)
-                    game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
-                    Image.Image.paste(base_img, game_, (1274, 90), mask=game_)
-                    drawer = ImageDraw.Draw(base_img)
-                    tour_ = 1
-                    drawer.text((55, 65), str(tour_) + " ТУР", font=font_, fill='white')
-                    drawer.text((55, 98), "", font=font_, fill='white')
-
-                    height = 415
-
-                    file = open(f"{posts[0].title}/{posts[0].title}_тур1.txt", "r", encoding="utf-8")
-                    file.seek(0)
-                    c = ((len(file.readlines()) - 2) // 3)
-                    count_photo = 0
-                    while c > 0:
-                        count_photo += 1
-                        c -= 5
-
-                    file.seek(0)
-                    other = 0
-                    for line in file.readlines():
-                        if line.count("----------------------------------") > 0:
-                            other += 1
-                    file.seek(0)
-                    file.seek(0)
-                    file.readline()
-                    file.readline()
-
-                    base_img.save(f'{posts[0].title}/tour_shedule_1.png', quality=100)
-
-                    for i in range(1, count_photo + 1):
-                        base_img_copy = Image.open(f'{posts[0].title}/tour_shedule_1.png')
-                        drawer = ImageDraw.Draw(base_img_copy)
-                        for _ in range(5):
-                            line = file.readline()
-                            team_1 = line[:45].strip()
-                            total_1 = line[45:].strip()
-                            line = file.readline()
-                            team_2 = line[:45].strip()
-                            total_2 = line[45:].strip()
-                            file.readline()
-                            drawer.text((150, height), team_1, font=font_c, fill='white')
-                            drawer.text((1210, height), team_2, font=font_c, fill='white')
-                            height += 134
-                        base_img_copy.save(f'{posts[0].title}/tour_shedule_1_{i}.png', quality=100)
-                        height = 415
-                    # ------ end ------
+            game = posts[0].title
+            tour_shedule(game, 1)
 
             return render(request, 'blog/sсhedule.html',
                           {'title': 'Орда', 'name': posts[0].title, 'count_tour': int(count_tour),
@@ -3769,37 +2638,412 @@ def schedule(request, pk):
     file_count.close()
     file.close()
 
-
-
-def save_tour_1(request):
+def new_files(request):
     if request.method == 'GET':
-        game = request.GET.get("name")
-        game_name, div_name = game.split()
-        checkbox = list(request.GET.get("data"))
-        com_add = request.GET.get("com").split("\n")
-        com_del = request.GET.get("del").split("\n")
+        name = request.GET.get("name")
 
-        file = open(f"{game}/{game}_счёт_1.txt", "w", encoding="utf-8")
+        if not os.path.exists(name):
+            os.mkdir(name)
+            file = open(f"{name}/{name}_туры.txt", "w", encoding="utf-8")
+            file.write("1")
+            file.close()
+            for i in range(1, 14):
+                file = open(f"{name}/{name}_тур{i}.txt", "w", encoding="utf-8")
+                file_res = open(f"{name}/результат_{i}_{name}.txt", "w", encoding="utf-8")
+                file.close()
+                file_res.close()
+            with open(f"{name}/пересечение_команд_{name}.json", "w", encoding="utf-8") as fp:
+                commands_dict = {}
+                s = json.dumps(commands_dict, ensure_ascii=False)
+                fp.write(s)
+
+            fp.close()
+        data = {"message": "ok"}
+        return JsonResponse(data)
+
+def del_dir_of_game(request):
+    if request.method == 'GET':
+        name = request.GET.get("name")
+        path = os.path.join(os.path.abspath(os.path.dirname(__file__)), str(os.getcwd()) + "/" + name.replace('"', ''))
+        shutil.rmtree(path)
+        data = {"message": "ok"}
+        return JsonResponse(data)
+
+def results(request, game, tour):
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    filename = f'{game}_тур{tour}.xlsx'
+
+    workbook = xlsxwriter.Workbook(BASE_DIR + "/" + game + "/" + filename)
+    worksheet = workbook.add_worksheet()
+
+    file = open(f"{game}/{game}_тур{tour}.txt", "r", encoding="utf-8")
+    file.seek(0)
+
+    i = 0
+    com1 = 1
+    com2 = 1
+    for com in file.readlines()[2:]:
+        if com.count("-") < 7:
+            i += 1
+            if i % 2 != 0:
+                worksheet.write(f'A{com1}', com[:len(com)-2].strip())
+                com1 += 1
+            else:
+                worksheet.write(f'B{com2}', com[:len(com)-2].strip())
+                com2 += 1
+    workbook.close()
+
+
+    filepath = BASE_DIR + "/" + game + "/" + filename
+    path = open(filepath, 'rb')
+    mime_type, _ = mimetypes.guess_type(filepath)
+
+    response = HttpResponse(path, content_type=mime_type)
+
+    response['Content-Disposition'] = "attachment; filename=%s" % filename
+
+    return response
+
+def download_shedule(request, game, tour):
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    filename = f'tour_shedule_{tour}.zip'
+
+    file = open(f"{game}/{game}_тур{tour}.txt", "r", encoding="utf-8")
+    file.seek(0)
+    div_name = game.split()[1]
+
+    if div_name == "МСКЛ" or div_name == "Восток" or div_name == "Запад":
+        c = ((len(file.readlines()) - 23) // 3)
+        count_photo = 0
+        while c > 0:
+            count_photo += 1
+            c -= 11
+
+        with ZipFile(BASE_DIR + "/" + game + "/" + filename, "w") as myzip:
+            myzip.write(f"{game}/tour_shedule_{tour}.png")
+            for i in range(1, count_photo + 1):
+                myzip.write(f"{game}/tour_shedule_{tour}_{i}.png")
+    else:
+        c = ((len(file.readlines()) - 2) // 3)
+        count_photo = 0
+        while c > 0:
+            count_photo += 1
+            c -= 5
+
+
+        with ZipFile(BASE_DIR + "/" + game + "/" + filename, "w") as myzip:
+            for i in range(1, count_photo + 1):
+                myzip.write(f"{game}/tour_shedule_{tour}_{i}.png")
+
+    filepath = BASE_DIR + "/" + game + "/" + filename
+    path = open(filepath, 'rb')
+    mime_type, _ = mimetypes.guess_type(filepath)
+
+    response = HttpResponse(path, content_type=mime_type)
+
+    response['Content-Disposition'] = "attachment; filename=%s" % filename
+
+    return response
+
+def download(request, game, tour):
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    filename = f'shedule_{tour}.zip'
+
+    file = open(f"{game}/{game}_тур{tour}.txt", "r", encoding="utf-8")
+    file.seek(0)
+    c = ((len(file.readlines()) - 2) // 3)
+    count_photo = 0
+    while c > 0:
+        count_photo += 1
+        c -= 5
+
+
+    with ZipFile(BASE_DIR + "/" + game + "/" + filename, "w") as myzip:
+        for i in range(1, count_photo + 1):
+            myzip.write(f"{game}/shedule_{tour}_{i}.png")
+
+    filepath = BASE_DIR + "/" + game + "/" + filename
+    path = open(filepath, 'rb')
+    mime_type, _ = mimetypes.guess_type(filepath)
+
+    response = HttpResponse(path, content_type=mime_type)
+
+    response['Content-Disposition'] = "attachment; filename=%s" % filename
+
+    return response
+
+def save_rating(request):
+    file = open(f"filter_param/{request.user.id}.txt", "r", encoding="utf-8")
+    game, div, tour, sort = file.readline().replace("\n", "").split()
+    file.close()
+
+
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    filename = f'рейтинг_тур{tour}.xlsx'
+
+    filepath = BASE_DIR + "/" + game + " " + div + "/" + filename
+    path = open(filepath, 'rb')
+    mime_type, _ = mimetypes.guess_type(filepath)
+
+    response = HttpResponse(path, content_type=mime_type)
+
+    response['Content-Disposition'] = "attachment; filename=%s" % filename
+
+    return response
+
+def reset(request, game, tour):
+    if request.method == 'GET':
+        file_count = open(f"{game}/{game}_туры.txt", "w", encoding="utf-8")
+        file_count.write(tour)
+        file_count.close()
+
+        add_com_list = []
+        for i in range(int(tour), 8):
+            if os.path.exists(f"{game}/{game}_{i}_доб.txt"):
+                add_com_list += [c.replace("\n", "") for c in
+                                 open(f"{game}/{game}_{i}_доб.txt", "r", encoding="utf-8").readlines()]
+        com_list = [c.replace("\n", "") for c in open(f"{game}/команды_{game}.txt", "r", encoding="utf-8").readlines()]
+        com_list_new = []
+
+        for c in com_list:
+            if c not in add_com_list:
+                com_list_new.append(c)
+
+        com_file = open(f"{game}/команды_{game}.txt", "w", encoding="utf-8")
+        for i in range(len(com_list_new)):
+            if i == 0:
+                com_file.write(com_list_new[i])
+            else:
+                com_file.write("\n" + com_list_new[i])
+
+        f = open(f"{game}/{game}_тур{int(tour) + 1}.txt", "w", encoding="utf-8")
+
+
+        fp = open(f"{game}/пересечение_команд_{game}.json", "r", encoding="utf-8")
+        commands_dict = json.load(fp)
+
+        for key in commands_dict.keys():
+            if key != "Пустышка" and len(commands_dict[key]) != 0:
+                commands_dict[key] = [commands_dict[key][0]]
+
+
+        with open(f"{game}/пересечение_команд_{game}.json", "w", encoding="utf-8") as fp:
+            s = json.dumps(commands_dict, ensure_ascii=False)
+            fp.write(s)
+
+
+        for i in range(int(tour) + 1, 10):
+            file = open(f"{game}/{game}_тур{tour}.txt", "w", encoding="utf-8")
+            file.close()
+            file = open(f"{game}/{game}_{tour}_доб.txt", "w", encoding="utf-8")
+            file.close()
+
+        for i in range(int(tour), 10):
+            file = open(f"{game}/результат_{tour}_{game}.txt", "w", encoding="utf-8")
+            file.close()
+            file = open(f"{game}/{game}_счёт_{tour}.txt", "w", encoding="utf-8")
+            file.close()
+
+        data = {"message": "ok"}
+        return JsonResponse(data)
+
+def download_rating(request):
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+    file = open(f"filter_param/{request.user.id}.txt", "r", encoding="utf-8")
+    game, div, tour, sort = file.readline().replace("\n", "").split()
+    file.close()
+
+    filename = f'rating_{game} {div}_тур{tour}.png'
+
+    filepath = BASE_DIR + "/" + game + " " + div + "/" + filename
+    path = open(filepath, 'rb')
+    mime_type, _ = mimetypes.guess_type(filepath)
+
+    response = HttpResponse(path, content_type=mime_type)
+
+    response['Content-Disposition'] = "attachment; filename=%s" % filename
+
+    return response
+
+def save_tour(request, game, tour):
+    if request.method == 'GET':
+        checkbox = list(request.GET.get("data"))
+        game_name, div_name = game.split()
+        file = open(f"{game}/{game}_счёт_{tour}.txt", "w", encoding="utf-8")
         file.write(" ".join(checkbox))
         file.close()
-        file = open(f"{game}/{game}_тур1.txt", "r", encoding="utf-8")
+        file = open(f"{game}/{game}_тур{tour}.txt", "r", encoding="utf-8")
         file_list = []
         i = 0
 
-
         for line in file.readlines():
-            if line.count("КОМАНДЫ") or line.count("---------------") or line.count(" ") > 40 or line.strip() in com_del:
+            if line.count("КОМАНДЫ") or line.count("---------------") or line.count(" ") > 40:
                 file_list.append(line)
             else:
                 new_line = line.replace("\n", "")
-                # l1 = new_line[:len(line) // 2]
-                # l2 = new_line[len(line) // 2:].replace("1", "").replace("0", "")
                 l1 = new_line[:45]
                 new_line = l1 + " " * 20 + checkbox[i] + "\n"
                 file_list.append(new_line)
                 i += 1
 
         file.close()
+
+        file = open(f"{game}/{game}_тур{int(tour)-1}.txt", "w", encoding="utf-8")
+        for el in file_list:
+            file.write(el)
+        file.close()
+
+        # init dict with commands
+
+        file_res = open(f"{game}/результат_{int(tour)-1}_{game}.txt", "r", encoding="utf-8")
+        com_dict = {}
+        for line in file_res.readlines():
+            if line.count(": ") > 0:
+                com_dict[line.split(": ")[0]] = int(line.split(": ")[1])
+
+        # count win
+        for el in file_list[1:]:
+            if el.count("-") < 5:
+                com = el[:45].strip()
+                score = el[45:].strip()
+                if com != "Пустышка":
+                    com_dict[com] += int(score)
+
+        # save results from 3 tour
+        res = open(f"{game}/результат_{tour}_{game}.txt", "w", encoding="utf-8")
+        for i in range(0, 10):
+            k = 0
+            for pair in com_dict.items():
+                if pair[1] == i and pair[0] != "Пустышка":
+                    res.write(pair[0] + ": " + str(i) + "\n")
+                    k += 1
+            if k % 2 != 0 and i != 0:
+                res.write("Пустышка" + ": " + str(i) + "\n")
+            res.write("\n")
+        res.close()
+
+
+
+        fp = open(f"{game}/пересечение_команд_{game}.json", "r", encoding="utf-8")
+        commands_dict = json.load(fp)
+
+        commands_dict["Пустышка"] = []
+
+        res = open(f"{game}/результат_{tour}_{game}.txt", "a", encoding="utf-8")
+        com_file = open(f"{game}/команды_{game}.txt", "a", encoding="utf-8")
+        com_add = request.GET.get("com").split("\n")
+
+        add_com_file = open(f"{game}/{game}_{int(tour)-1}_доб.txt", "w", encoding="utf-8")
+
+        if com_add[0] != "":
+            for c in com_add:
+                if list(c).count(" ") < 7:
+                    res.write(f"{c[:len(c) - 2]}: {c[len(c) - 1:]}\n")
+                    com_file.write(f"\n{c[:len(c) - 2]}")
+                    if c[:len(c) - 2] not in commands_dict:
+                        commands_dict[c[:len(c) - 2]] = []
+                    add_com_file.write(c[:len(c) - 2] + "\n")
+
+        with open(f"{game}/пересечение_команд_{game}.json", "w", encoding="utf-8") as fp:
+                s = json.dumps(commands_dict, ensure_ascii=False)
+                fp.write(s)
+
+
+        # new tour
+        file_count = open(f"{game}/{game}_туры.txt", "w", encoding="utf-8")
+        file_count.write(str(int(tour)+1))
+        file_count.close()
+
+        # generate shedule (photo)
+        font_ = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 40)
+        font_c = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 35)
+        base_img = Image.open('shedule/base.png')
+        div = Image.open(f'shedule/{div_name}.png').resize((250, 278))
+        Image.Image.paste(base_img, div, (1570, 76), mask=div)
+        game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
+        Image.Image.paste(base_img, game_, (1274, 90), mask=game_)
+        drawer = ImageDraw.Draw(base_img)
+        tour_ = int(tour)
+        drawer.text((55, 65), "8 ТУР", font=font_, fill='white')
+        drawer.text((55, 98), "", font=font_, fill='white')
+
+        height = 415
+
+        file = open(f"{game}/{game}_тур{tour}.txt", "r", encoding="utf-8")
+        c = ((len(file.readlines()) - 2) // 3)
+        count_photo = 0
+        while c > 0:
+            count_photo += 1
+            c -= 5
+
+        file.seek(0)
+        other = 0
+        for line in file.readlines():
+            if line.count("----------------------------------") > 0:
+                other += 1
+        file.seek(0)
+        file.seek(0)
+        file.readline()
+        file.readline()
+
+        base_img.save(f'{game}/shedule_{tour}.png', quality=100)
+
+        for i in range(1, count_photo + 1):
+            base_img_copy = Image.open(f'{game}/shedule_{tour}.png')
+            drawer = ImageDraw.Draw(base_img_copy)
+            for _ in range(5):
+                line = file.readline()
+                team_1 = line[:45].strip()
+                total_1 = line[45:].strip()
+                line = file.readline()
+                team_2 = line[:45].strip()
+                total_2 = line[45:].strip()
+                file.readline()
+                drawer.text((120, height), team_1, font=font_c, fill='white')
+                drawer.text((1180, height), team_2, font=font_c, fill='white')
+                drawer.text((820, height), total_1, font=font_c, fill='white')
+                drawer.text((1085, height), total_2, font=font_c, fill='white')
+                height += 134
+            base_img_copy.save(f'{game}/shedule_{tour}_{i}.png', quality=100)
+            height = 415
+        # ------ end ------
+
+
+        data = {"message": "ok"}
+        return JsonResponse(data)
+
+def save_tour_1(request):
+    if request.method == 'GET':
+        # получение данных с запроса
+        game = request.GET.get("name")
+        game_name, div_name = game.split()
+        checkbox = list(request.GET.get("data"))
+        com_add = request.GET.get("com").split("\n")
+        com_del = request.GET.get("del").split("\n")
+
+        # запись счёта
+        file = open(f"{game}/{game}_счёт_1.txt", "w", encoding="utf-8")
+        file.write(" ".join(checkbox))
+        file.close()
+
+
+        # получение пар 1ого тура
+        file = open(f"{game}/{game}_тур1.txt", "r", encoding="utf-8")
+        file_list = []
+        i = 0
+        for line in file.readlines():
+            if line.count("КОМАНДЫ") or line.count("---------------") or line.count(" ") > 40 or line.strip() in com_del:
+                file_list.append(line)
+            else:
+                new_line = line.replace("\n", "")
+                l1 = new_line[:45]
+                new_line = l1 + " " * 20 + checkbox[i] + "\n"
+                file_list.append(new_line)
+                i += 1
+        file.close()
+
+        # заполнение 1ого тура со счётом
         file = open(f"{game}/{game}_тур1.txt", "w", encoding="utf-8")
         for el in file_list:
             file.write(el)
@@ -3810,14 +3054,15 @@ def save_tour_1(request):
         com_dict = {}
         for com in commands_file.readlines():
             com_dict[com.replace("\n", "")] = 0
-
         com_dict["Пустышка"] = 0
+
         # count win
         for el in file_list[1:]:
             if el.count("-") < 5:
                 com = el[:45].strip()
                 score = el[45:].strip()
-                com_dict[com] += int(score)
+                if com != "Пустышка":
+                    com_dict[com] += int(score)
 
         # save results from 1 tour
         res = open(f"{game}/результат_1_{game}.txt", "w", encoding="utf-8")
@@ -3854,18 +3099,10 @@ def save_tour_1(request):
 
         commands_dict["Пустышка"] = []
 
+        # добавление команд
         add_com_file = open(f"{game}/{game}_1_доб.txt", "w", encoding="utf-8")
 
         if com_add[0] != "":
-            # for c in com_add:
-            #     if list(c).count(" ") < 3:
-            #         res.write(f"{c}: 0\n")
-            #         com_file.write(f"\n{c}")
-            #         commands_dict[c] = []
-            #         add_com_file.write(c + "\n")
-
-            # ADD NEW
-
             res = open(f"{game}/результат_1_{game}.txt", "a", encoding="utf-8")
             res.write("\n")
             com_file_list = []
@@ -4042,1563 +3279,130 @@ def save_tour_1(request):
         data = {"message": "ok"}
         return JsonResponse(data)
 
-
-def save_tour_2(request):
-    if request.method == 'GET':
-        checkbox = list(request.GET.get("data"))
-        game = request.GET.get("name")
-        game_name, div_name = game.split()
-        com_add = request.GET.get("com").split("\n")
-        com_del = request.GET.get("del").split("\n")
-
-        file = open(f"{game}/{game}_счёт_2.txt", "w", encoding="utf-8")
-        file.write(" ".join(checkbox))
-        file.close()
-        file = open(f"{game}/{game}_тур2.txt", "r", encoding="utf-8")
-        file_list = []
-        i = 0
-
-        for line in file.readlines():
-            if line.count("КОМАНДЫ") or line.count("---------------") or line.count(" ") > 40:
-                file_list.append(line)
-            else:
-                new_line = line.replace("\n", "")
-                # l1 = new_line[:len(line) // 2]
-                # l2 = new_line[len(line) // 2:].replace("1", "").replace("0", "")
-                l1 = new_line[:45]
-                new_line = l1 + " " * 20 + checkbox[i] + "\n"
-                file_list.append(new_line)
-                i += 1
-
-        file.close()
-
-        file = open(f"{game}/{game}_тур2.txt", "w", encoding="utf-8")
-        for el in file_list:
-            file.write(el)
-        file.close()
-
-        # # init dict with commands
-
-        file_res = open(f"{game}/результат_1_{game}.txt", "r", encoding="utf-8")
-        com_dict = {}
-        for line in file_res.readlines():
-            if line.count(": ") > 0:
-                com_dict[line.split(": ")[0]] = int(line.split(": ")[1])
-
-        com_dict["Пустышка"] = 0
-        # count win
-        for el in file_list[1:]:
-            if el.count("-") < 5:
-                com = el[:45].strip()
-                score = el[45:].strip()
-                com_dict[com] += int(score)
-
-        # save results from 2 tour
-        res = open(f"{game}/результат_2_{game}.txt", "w", encoding="utf-8")
-        for i in range(0, 10):
-            k = 0
-            for pair in com_dict.items():
-                if pair[1] == i and pair[0] != "Пустышка":
-                    res.write(pair[0] + ": " + str(i) + "\n")
-                    k += 1
-            if k % 2 != 0 and i != 0:
-                res.write("Пустышка" + ": " + str(i) + "\n")
-            res.write("\n")
-        res.close()
-
-        # del commands
-        res = open(f"{game}/результат_2_{game}.txt", "r", encoding="utf-8")
-        new_res = []
-
-        for c in res.readlines():
-            if c.split(": ")[0] not in com_del:
-                new_res.append(c)
-        res.close()
-
-        res = open(f"{game}/результат_2_{game}.txt", "w", encoding="utf-8")
-
-        for c in new_res:
-            res.write(f"{c}")
-
-        res.close()
-        # end
-
-        fp = open(f"{game}/пересечение_команд_{game}.json", "r", encoding="utf-8")
-        commands_dict = json.load(fp)
-
-        commands_dict["Пустышка"] = []
-
-        res = open(f"{game}/результат_2_{game}.txt", "a", encoding="utf-8")
-        com_file = open(f"{game}/команды_{game}.txt", "a", encoding="utf-8")
-
-        add_com_file = open(f"{game}/{game}_2_доб.txt", "w", encoding="utf-8")
-
-        if com_add[0] != "":
-            for c in com_add:
-                if list(c).count(" ") < 7:
-                    res.write(f"{c[:len(c)-2]}: {c[len(c)-1:]}\n")
-                    com_file.write(f"\n{c[:len(c)-2]}")
-                    if c[:len(c)-2] not in commands_dict:
-                        commands_dict[c[:len(c)-2]] = []
-                    add_com_file.write(c[:len(c)-2] + "\n")
-
-        with open(f"{game}/пересечение_команд_{game}.json", "w", encoding="utf-8") as fp:
-                s = json.dumps(commands_dict, ensure_ascii=False)
-                fp.write(s)
-
-
-        # new tour
-        file_count = open(f"{game}/{game}_туры.txt", "w", encoding="utf-8")
-        file_count.write("3")
-        file_count.close()
-
-
-
-        if div_name != "МСКЛ" and div_name != "Восток" and div_name != "Запад":
-            # generate shedule (photo)
-            font_ = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 40)
-            font_c = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 35)
-            base_img = Image.open('shedule/base.png')
-            div = Image.open(f'shedule/{div_name}.png').resize((250, 278))
-            Image.Image.paste(base_img, div, (1570, 76), mask=div)
-            game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
-            Image.Image.paste(base_img, game_, (1274, 90), mask=game_)
-            drawer = ImageDraw.Draw(base_img)
-            drawer.text((55, 65), "2 ТУР", font=font_, fill='white')
-            drawer.text((55, 98), "", font=font_, fill='white')
-
-            height = 415
-
-            file = open(f"{game}/{game}_тур2.txt", "r", encoding="utf-8")
-            c = ((len(file.readlines()) - 2) // 3)
-            count_photo = 0
-            while c > 0:
-                count_photo += 1
-                c -= 5
-
-            file.seek(0)
-            other = 0
-            for line in file.readlines():
-                if line.count("----------------------------------") > 0:
-                    other += 1
-            file.seek(0)
-            file.seek(0)
-            file.readline()
-            file.readline()
-
-            base_img.save(f'{game}/shedule_2.png', quality=100)
-
-            for i in range(1, count_photo + 1):
-                base_img_copy = Image.open(f'{game}/shedule_2.png')
-                drawer = ImageDraw.Draw(base_img_copy)
-                for _ in range(5):
-                    line = file.readline()
-                    team_1 = line[:45].strip()
-                    total_1 = line[45:].strip()
-                    line = file.readline()
-                    team_2 = line[:45].strip()
-                    total_2 = line[45:].strip()
-                    file.readline()
-                    drawer.text((120, height), team_1, font=font_c, fill='white')
-                    drawer.text((1180, height), team_2, font=font_c, fill='white')
-                    drawer.text((820, height), total_1, font=font_c, fill='white')
-                    drawer.text((1085, height), total_2, font=font_c, fill='white')
-                    height += 134
-                base_img_copy.save(f'{game}/shedule_2_{i}.png', quality=100)
-                height = 415
-            # ------ end ------
-
-        data = {"message": "ok"}
-        return JsonResponse(data)
-
-
-def save_tour_3(request):
-    if request.method == 'GET':
-        checkbox = list(request.GET.get("data"))
-        game = request.GET.get("name")
-        com_del = request.GET.get("del").split("\n")
-        game_name, div_name = game.split()
-        file = open(f"{game}/{game}_счёт_3.txt", "w", encoding="utf-8")
-        file.write(" ".join(checkbox))
-        file.close()
-        file = open(f"{game}/{game}_тур3.txt", "r", encoding="utf-8")
-        file_list = []
-        i = 0
-
-        for line in file.readlines():
-            if line.count("КОМАНДЫ") or line.count("---------------") or line.count(" ") > 40:
-                file_list.append(line)
-            else:
-                new_line = line.replace("\n", "")
-                # l1 = new_line[:len(line) // 2]
-                # l2 = new_line[len(line) // 2:].replace("1", "").replace("0", "")
-                l1 = new_line[:45]
-                new_line = l1 + " " * 20 + checkbox[i] + "\n"
-                file_list.append(new_line)
-                i += 1
-
-        file.close()
-
-        file = open(f"{game}/{game}_тур3.txt", "w", encoding="utf-8")
-        for el in file_list:
-            file.write(el)
-        file.close()
-
-        # init dict with commands
-
-        file_res = open(f"{game}/результат_2_{game}.txt", "r", encoding="utf-8")
-        com_dict = {}
-        for line in file_res.readlines():
-            if line.count(": ") > 0:
-                com_dict[line.split(": ")[0]] = int(line.split(": ")[1])
-
-        # count win
-        for el in file_list[1:]:
-            if el.count("-") < 5:
-                com = el[:45].strip()
-                score = el[45:].strip()
-                if com != "Пустышка":
-                    com_dict[com] += int(score)
-
-        # save results from 3 tour
-        res = open(f"{game}/результат_3_{game}.txt", "w", encoding="utf-8")
-        for i in range(0, 10):
-            k = 0
-            for pair in com_dict.items():
-                if pair[1] == i and pair[0] != "Пустышка":
-                    res.write(pair[0] + ": " + str(i) + "\n")
-                    k += 1
-            if k % 2 != 0 and i != 0:
-                res.write("Пустышка" + ": " + str(i) + "\n")
-            res.write("\n")
-        res.close()
-
-        # del commands
-        res = open(f"{game}/результат_3_{game}.txt", "r", encoding="utf-8")
-        new_res = []
-
-        for c in res.readlines():
-            if c.split(": ")[0] not in com_del:
-                new_res.append(c)
-        res.close()
-
-        res = open(f"{game}/результат_3_{game}.txt", "w", encoding="utf-8")
-
-        for c in new_res:
-            res.write(f"{c}")
-
-        res.close()
-        # end
-
-        fp = open(f"{game}/пересечение_команд_{game}.json", "r", encoding="utf-8")
-        commands_dict = json.load(fp)
-
-        commands_dict["Пустышка"] = []
-
-        res = open(f"{game}/результат_3_{game}.txt", "a", encoding="utf-8")
-        com_file = open(f"{game}/команды_{game}.txt", "a", encoding="utf-8")
-        com_add = request.GET.get("com").split("\n")
-
-        add_com_file = open(f"{game}/{game}_3_доб.txt", "w", encoding="utf-8")
-
-        if com_add[0] != "":
-            for c in com_add:
-                if list(c).count(" ") < 7:
-                    res.write(f"{c[:len(c) - 2]}: {c[len(c) - 1:]}\n")
-                    com_file.write(f"\n{c[:len(c) - 2]}")
-                    if c[:len(c) - 2] not in commands_dict:
-                        commands_dict[c[:len(c) - 2]] = []
-                    add_com_file.write(c[:len(c) - 2] + "\n")
-
-
-        with open(f"{game}/пересечение_команд_{game}.json", "w", encoding="utf-8") as fp:
-                s = json.dumps(commands_dict, ensure_ascii=False)
-                fp.write(s)
-
-
-        # new tour
-        file_count = open(f"{game}/{game}_туры.txt", "w", encoding="utf-8")
-        file_count.write("4")
-        file_count.close()
-
-        if div_name != "МСКЛ" and div_name != "Восток" and div_name != "Запад":
-            # generate shedule (photo)
-            font_ = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 40)
-            font_c = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 35)
-            base_img = Image.open('shedule/base.png')
-            div = Image.open(f'shedule/{div_name}.png').resize((250, 278))
-            Image.Image.paste(base_img, div, (1570, 76), mask=div)
-            game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
-            Image.Image.paste(base_img, game_, (1274, 90), mask=game_)
-            drawer = ImageDraw.Draw(base_img)
-            drawer.text((55, 65), "3 ТУР", font=font_, fill='white')
-            drawer.text((55, 98), "", font=font_, fill='white')
-
-            height = 415
-
-            file = open(f"{game}/{game}_тур3.txt", "r", encoding="utf-8")
-            c = ((len(file.readlines()) - 2) // 3)
-            count_photo = 0
-            while c > 0:
-                count_photo += 1
-                c -= 5
-
-            file.seek(0)
-            other = 0
-            for line in file.readlines():
-                if line.count("----------------------------------") > 0:
-                    other += 1
-            file.seek(0)
-            file.seek(0)
-            file.readline()
-            file.readline()
-
-            base_img.save(f'{game}/shedule_3.png', quality=100)
-
-            for i in range(1, count_photo + 1):
-                base_img_copy = Image.open(f'{game}/shedule_3.png')
-                drawer = ImageDraw.Draw(base_img_copy)
-                for _ in range(5):
-                    line = file.readline()
-                    team_1 = line[:45].strip()
-                    total_1 = line[45:].strip()
-                    line = file.readline()
-                    team_2 = line[:45].strip()
-                    total_2 = line[45:].strip()
-                    file.readline()
-                    drawer.text((120, height), team_1, font=font_c, fill='white')
-                    drawer.text((1180, height), team_2, font=font_c, fill='white')
-                    drawer.text((820, height), total_1, font=font_c, fill='white')
-                    drawer.text((1085, height), total_2, font=font_c, fill='white')
-                    height += 134
-                base_img_copy.save(f'{game}/shedule_3_{i}.png', quality=100)
-                height = 415
-            # ------ end ------
-
-
-        data = {"message": "ok"}
-        return JsonResponse(data)
-
-
-def save_tour_4(request):
-    if request.method == 'GET':
-        checkbox = list(request.GET.get("data"))
-        game = request.GET.get("name")
-        game_name, div_name = game.split()
-        com_del = request.GET.get("del").split("\n")
-        file = open(f"{game}/{game}_счёт_4.txt", "w", encoding="utf-8")
-        file.write(" ".join(checkbox))
-        file.close()
-        file = open(f"{game}/{game}_тур4.txt", "r", encoding="utf-8")
-        file_list = []
-        i = 0
-
-
-        for line in file.readlines():
-            if line.count("КОМАНДЫ") or line.count("---------------") or line.count(" ") > 40:
-                file_list.append(line)
-            else:
-                new_line = line.replace("\n", "")
-                # l1 = new_line[:len(line) // 2]
-                # l2 = new_line[len(line) // 2:].replace("1", "").replace("0", "")
-                l1 = new_line[:45]
-                new_line = l1 + " " * 20 + checkbox[i] + "\n"
-                file_list.append(new_line)
-                i += 1
-
-        file.close()
-
-        file = open(f"{game}/{game}_тур4.txt", "w", encoding="utf-8")
-        for el in file_list:
-            file.write(el)
-        file.close()
-
-        # init dict with commands
-
-        file_res = open(f"{game}/результат_3_{game}.txt", "r", encoding="utf-8")
-        com_dict = {}
-        for line in file_res.readlines():
-            if line.count(": ") > 0:
-                com_dict[line.split(": ")[0]] = int(line.split(": ")[1])
-
-        # count win
-        for el in file_list[1:]:
-            if el.count("-") < 5:
-                com = el[:45].strip()
-                score = el[45:].strip()
-                if com != "Пустышка":
-                    com_dict[com] += int(score)
-
-        # save results from 3 tour
-        res = open(f"{game}/результат_4_{game}.txt", "w", encoding="utf-8")
-        for i in range(0, 10):
-            k = 0
-            for pair in com_dict.items():
-                if pair[1] == i and pair[0] != "Пустышка":
-                    res.write(pair[0] + ": " + str(i) + "\n")
-                    k += 1
-            if k % 2 != 0 and i != 0:
-                res.write("Пустышка" + ": " + str(i) + "\n")
-            res.write("\n")
-        res.close()
-
-        # del commands
-        res = open(f"{game}/результат_4_{game}.txt", "r", encoding="utf-8")
-        new_res = []
-
-        for c in res.readlines():
-            if c.split(": ")[0] not in com_del:
-                new_res.append(c)
-        res.close()
-
-        res = open(f"{game}/результат_4_{game}.txt", "w", encoding="utf-8")
-
-        for c in new_res:
-            res.write(f"{c}")
-
-        res.close()
-        # end
-
-
-
-        fp = open(f"{game}/пересечение_команд_{game}.json", "r", encoding="utf-8")
-        commands_dict = json.load(fp)
-
-        commands_dict["Пустышка"] = []
-
-        res = open(f"{game}/результат_4_{game}.txt", "a", encoding="utf-8")
-        com_file = open(f"{game}/команды_{game}.txt", "a", encoding="utf-8")
-        com_add = request.GET.get("com").split("\n")
-
-        add_com_file = open(f"{game}/{game}_4_доб.txt", "w", encoding="utf-8")
-
-        if com_add[0] != "":
-            for c in com_add:
-                if list(c).count(" ") < 7:
-                    res.write(f"{c[:len(c) - 2]}: {c[len(c) - 1:]}\n")
-                    com_file.write(f"\n{c[:len(c) - 2]}")
-                    if c[:len(c) - 2] not in commands_dict:
-                        commands_dict[c[:len(c) - 2]] = []
-                    add_com_file.write(c[:len(c) - 2] + "\n")
-
-        with open(f"{game}/пересечение_команд_{game}.json", "w", encoding="utf-8") as fp:
-                s = json.dumps(commands_dict, ensure_ascii=False)
-                fp.write(s)
-
-
-        # new tour
-        file_count = open(f"{game}/{game}_туры.txt", "w", encoding="utf-8")
-        file_count.write("5")
-        file_count.close()
-
-        if div_name != "МСКЛ" and div_name != "Восток" and div_name != "Запад":
-            # generate shedule (photo)
-            font_ = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 40)
-            font_c = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 35)
-            base_img = Image.open('shedule/base.png')
-            div = Image.open(f'shedule/{div_name}.png').resize((250, 278))
-            Image.Image.paste(base_img, div, (1570, 76), mask=div)
-            game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
-            Image.Image.paste(base_img, game_, (1274, 90), mask=game_)
-            drawer = ImageDraw.Draw(base_img)
-            tour_ = 1
-            drawer.text((55, 65), "4 ТУР", font=font_, fill='white')
-            drawer.text((55, 98), "", font=font_, fill='white')
-
-            height = 415
-
-            file = open(f"{game}/{game}_тур4.txt", "r", encoding="utf-8")
-            c = ((len(file.readlines()) - 2) // 3)
-            count_photo = 0
-            while c > 0:
-                count_photo += 1
-                c -= 5
-
-            file.seek(0)
-            other = 0
-            for line in file.readlines():
-                if line.count("----------------------------------") > 0:
-                    other += 1
-            file.seek(0)
-            file.seek(0)
-            file.readline()
-            file.readline()
-
-            base_img.save(f'{game}/shedule_4.png', quality=100)
-
-            for i in range(1, count_photo + 1):
-                base_img_copy = Image.open(f'{game}/shedule_4.png')
-                drawer = ImageDraw.Draw(base_img_copy)
-                for _ in range(5):
-                    line = file.readline()
-                    team_1 = line[:45].strip()
-                    total_1 = line[45:].strip()
-                    line = file.readline()
-                    team_2 = line[:45].strip()
-                    total_2 = line[45:].strip()
-                    file.readline()
-                    drawer.text((120, height), team_1, font=font_c, fill='white')
-                    drawer.text((1180, height), team_2, font=font_c, fill='white')
-                    drawer.text((820, height), total_1, font=font_c, fill='white')
-                    drawer.text((1085, height), total_2, font=font_c, fill='white')
-                    height += 134
-                base_img_copy.save(f'{game}/shedule_4_{i}.png', quality=100)
-                height = 415
-            # ------ end ------
-
-
-        data = {"message": "ok"}
-        return JsonResponse(data)
-
-
-def save_tour_5(request):
-    if request.method == 'GET':
-        checkbox = list(request.GET.get("data"))
-        game = request.GET.get("name")
-        game_name, div_name = game.split()
-        com_del = request.GET.get("del").split("\n")
-        file = open(f"{game}/{game}_счёт_5.txt", "w", encoding="utf-8")
-        file.write(" ".join(checkbox))
-        file.close()
-        file = open(f"{game}/{game}_тур5.txt", "r", encoding="utf-8")
-        file_list = []
-        i = 0
-
-
-        for line in file.readlines():
-            if line.count("КОМАНДЫ") or line.count("---------------") or line.count(" ") > 40:
-                file_list.append(line)
-            else:
-                new_line = line.replace("\n", "")
-                # l1 = new_line[:len(line) // 2]
-                # l2 = new_line[len(line) // 2:].replace("1", "").replace("0", "")
-                l1 = new_line[:45]
-                new_line = l1 + " " * 20 + checkbox[i] + "\n"
-                file_list.append(new_line)
-                i += 1
-
-        file.close()
-
-        file = open(f"{game}/{game}_тур5.txt", "w", encoding="utf-8")
-        for el in file_list:
-            file.write(el)
-        file.close()
-
-        # init dict with commands
-
-        file_res = open(f"{game}/результат_4_{game}.txt", "r", encoding="utf-8")
-        com_dict = {}
-        for line in file_res.readlines():
-            if line.count(": ") > 0:
-                com_dict[line.split(": ")[0]] = int(line.split(": ")[1])
-
-        # count win
-        for el in file_list[1:]:
-            if el.count("-") < 5:
-                com = el[:45].strip()
-                score = el[45:].strip()
-                if com != "Пустышка":
-                    com_dict[com] += int(score)
-
-        # save results from 3 tour
-        res = open(f"{game}/результат_5_{game}.txt", "w", encoding="utf-8")
-        for i in range(0, 10):
-            k = 0
-            for pair in com_dict.items():
-                if pair[1] == i and pair[0] != "Пустышка":
-                    res.write(pair[0] + ": " + str(i) + "\n")
-                    k += 1
-            if k % 2 != 0 and i != 0:
-                res.write("Пустышка" + ": " + str(i) + "\n")
-            res.write("\n")
-        res.close()
-
-        # del commands
-        res = open(f"{game}/результат_5_{game}.txt", "r", encoding="utf-8")
-        new_res = []
-
-        for c in res.readlines():
-            if c.split(": ")[0] not in com_del:
-                new_res.append(c)
-        res.close()
-
-        res = open(f"{game}/результат_5_{game}.txt", "w", encoding="utf-8")
-
-        for c in new_res:
-            res.write(f"{c}")
-
-        res.close()
-        # end
-
-        fp = open(f"{game}/пересечение_команд_{game}.json", "r", encoding="utf-8")
-        commands_dict = json.load(fp)
-
-        commands_dict["Пустышка"] = []
-
-        res = open(f"{game}/результат_5_{game}.txt", "a", encoding="utf-8")
-        com_file = open(f"{game}/команды_{game}.txt", "a", encoding="utf-8")
-        com_add = request.GET.get("com").split("\n")
-
-        print(com_add)
-        add_com_file = open(f"{game}/{game}_5_доб.txt", "w", encoding="utf-8")
-
-        if com_add[0] != "":
-            for c in com_add:
-                if list(c).count(" ") < 7:
-                    res.write(f"{c[:len(c) - 2]}: {c[len(c) - 1:]}\n")
-                    com_file.write(f"\n{c[:len(c) - 2]}")
-                    if c[:len(c) - 2] not in commands_dict:
-                        commands_dict[c[:len(c) - 2]] = []
-                    add_com_file.write(c[:len(c) - 2] + "\n")
-
-        with open(f"{game}/пересечение_команд_{game}.json", "w", encoding="utf-8") as fp:
-                s = json.dumps(commands_dict, ensure_ascii=False)
-                fp.write(s)
-
-
-        # new tour
-        file_count = open(f"{game}/{game}_туры.txt", "w", encoding="utf-8")
-        file_count.write("6")
-        file_count.close()
-
-        if div_name != "МСКЛ" and div_name != "Восток" and div_name != "Запад":
-            # generate shedule (photo)
-            font_ = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 40)
-            font_c = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 35)
-            base_img = Image.open('shedule/base.png')
-            div = Image.open(f'shedule/{div_name}.png').resize((250, 278))
-            Image.Image.paste(base_img, div, (1570, 76), mask=div)
-            game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
-            Image.Image.paste(base_img, game_, (1274, 90), mask=game_)
-            drawer = ImageDraw.Draw(base_img)
-            drawer.text((55, 65), "3 ТУР", font=font_, fill='white')
-            drawer.text((55, 98), "", font=font_, fill='white')
-
-            height = 415
-
-            file = open(f"{game}/{game}_тур5.txt", "r", encoding="utf-8")
-            c = ((len(file.readlines()) - 2) // 3)
-            count_photo = 0
-            while c > 0:
-                count_photo += 1
-                c -= 5
-
-            file.seek(0)
-            other = 0
-            for line in file.readlines():
-                if line.count("----------------------------------") > 0:
-                    other += 1
-            file.seek(0)
-            file.seek(0)
-            file.readline()
-            file.readline()
-
-            base_img.save(f'{game}/shedule_5.png', quality=100)
-
-            for i in range(1, count_photo + 1):
-                base_img_copy = Image.open(f'{game}/shedule_5.png')
-                drawer = ImageDraw.Draw(base_img_copy)
-                for _ in range(5):
-                    line = file.readline()
-                    team_1 = line[:45].strip()
-                    total_1 = line[45:].strip()
-                    line = file.readline()
-                    team_2 = line[:45].strip()
-                    total_2 = line[45:].strip()
-                    file.readline()
-                    drawer.text((120, height), team_1, font=font_c, fill='white')
-                    drawer.text((1180, height), team_2, font=font_c, fill='white')
-                    drawer.text((820, height), total_1, font=font_c, fill='white')
-                    drawer.text((1085, height), total_2, font=font_c, fill='white')
-                    height += 134
-                base_img_copy.save(f'{game}/shedule_5_{i}.png', quality=100)
-                height = 415
-            # ------ end ------
-
-
-        data = {"message": "ok"}
-        return JsonResponse(data)
-
-
-def save_tour_6(request):
-    if request.method == 'GET':
-        checkbox = list(request.GET.get("data"))
-        game = request.GET.get("name")
-        com_del = request.GET.get("del").split("\n")
-        game_name, div_name = game.split()
-        file = open(f"{game}/{game}_счёт_6.txt", "w", encoding="utf-8")
-        file.write(" ".join(checkbox))
-        file.close()
-        file = open(f"{game}/{game}_тур6.txt", "r", encoding="utf-8")
-        file_list = []
-        i = 0
-
-        for line in file.readlines():
-            if line.count("КОМАНДЫ") or line.count("---------------") or line.count(" ") > 40:
-                file_list.append(line)
-            else:
-                new_line = line.replace("\n", "")
-                # l1 = new_line[:len(line) // 2]
-                # l2 = new_line[len(line) // 2:].replace("1", "").replace("0", "")
-                l1 = new_line[:45]
-                new_line = l1 + " " * 20 + checkbox[i] + "\n"
-                file_list.append(new_line)
-                i += 1
-
-        file.close()
-
-        file = open(f"{game}/{game}_тур6.txt", "w", encoding="utf-8")
-        for el in file_list:
-            file.write(el)
-        file.close()
-
-        # init dict with commands
-
-        file_res = open(f"{game}/результат_5_{game}.txt", "r", encoding="utf-8")
-        com_dict = {}
-        for line in file_res.readlines():
-            if line.count(": ") > 0:
-                com_dict[line.split(": ")[0]] = int(line.split(": ")[1])
-
-        # count win
-        for el in file_list[1:]:
-            if el.count("-") < 5:
-                com = el[:45].strip()
-                score = el[45:].strip()
-                com_dict[com] += int(score)
-
-        # save results from 3 tour
-        res = open(f"{game}/результат_6_{game}.txt", "w", encoding="utf-8")
-        for i in range(0, 10):
-            k = 0
-            for pair in com_dict.items():
-                if pair[1] == i and pair[0] != "Пустышка":
-                    res.write(pair[0] + ": " + str(i) + "\n")
-                    k += 1
-            if k % 2 != 0 and i != 0:
-                res.write("Пустышка" + ": " + str(i) + "\n")
-            res.write("\n")
-        res.close()
-
-        # del commands
-        res = open(f"{game}/результат_6_{game}.txt", "r", encoding="utf-8")
-        new_res = []
-
-        for c in res.readlines():
-            if c.split(": ")[0] not in com_del:
-                new_res.append(c)
-        res.close()
-
-        res = open(f"{game}/результат_6_{game}.txt", "w", encoding="utf-8")
-
-        for c in new_res:
-            res.write(f"{c}")
-
-        res.close()
-        # end
-
-
-        fp = open(f"{game}/пересечение_команд_{game}.json", "r", encoding="utf-8")
-        commands_dict = json.load(fp)
-
-        commands_dict["Пустышка"] = []
-
-        res = open(f"{game}/результат_6_{game}.txt", "a", encoding="utf-8")
-        com_file = open(f"{game}/команды_{game}.txt", "a", encoding="utf-8")
-        com_add = request.GET.get("com").split("\n")
-
-        add_com_file = open(f"{game}/{game}_6_доб.txt", "w", encoding="utf-8")
-
-        if com_add[0] != "":
-            for c in com_add:
-                if list(c).count(" ") < 7:
-                    res.write(f"{c[:len(c) - 2]}: {c[len(c) - 1:]}\n")
-                    com_file.write(f"\n{c[:len(c) - 2]}")
-                    if c[:len(c) - 2] not in commands_dict:
-                        commands_dict[c[:len(c) - 2]] = []
-                    add_com_file.write(c[:len(c) - 2] + "\n")
-
-        with open(f"{game}/пересечение_команд_{game}.json", "w", encoding="utf-8") as fp:
-                s = json.dumps(commands_dict, ensure_ascii=False)
-                fp.write(s)
-
-
-        # new tour
-        file_count = open(f"{game}/{game}_туры.txt", "w", encoding="utf-8")
-        file_count.write("7")
-        file_count.close()
-
-        # generate shedule (photo)
-        font_ = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 40)
-        font_c = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 35)
-        base_img = Image.open('shedule/base.png')
-        div = Image.open(f'shedule/{div_name}.png').resize((250, 278))
-        Image.Image.paste(base_img, div, (1570, 76), mask=div)
+def tour_shedule(game, tour):
+    font_ = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 40)
+    font_c = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 35)
+    game_name = game.split()[0]
+    div_name =  game.split()[1]
+
+    if game.split()[1] in ["МСКЛ", "Восток", "Запад"]:
+        base_img = Image.open('shedule/back1.png')
         game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
-        Image.Image.paste(base_img, game_, (1274, 90), mask=game_)
+        Image.Image.paste(base_img, game_, (1650, 90), mask=game_)
         drawer = ImageDraw.Draw(base_img)
-        tour_ = 1
-        drawer.text((55, 65), "6 ТУР", font=font_, fill='white')
-        drawer.text((55, 98), "", font=font_, fill='white')
 
-        height = 415
+        height = 402
 
-        file = open(f"{game}/{game}_тур6.txt", "r", encoding="utf-8")
-        c = ((len(file.readlines()) - 2) // 3)
-        count_photo = 0
-        while c > 0:
-            count_photo += 1
-            c -= 5
-
-        file.seek(0)
-        other = 0
-        for line in file.readlines():
-            if line.count("----------------------------------") > 0:
-                other += 1
-        file.seek(0)
-        file.seek(0)
-        file.readline()
-        file.readline()
-
-        base_img.save(f'{game}/shedule_6.png', quality=100)
-
-        for i in range(1, count_photo + 1):
-            base_img_copy = Image.open(f'{game}/shedule_6.png')
-            drawer = ImageDraw.Draw(base_img_copy)
-            for _ in range(5):
-                line = file.readline()
-                team_1 = line[:45].strip()
-                total_1 = line[45:].strip()
-                line = file.readline()
-                team_2 = line[:45].strip()
-                total_2 = line[45:].strip()
-                file.readline()
-                drawer.text((120, height), team_1, font=font_c, fill='white')
-                drawer.text((1180, height), team_2, font=font_c, fill='white')
-                drawer.text((820, height), total_1, font=font_c, fill='white')
-                drawer.text((1085, height), total_2, font=font_c, fill='white')
-                height += 134
-            base_img_copy.save(f'{game}/shedule_6_{i}.png', quality=100)
-            height = 415
-        # ------ end ------
-
-
-        data = {"message": "ok"}
-        return JsonResponse(data)
-
-
-def save_tour_7(request):
-    if request.method == 'GET':
-        checkbox = list(request.GET.get("data"))
-        game = request.GET.get("name")
-        com_del = request.GET.get("del").split("\n")
-        game_name, div_name = game.split()
-        file = open(f"{game}/{game}_счёт_7.txt", "w", encoding="utf-8")
-        file.write(" ".join(checkbox))
-        file.close()
-        file = open(f"{game}/{game}_тур7.txt", "r", encoding="utf-8")
+        file = open(f"{game}/{game}_тур{tour}.txt", "r", encoding="utf-8")
         file_list = []
-        i = 0
-
-        for line in file.readlines():
-            if line.count("КОМАНДЫ") or line.count("---------------") or line.count(" ") > 40:
-                file_list.append(line)
+        for line in file.readlines()[2:]:
+            if line.count("----------"):
+                pass
             else:
-                new_line = line.replace("\n", "")
-                # l1 = new_line[:len(line) // 2]
-                # l2 = new_line[len(line) // 2:].replace("1", "").replace("0", "")
-                l1 = new_line[:45]
-                new_line = l1 + " " * 20 + checkbox[i] + "\n"
-                file_list.append(new_line)
-                i += 1
+                file_list.append(line.replace("\n", "").strip())
 
-        file.close()
+        file = open(f"{game}/{game}_тур{tour}.txt", "w", encoding="utf-8")
+        num = 1
+        title = "КОМАНДЫ" + " " * 35 + "|СЧЁТ\n"
+        file.write(title)
+        file.write("-" * len(title) + "\n")
+        for command in file_list:
+            file.write(command.replace("\n", "").ljust(35) + "\n")
+            if num % 2 == 0:
+                file.write("-" * len(title) + "\n")
+            num += 1
 
-        file = open(f"{game}/{game}_тур6.txt", "w", encoding="utf-8")
-        for el in file_list:
-            file.write(el)
-        file.close()
-
-        # init dict with commands
-
-        file_res = open(f"{game}/результат_6_{game}.txt", "r", encoding="utf-8")
-        com_dict = {}
-        for line in file_res.readlines():
-            if line.count(": ") > 0:
-                com_dict[line.split(": ")[0]] = int(line.split(": ")[1])
-
-        # count win
-        for el in file_list[1:]:
-            if el.count("-") < 5:
-                com = el[:45].strip()
-                score = el[45:].strip()
-                com_dict[com] += int(score)
-
-        # save results from 3 tour
-        res = open(f"{game}/результат_7_{game}.txt", "w", encoding="utf-8")
-        for i in range(0, 10):
-            k = 0
-            for pair in com_dict.items():
-                if pair[1] == i and pair[0] != "Пустышка":
-                    res.write(pair[0] + ": " + str(i) + "\n")
-                    k += 1
-            if k % 2 != 0 and i != 0:
-                res.write("Пустышка" + ": " + str(i) + "\n")
-            res.write("\n")
-        res.close()
-
-        # del commands
-        res = open(f"{game}/результат_7_{game}.txt", "r", encoding="utf-8")
-        new_res = []
-
-        for c in res.readlines():
-            if c.split(": ")[0] not in com_del:
-                new_res.append(c)
-        res.close()
-
-        res = open(f"{game}/результат_7_{game}.txt", "w", encoding="utf-8")
-
-        for c in new_res:
-            res.write(f"{c}")
-
-        res.close()
-        # end
-
-
-
-        fp = open(f"{game}/пересечение_команд_{game}.json", "r", encoding="utf-8")
-        commands_dict = json.load(fp)
-
-        commands_dict["Пустышка"] = []
-
-        res = open(f"{game}/результат_7_{game}.txt", "a", encoding="utf-8")
-        com_file = open(f"{game}/команды_{game}.txt", "a", encoding="utf-8")
-        com_add = request.GET.get("com").split("\n")
-
-        add_com_file = open(f"{game}/{game}_7_доб.txt", "w", encoding="utf-8")
-
-        if com_add[0] != "":
-            for c in com_add:
-                if list(c).count(" ") < 7:
-                    res.write(f"{c[:len(c) - 2]}: {c[len(c) - 1:]}\n")
-                    com_file.write(f"\n{c[:len(c) - 2]}")
-                    if c[:len(c) - 2] not in commands_dict:
-                        commands_dict[c[:len(c) - 2]] = []
-                    add_com_file.write(c[:len(c) - 2] + "\n")
-
-        with open(f"{game}/пересечение_команд_{game}.json", "w", encoding="utf-8") as fp:
-                s = json.dumps(commands_dict, ensure_ascii=False)
-                fp.write(s)
-
-
-        # new tour
-        file_count = open(f"{game}/{game}_туры.txt", "w", encoding="utf-8")
-        file_count.write("8")
-        file_count.close()
-
-        # generate shedule (photo)
-        font_ = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 40)
-        font_c = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 35)
-        base_img = Image.open('shedule/base.png')
-        div = Image.open(f'shedule/{div_name}.png').resize((250, 278))
-        Image.Image.paste(base_img, div, (1570, 76), mask=div)
-        game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
-        Image.Image.paste(base_img, game_, (1274, 90), mask=game_)
-        drawer = ImageDraw.Draw(base_img)
-        tour_ = 1
-        drawer.text((55, 65), "7 ТУР", font=font_, fill='white')
-        drawer.text((55, 98), "", font=font_, fill='white')
-
-        height = 415
-
-        file = open(f"{game}/{game}_тур7.txt", "r", encoding="utf-8")
-        c = ((len(file.readlines()) - 2) // 3)
-        count_photo = 0
-        while c > 0:
-            count_photo += 1
-            c -= 5
-
+        file = open(f"{game}/{game}_тур{tour}.txt", "r", encoding="utf-8")
         file.seek(0)
-        other = 0
-        for line in file.readlines():
-            if line.count("----------------------------------") > 0:
-                other += 1
-        file.seek(0)
-        file.seek(0)
-        file.readline()
-        file.readline()
-
-        base_img.save(f'{game}/shedule_7.png', quality=100)
-
-        for i in range(1, count_photo + 1):
-            base_img_copy = Image.open(f'{game}/shedule_7.png')
-            drawer = ImageDraw.Draw(base_img_copy)
-            for _ in range(5):
-                line = file.readline()
-                team_1 = line[:45].strip()
-                total_1 = line[45:].strip()
-                line = file.readline()
-                team_2 = line[:45].strip()
-                total_2 = line[45:].strip()
-                file.readline()
-                drawer.text((120, height), team_1, font=font_c, fill='white')
-                drawer.text((1180, height), team_2, font=font_c, fill='white')
-                drawer.text((820, height), total_1, font=font_c, fill='white')
-                drawer.text((1085, height), total_2, font=font_c, fill='white')
-                height += 134
-            base_img_copy.save(f'{game}/shedule_7_{i}.png', quality=100)
-            height = 415
-        # ------ end ------
-
-
-        data = {"message": "ok"}
-        return JsonResponse(data)
-
-
-def save_tour_8(request):
-    if request.method == 'GET':
-        checkbox = list(request.GET.get("data"))
-        game = request.GET.get("name")
-        com_del = request.GET.get("del").split("\n")
-        game_name, div_name = game.split()
-        file = open(f"{game}/{game}_счёт_8.txt", "w", encoding="utf-8")
-        file.write(" ".join(checkbox))
-        file.close()
-        file = open(f"{game}/{game}_тур8.txt", "r", encoding="utf-8")
-        file_list = []
-        i = 0
-
-        for line in file.readlines():
-            if line.count("КОМАНДЫ") or line.count("---------------") or line.count(" ") > 40:
-                file_list.append(line)
-            else:
-                new_line = line.replace("\n", "")
-                # l1 = new_line[:len(line) // 2]
-                # l2 = new_line[len(line) // 2:].replace("1", "").replace("0", "")
-                l1 = new_line[:45]
-                new_line = l1 + " " * 20 + checkbox[i] + "\n"
-                file_list.append(new_line)
-                i += 1
-
-        file.close()
-
-        file = open(f"{game}/{game}_тур7.txt", "w", encoding="utf-8")
-        for el in file_list:
-            file.write(el)
-        file.close()
-
-        # init dict with commands
-
-        file_res = open(f"{game}/результат_7_{game}.txt", "r", encoding="utf-8")
-        com_dict = {}
-        for line in file_res.readlines():
-            if line.count(": ") > 0:
-                com_dict[line.split(": ")[0]] = int(line.split(": ")[1])
-
-        # count win
-        for el in file_list[1:]:
-            if el.count("-") < 5:
-                com = el[:45].strip()
-                score = el[45:].strip()
-                com_dict[com] += int(score)
-
-        # save results from 3 tour
-        res = open(f"{game}/результат_8_{game}.txt", "w", encoding="utf-8")
-        for i in range(0, 10):
-            k = 0
-            for pair in com_dict.items():
-                if pair[1] == i and pair[0] != "Пустышка":
-                    res.write(pair[0] + ": " + str(i) + "\n")
-                    k += 1
-            if k % 2 != 0 and i != 0:
-                res.write("Пустышка" + ": " + str(i) + "\n")
-            res.write("\n")
-        res.close()
-
-        # del commands
-        res = open(f"{game}/результат_8_{game}.txt", "r", encoding="utf-8")
-        new_res = []
-
-        for c in res.readlines():
-            if c.split(": ")[0] not in com_del:
-                new_res.append(c)
-        res.close()
-
-        res = open(f"{game}/результат_8_{game}.txt", "w", encoding="utf-8")
-
-        for c in new_res:
-            res.write(f"{c}")
-
-        res.close()
-        # end
-
-        fp = open(f"{game}/пересечение_команд_{game}.json", "r", encoding="utf-8")
-        commands_dict = json.load(fp)
-
-        commands_dict["Пустышка"] = []
-
-        res = open(f"{game}/результат_8_{game}.txt", "a", encoding="utf-8")
-        com_file = open(f"{game}/команды_{game}.txt", "a", encoding="utf-8")
-        com_add = request.GET.get("com").split("\n")
-
-        add_com_file = open(f"{game}/{game}_7_доб.txt", "w", encoding="utf-8")
-
-        if com_add[0] != "":
-            for c in com_add:
-                if list(c).count(" ") < 7:
-                    res.write(f"{c[:len(c) - 2]}: {c[len(c) - 1:]}\n")
-                    com_file.write(f"\n{c[:len(c) - 2]}")
-                    if c[:len(c) - 2] not in commands_dict:
-                        commands_dict[c[:len(c) - 2]] = []
-                    add_com_file.write(c[:len(c) - 2] + "\n")
-
-        with open(f"{game}/пересечение_команд_{game}.json", "w", encoding="utf-8") as fp:
-                s = json.dumps(commands_dict, ensure_ascii=False)
-                fp.write(s)
-
-
-        # new tour
-        file_count = open(f"{game}/{game}_туры.txt", "w", encoding="utf-8")
-        file_count.write("9")
-        file_count.close()
-
-        # generate shedule (photo)
-        font_ = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 40)
-        font_c = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 35)
-        base_img = Image.open('shedule/base.png')
-        div = Image.open(f'shedule/{div_name}.png').resize((250, 278))
-        Image.Image.paste(base_img, div, (1570, 76), mask=div)
-        game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
-        Image.Image.paste(base_img, game_, (1274, 90), mask=game_)
-        drawer = ImageDraw.Draw(base_img)
-        tour_ = 1
-        drawer.text((55, 65), "8 ТУР", font=font_, fill='white')
-        drawer.text((55, 98), "", font=font_, fill='white')
-
-        height = 415
-
-        file = open(f"{game}/{game}_тур8.txt", "r", encoding="utf-8")
-        c = ((len(file.readlines()) - 2) // 3)
-        count_photo = 0
-        while c > 0:
-            count_photo += 1
-            c -= 5
-
-        file.seek(0)
-        other = 0
-        for line in file.readlines():
-            if line.count("----------------------------------") > 0:
-                other += 1
-        file.seek(0)
-        file.seek(0)
-        file.readline()
-        file.readline()
-
-        base_img.save(f'{game}/shedule_8.png', quality=100)
-
-        for i in range(1, count_photo + 1):
-            base_img_copy = Image.open(f'{game}/shedule_8.png')
-            drawer = ImageDraw.Draw(base_img_copy)
-            for _ in range(5):
-                line = file.readline()
-                team_1 = line[:45].strip()
-                total_1 = line[45:].strip()
-                line = file.readline()
-                team_2 = line[:45].strip()
-                total_2 = line[45:].strip()
-                file.readline()
-                drawer.text((120, height), team_1, font=font_c, fill='white')
-                drawer.text((1180, height), team_2, font=font_c, fill='white')
-                drawer.text((820, height), total_1, font=font_c, fill='white')
-                drawer.text((1085, height), total_2, font=font_c, fill='white')
-                height += 134
-            base_img_copy.save(f'{game}/shedule_8_{i}.png', quality=100)
-            height = 415
-        # ------ end ------
-
-
-        data = {"message": "ok"}
-        return JsonResponse(data)
-
-
-def new_files(request):
-    if request.method == 'GET':
-        name = request.GET.get("name")
-
-        if not os.path.exists(name):
-            os.mkdir(name)
-            file = open(f"{name}/{name}_туры.txt", "w", encoding="utf-8")
-            file.write("1")
-            file.close()
-            for i in range(1, 14):
-                file = open(f"{name}/{name}_тур{i}.txt", "w", encoding="utf-8")
-                file_res = open(f"{name}/результат_{i}_{name}.txt", "w", encoding="utf-8")
-                file.close()
-                file_res.close()
-            with open(f"{name}/пересечение_команд_{name}.json", "w", encoding="utf-8") as fp:
-                commands_dict = {}
-                s = json.dumps(commands_dict, ensure_ascii=False)
-                fp.write(s)
-
-            fp.close()
-        data = {"message": "ok"}
-        return JsonResponse(data)
-
-
-def del_dir_of_game(request):
-    if request.method == 'GET':
-        name = request.GET.get("name")
-        path = os.path.join(os.path.abspath(os.path.dirname(__file__)), str(os.getcwd()) + "/" + name.replace('"', ''))
-        shutil.rmtree(path)
-        data = {"message": "ok"}
-        return JsonResponse(data)
-
-
-def results(request, game, tour):
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    filename = f'{game}_тур{tour}.xlsx'
-
-    workbook = xlsxwriter.Workbook(BASE_DIR + "/" + game + "/" + filename)
-    worksheet = workbook.add_worksheet()
-
-    file = open(f"{game}/{game}_тур{tour}.txt", "r", encoding="utf-8")
-    file.seek(0)
-
-    i = 0
-    com1 = 1
-    com2 = 1
-    for com in file.readlines()[2:]:
-        if com.count("-") < 7:
-            i += 1
-            if i % 2 != 0:
-                worksheet.write(f'A{com1}', com[:len(com)-2].strip())
-                com1 += 1
-            else:
-                worksheet.write(f'B{com2}', com[:len(com)-2].strip())
-                com2 += 1
-    workbook.close()
-
-
-    filepath = BASE_DIR + "/" + game + "/" + filename
-    path = open(filepath, 'rb')
-    mime_type, _ = mimetypes.guess_type(filepath)
-
-    response = HttpResponse(path, content_type=mime_type)
-
-    response['Content-Disposition'] = "attachment; filename=%s" % filename
-
-    return response
-
-
-def download_shedule(request, game, tour):
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    filename = f'tour_shedule_{tour}.zip'
-
-    file = open(f"{game}/{game}_тур{tour}.txt", "r", encoding="utf-8")
-    file.seek(0)
-    div_name = game.split()[1]
-
-    if div_name == "МСКЛ" or div_name == "Восток" or div_name == "Запад":
         c = ((len(file.readlines()) - 23) // 3)
         count_photo = 0
         while c > 0:
             count_photo += 1
             c -= 11
 
-        with ZipFile(BASE_DIR + "/" + game + "/" + filename, "w") as myzip:
-            myzip.write(f"{game}/tour_shedule_{tour}.png")
-            for i in range(1, count_photo + 1):
-                myzip.write(f"{game}/tour_shedule_{tour}_{i}.png")
+        file.seek(0)
+        other = 0
+        for line in file.readlines():
+            if line.count("----------------------------------") > 0:
+                other += 1
+        file.seek(0)
+        file.seek(0)
+        file.readline()
+        file.readline()
+
+        for _ in range(7):
+            line = file.readline()
+            team_1 = line[:45].strip()
+            line = file.readline()
+            team_2 = line[:45].strip()
+            file.readline()
+            drawer.text((150, height), team_1, font=font_c, fill='white')
+            drawer.text((1180, height), team_2, font=font_c, fill='white')
+            height += 90
+
+        base_img.save(f'{game}/tour_shedule_{tour}.png', quality=100)
+
+        for i in range(1, count_photo + 1):
+            height = 65
+            base_img_copy = Image.open('shedule/back2.png')
+            drawer = ImageDraw.Draw(base_img_copy)
+            for _ in range(11):
+                line = file.readline()
+                team_1 = line[:45].strip()
+                line = file.readline()
+                team_2 = line[:45].strip()
+                file.readline()
+                drawer.text((120, height), team_1, font=font_c, fill='white')
+                drawer.text((1180, height), team_2, font=font_c, fill='white')
+                height += 90.5
+            base_img_copy.save(f'{game}/tour_shedule_{tour}_{i}.png', quality=100)
+            height = 63
+
     else:
+
+        base_img = Image.open('shedule/shedule.png')
+        div = Image.open(f'shedule/{div_name}.png').resize((250, 278))
+        Image.Image.paste(base_img, div, (1570, 76), mask=div)
+        game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
+        Image.Image.paste(base_img, game_, (1274, 90), mask=game_)
+        drawer = ImageDraw.Draw(base_img)
+        tour_ = tour
+        drawer.text((55, 65), str(tour_) + " ТУР", font=font_, fill='white')
+        drawer.text((55, 98), "", font=font_, fill='white')
+
+        height = 415
+
+        file = open(f"{game}/{game}_тур{tour}.txt", "r", encoding="utf-8")
+        file.seek(0)
         c = ((len(file.readlines()) - 2) // 3)
         count_photo = 0
         while c > 0:
             count_photo += 1
             c -= 5
 
+        file.seek(0)
+        other = 0
+        for line in file.readlines():
+            if line.count("----------------------------------") > 0:
+                other += 1
+        file.seek(0)
+        file.seek(0)
+        file.readline()
+        file.readline()
 
-        with ZipFile(BASE_DIR + "/" + game + "/" + filename, "w") as myzip:
-            for i in range(1, count_photo + 1):
-                myzip.write(f"{game}/tour_shedule_{tour}_{i}.png")
+        base_img.save(f'{game}/tour_shedule_{tour}.png', quality=100)
 
-    filepath = BASE_DIR + "/" + game + "/" + filename
-    path = open(filepath, 'rb')
-    mime_type, _ = mimetypes.guess_type(filepath)
-
-    response = HttpResponse(path, content_type=mime_type)
-
-    response['Content-Disposition'] = "attachment; filename=%s" % filename
-
-    return response
-
-
-def download(request, game, tour):
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    filename = f'shedule_{tour}.zip'
-
-    file = open(f"{game}/{game}_тур{tour}.txt", "r", encoding="utf-8")
-    file.seek(0)
-    c = ((len(file.readlines()) - 2) // 3)
-    count_photo = 0
-    while c > 0:
-        count_photo += 1
-        c -= 5
-
-
-    with ZipFile(BASE_DIR + "/" + game + "/" + filename, "w") as myzip:
         for i in range(1, count_photo + 1):
-            myzip.write(f"{game}/shedule_{tour}_{i}.png")
-
-    filepath = BASE_DIR + "/" + game + "/" + filename
-    path = open(filepath, 'rb')
-    mime_type, _ = mimetypes.guess_type(filepath)
-
-    response = HttpResponse(path, content_type=mime_type)
-
-    response['Content-Disposition'] = "attachment; filename=%s" % filename
-
-    return response
-
-
-def save_rating(request):
-    file = open(f"filter_param/{request.user.id}.txt", "r", encoding="utf-8")
-    game, div, tour, sort = file.readline().replace("\n", "").split()
-    file.close()
-
-
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    filename = f'рейтинг_тур{tour}.xlsx'
-
-    filepath = BASE_DIR + "/" + game + " " + div + "/" + filename
-    path = open(filepath, 'rb')
-    mime_type, _ = mimetypes.guess_type(filepath)
-
-    response = HttpResponse(path, content_type=mime_type)
-
-    response['Content-Disposition'] = "attachment; filename=%s" % filename
-
-    return response
-
-
-def reset(request, game, tour):
-    if request.method == 'GET':
-        file_count = open(f"{game}/{game}_туры.txt", "w", encoding="utf-8")
-        file_count.write(tour)
-        file_count.close()
-
-        add_com_list = []
-        for i in range(int(tour), 8):
-            if os.path.exists(f"{game}/{game}_{i}_доб.txt"):
-                add_com_list += [c.replace("\n", "") for c in
-                                 open(f"{game}/{game}_{i}_доб.txt", "r", encoding="utf-8").readlines()]
-        com_list = [c.replace("\n", "") for c in open(f"{game}/команды_{game}.txt", "r", encoding="utf-8").readlines()]
-        com_list_new = []
-
-        for c in com_list:
-            if c not in add_com_list:
-                com_list_new.append(c)
-
-        com_file = open(f"{game}/команды_{game}.txt", "w", encoding="utf-8")
-        for i in range(len(com_list_new)):
-            if i == 0:
-                com_file.write(com_list_new[i])
-            else:
-                com_file.write("\n" + com_list_new[i])
-
-        f = open(f"{game}/{game}_тур{int(tour) + 1}.txt", "w", encoding="utf-8")
-
-
-        fp = open(f"{game}/пересечение_команд_{game}.json", "r", encoding="utf-8")
-        commands_dict = json.load(fp)
-
-        for key in commands_dict.keys():
-            if key != "Пустышка" and len(commands_dict[key]) != 0:
-                commands_dict[key] = [commands_dict[key][0]]
-
-
-        with open(f"{game}/пересечение_команд_{game}.json", "w", encoding="utf-8") as fp:
-            s = json.dumps(commands_dict, ensure_ascii=False)
-            fp.write(s)
-
-
-        for i in range(int(tour) + 1, 10):
-            file = open(f"{game}/{game}_тур{tour}.txt", "w", encoding="utf-8")
-            file.close()
-            file = open(f"{game}/{game}_{tour}_доб.txt", "w", encoding="utf-8")
-            file.close()
-
-        for i in range(int(tour), 10):
-            file = open(f"{game}/результат_{tour}_{game}.txt", "w", encoding="utf-8")
-            file.close()
-            file = open(f"{game}/{game}_счёт_{tour}.txt", "w", encoding="utf-8")
-            file.close()
-
-        data = {"message": "ok"}
-        return JsonResponse(data)
-
-
-def download_rating(request):
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-    file = open(f"filter_param/{request.user.id}.txt", "r", encoding="utf-8")
-    game, div, tour, sort = file.readline().replace("\n", "").split()
-    file.close()
-
-    filename = f'rating_{game} {div}_тур{tour}.png'
-
-    filepath = BASE_DIR + "/" + game + " " + div + "/" + filename
-    path = open(filepath, 'rb')
-    mime_type, _ = mimetypes.guess_type(filepath)
-
-    response = HttpResponse(path, content_type=mime_type)
-
-    response['Content-Disposition'] = "attachment; filename=%s" % filename
-
-    return response
-
-
-
-# def save_tour(request, game, tour):
-#     if request.method == 'GET':
-#         checkbox = list(request.GET.get("data"))
-#         game_name, div_name = game.split()
-#         file = open(f"{game}/{game}_счёт_{tour}.txt", "w", encoding="utf-8")
-#         file.write(" ".join(checkbox))
-#         file.close()
-#         file = open(f"{game}/{game}_тур{tour}.txt", "r", encoding="utf-8")
-#         file_list = []
-#         i = 0
-#
-#         for line in file.readlines():
-#             if line.count("КОМАНДЫ") or line.count("---------------") or line.count(" ") > 40:
-#                 file_list.append(line)
-#             else:
-#                 new_line = line.replace("\n", "")
-#                 l1 = new_line[:45]
-#                 new_line = l1 + " " * 20 + checkbox[i] + "\n"
-#                 file_list.append(new_line)
-#                 i += 1
-#
-#         file.close()
-#
-#         file = open(f"{game}/{game}_тур{int(tour)-1}.txt", "w", encoding="utf-8")
-#         for el in file_list:
-#             file.write(el)
-#         file.close()
-#
-#         # init dict with commands
-#
-#         file_res = open(f"{game}/результат_{int(tour)-1}_{game}.txt", "r", encoding="utf-8")
-#         com_dict = {}
-#         for line in file_res.readlines():
-#             if line.count(": ") > 0:
-#                 com_dict[line.split(": ")[0]] = int(line.split(": ")[1])
-#
-#         # count win
-#         for el in file_list[1:]:
-#             if el.count("-") < 5:
-#                 com = el[:45].strip()
-#                 score = el[45:].strip()
-#                 com_dict[com] += int(score)
-#
-#         # save results from 3 tour
-#         res = open(f"{game}/результат_{tour}_{game}.txt", "w", encoding="utf-8")
-#         for i in range(0, 10):
-#             k = 0
-#             for pair in com_dict.items():
-#                 if pair[1] == i and pair[0] != "Пустышка":
-#                     res.write(pair[0] + ": " + str(i) + "\n")
-#                     k += 1
-#             if k % 2 != 0 and i != 0:
-#                 res.write("Пустышка" + ": " + str(i) + "\n")
-#             res.write("\n")
-#         res.close()
-#
-#
-#
-#         fp = open(f"{game}/пересечение_команд_{game}.json", "r", encoding="utf-8")
-#         commands_dict = json.load(fp)
-#
-#         commands_dict["Пустышка"] = []
-#
-#         res = open(f"{game}/результат_{tour}_{game}.txt", "a", encoding="utf-8")
-#         com_file = open(f"{game}/команды_{game}.txt", "a", encoding="utf-8")
-#         com_add = request.GET.get("com").split("\n")
-#
-#         add_com_file = open(f"{game}/{game}_{int(tour)-1}_доб.txt", "w", encoding="utf-8")
-#
-#         if com_add[0] != "":
-#             for c in com_add:
-#                 if list(c).count(" ") < 7:
-#                     res.write(f"{c[:len(c) - 2]}: {c[len(c) - 1:]}\n")
-#                     com_file.write(f"\n{c[:len(c) - 2]}")
-#                     commands_dict[c[:len(c) - 2]] = []
-#                     add_com_file.write(c[:len(c) - 2] + "\n")
-#
-#         with open(f"{game}/пересечение_команд_{game}.json", "w", encoding="utf-8") as fp:
-#                 s = json.dumps(commands_dict, ensure_ascii=False)
-#                 fp.write(s)
-#
-#
-#         # new tour
-#         file_count = open(f"{game}/{game}_туры.txt", "w", encoding="utf-8")
-#         file_count.write("9")
-#         file_count.close()
-#
-#         # generate shedule (photo)
-#         font_ = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 40)
-#         font_c = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 35)
-#         base_img = Image.open('shedule/base.png')
-#         div = Image.open(f'shedule/{div_name}.png').resize((250, 278))
-#         Image.Image.paste(base_img, div, (1570, 76), mask=div)
-#         game_ = Image.open(f'shedule/{game_name}.png').resize((220, 220))
-#         Image.Image.paste(base_img, game_, (1274, 90), mask=game_)
-#         drawer = ImageDraw.Draw(base_img)
-#         tour_ = int(tour)
-#         drawer.text((55, 65), "8 ТУР", font=font_, fill='white')
-#         drawer.text((55, 98), "", font=font_, fill='white')
-#
-#         height = 415
-#
-#         file = open(f"{game}/{game}_тур{tour}.txt", "r", encoding="utf-8")
-#         c = ((len(file.readlines()) - 2) // 3)
-#         count_photo = 0
-#         while c > 0:
-#             count_photo += 1
-#             c -= 5
-#
-#         file.seek(0)
-#         other = 0
-#         for line in file.readlines():
-#             if line.count("----------------------------------") > 0:
-#                 other += 1
-#         file.seek(0)
-#         file.seek(0)
-#         file.readline()
-#         file.readline()
-#
-#         base_img.save(f'{game}/shedule_{tour}.png', quality=100)
-#
-#         for i in range(1, count_photo + 1):
-#             base_img_copy = Image.open(f'{game}/shedule_{tour}.png')
-#             drawer = ImageDraw.Draw(base_img_copy)
-#             for _ in range(5):
-#                 line = file.readline()
-#                 team_1 = line[:45].strip()
-#                 total_1 = line[45:].strip()
-#                 line = file.readline()
-#                 team_2 = line[:45].strip()
-#                 total_2 = line[45:].strip()
-#                 file.readline()
-#                 drawer.text((120, height), team_1, font=font_c, fill='white')
-#                 drawer.text((1180, height), team_2, font=font_c, fill='white')
-#                 drawer.text((820, height), total_1, font=font_c, fill='white')
-#                 drawer.text((1085, height), total_2, font=font_c, fill='white')
-#                 height += 134
-#             base_img_copy.save(f'{game}/shedule_{tour}_{i}.png', quality=100)
-#             height = 415
-#         # ------ end ------
-#
-#
-#         data = {"message": "ok"}
-#         return JsonResponse(data)
+            base_img_copy = Image.open(f'{game}/tour_shedule_{tour}.png')
+            drawer = ImageDraw.Draw(base_img_copy)
+            for _ in range(5):
+                line = file.readline()
+                team_1 = line[:45].strip()
+                line = file.readline()
+                team_2 = line[:45].strip()
+                file.readline()
+                drawer.text((150, height), team_1, font=font_c, fill='white')
+                drawer.text((1210, height), team_2, font=font_c, fill='white')
+                height += 134
+            base_img_copy.save(f'{game}/tour_shedule_{tour}_{i}.png', quality=100)
+            height = 415
