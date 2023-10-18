@@ -1569,6 +1569,24 @@ def schedule(request, pk):
             if len(com_d[0]) % 2 != 0:
                 com7_7.append([com_d[0][-1], "Пустышка"])
 
+            if len(com_d[1]) % 2 != 0:
+                com7_6.append([com_d[1][-1], "Пустышка"])
+
+            if len(com_d[2]) % 2 != 0:
+                com7_5.append([com_d[2][-1], "Пустышка"])
+
+            if len(com_d[3]) % 2 != 0:
+                com7_4.append([com_d[3][-1], "Пустышка"])
+
+            if len(com_d[4]) % 2 != 0:
+                com7_3.append([com_d[4][-1], "Пустышка"])
+
+            if len(com_d[5]) % 2 != 0:
+                com7_2.append([com_d[5][-1], "Пустышка"])
+                
+            if len(com_d[6]) % 2 != 0:
+                com7_1.append([com_d[6][-1], "Пустышка"])
+
             file = open(f"{posts[0].title}/{posts[0].title}_тур7.txt", "r", encoding="utf-8")
             if len(file.read()) == 0:
                 file = open(f"{posts[0].title}/{posts[0].title}_тур7.txt", "w", encoding="utf-8")
