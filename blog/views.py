@@ -731,6 +731,30 @@ def schedule(request, pk):
             if len(com_d[0]) % 2 != 0:
                 com9_9.append([com_d[0][-1], "Пустышка"])
 
+            if len(com_d[1]) % 2 != 0:
+                com9_8.append([com_d[1][-1], "Пустышка"])
+
+            if len(com_d[2]) % 2 != 0:
+                com9_7.append([com_d[2][-1], "Пустышка"])
+
+            if len(com_d[3]) % 2 != 0:
+                com9_6.append([com_d[3][-1], "Пустышка"])
+
+            if len(com_d[4]) % 2 != 0:
+                com9_5.append([com_d[4][-1], "Пустышка"])
+
+            if len(com_d[5]) % 2 != 0:
+                com9_4.append([com_d[5][-1], "Пустышка"])
+
+            if len(com_d[6]) % 2 != 0:
+                com9_3.append([com_d[6][-1], "Пустышка"])
+
+            if len(com_d[7]) % 2 != 0:
+                com9_2.append([com_d[7][-1], "Пустышка"])
+
+            if len(com_d[8]) % 2 != 0:
+                com9_1.append([com_d[8][-1], "Пустышка"])
+
             file = open(f"{posts[0].title}/{posts[0].title}_тур9.txt", "r", encoding="utf-8")
             if len(file.read()) == 0:
                 file = open(f"{posts[0].title}/{posts[0].title}_тур9.txt", "w", encoding="utf-8")
@@ -1211,6 +1235,27 @@ def schedule(request, pk):
             if len(com_d[0]) % 2 != 0:
                 com8_8.append([com_d[0][-1], "Пустышка"])
 
+            if len(com_d[1]) % 2 != 0:
+                com8_7.append([com_d[1][-1], "Пустышка"])
+
+            if len(com_d[2]) % 2 != 0:
+                com8_6.append([com_d[2][-1], "Пустышка"])
+
+            if len(com_d[3]) % 2 != 0:
+                com8_5.append([com_d[3][-1], "Пустышка"])
+
+            if len(com_d[4]) % 2 != 0:
+                com8_4.append([com_d[4][-1], "Пустышка"])
+
+            if len(com_d[5]) % 2 != 0:
+                com8_3.append([com_d[5][-1], "Пустышка"])
+
+            if len(com_d[6]) % 2 != 0:
+                com8_2.append([com_d[6][-1], "Пустышка"])
+
+            if len(com_d[7]) % 2 != 0:
+                com8_1.append([com_d[7][-1], "Пустышка"])
+
             file = open(f"{posts[0].title}/{posts[0].title}_тур8.txt", "r", encoding="utf-8")
             if len(file.read()) == 0:
                 file = open(f"{posts[0].title}/{posts[0].title}_тур8.txt", "w", encoding="utf-8")
@@ -1583,7 +1628,7 @@ def schedule(request, pk):
 
             if len(com_d[5]) % 2 != 0:
                 com7_2.append([com_d[5][-1], "Пустышка"])
-                
+
             if len(com_d[6]) % 2 != 0:
                 com7_1.append([com_d[6][-1], "Пустышка"])
 
