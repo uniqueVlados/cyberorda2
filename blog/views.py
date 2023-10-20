@@ -2625,17 +2625,13 @@ def schedule(request, pk):
             if len(com_d[1]) % 2 != 0:
                 com2_1.append([com_d[1][-1], "Пустышка"])
 
-            file = open(f"{posts[0].title}/{posts[0].title}_тур2.txt", "r", encoding="utf-8")
-            if len(file.read()) == 0:
-                file.close()
+
                 file = open(f"{posts[0].title}/{posts[0].title}_тур2.txt", "w", encoding="utf-8")
                 num = 1
                 title = "КОМАНДЫ" + " " * 35 + "|СЧЁТ"
                 file.write(title + "\n")
                 file.write("-" * len(title) + "\n")
 
-                shuffle(com2_1)
-                shuffle(com2_2)
                 for com in com2_1:
                     file.write(com[0].replace("\n", "").ljust(37) + "\n")
                     file.write(com[1].replace("\n", "").ljust(37) + "\n")
