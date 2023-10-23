@@ -263,7 +263,6 @@ def schedule(request, pk):
             file.write(title + "\n")
             file.write("-" * len(title) + "\n")
             commands = com_file.readlines()
-            shuffle(commands)
             for command in commands:
                 file.write(command.replace("\n", "").ljust(35) + "\n")
                 commands_dict[command.replace("\n", "").strip()] = []
@@ -2520,8 +2519,7 @@ def schedule(request, pk):
             if len(com_d[2]) % 2 != 0:
                 com3_1.append([com_d[2][-1], "Пустышка"])
 
-            file = open(f"{posts[0].title}/{posts[0].title}_тур3.txt", "r", encoding="utf-8")
-            file.seek(0)
+
             file = open(f"{posts[0].title}/{posts[0].title}_тур3.txt", "w", encoding="utf-8")
             num = 1
             title = "КОМАНДЫ" + " " * 35 + "|СЧЁТ"
@@ -2626,20 +2624,20 @@ def schedule(request, pk):
                 com2_1.append([com_d[1][-1], "Пустышка"])
 
 
-                file = open(f"{posts[0].title}/{posts[0].title}_тур2.txt", "w", encoding="utf-8")
-                num = 1
-                title = "КОМАНДЫ" + " " * 35 + "|СЧЁТ"
-                file.write(title + "\n")
-                file.write("-" * len(title) + "\n")
+            file = open(f"{posts[0].title}/{posts[0].title}_тур2.txt", "w", encoding="utf-8")
+            num = 1
+            title = "КОМАНДЫ" + " " * 35 + "|СЧЁТ"
+            file.write(title + "\n")
+            file.write("-" * len(title) + "\n")
 
-                for com in com2_1:
-                    file.write(com[0].replace("\n", "").ljust(37) + "\n")
-                    file.write(com[1].replace("\n", "").ljust(37) + "\n")
-                    file.write("-" * len(title) + "\n")
-                for com in com2_2:
-                    file.write(com[0].replace("\n", "").ljust(37) + "\n")
-                    file.write(com[1].replace("\n", "").ljust(37) + "\n")
-                    file.write("-" * len(title) + "\n")
+            for com in com2_1:
+                file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                file.write("-" * len(title) + "\n")
+            for com in com2_2:
+                file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                file.write("-" * len(title) + "\n")
 
 
             fp = open(f"{posts[0].title}/пересечение_команд_{posts[0].title}.json", "r", encoding="utf-8")
@@ -2852,6 +2850,8 @@ def save_rating(request):
 
 def reset(request, game, tour):
     if request.method == 'GET':
+        print(tour)
+
         file_count = open(f"{game}/{game}_туры.txt", "w", encoding="utf-8")
         file_count.write(tour)
         file_count.close()
@@ -2891,16 +2891,17 @@ def reset(request, game, tour):
             fp.write(s)
 
 
-        for i in range(int(tour) + 1, 10):
-            file = open(f"{game}/{game}_тур{tour}.txt", "w", encoding="utf-8")
+        # clear files
+
+        for j in range(12, int(tour) - 1, -1):
+            file = open(f"{game}/{game}_тур{j}.txt", "w", encoding="utf-8")
             file.close()
-            file = open(f"{game}/{game}_{tour}_доб.txt", "w", encoding="utf-8")
+            file = open(f"{game}/{game}_{j}_доб.txt", "w", encoding="utf-8")
             file.close()
 
-        for i in range(int(tour), 10):
-            file = open(f"{game}/результат_{tour}_{game}.txt", "w", encoding="utf-8")
+            file = open(f"{game}/результат_{j}_{game}.txt", "w", encoding="utf-8")
             file.close()
-            file = open(f"{game}/{game}_счёт_{tour}.txt", "w", encoding="utf-8")
+            file = open(f"{game}/{game}_счёт_{j}.txt", "w", encoding="utf-8")
             file.close()
 
         data = {"message": "ok"}
@@ -2928,6 +2929,8 @@ def download_rating(request):
 def save_tour(request, game, tour):
     if request.method == 'GET':
         checkbox = list(request.GET.get("data"))
+        com_add = request.GET.get("com").split("\n")
+        com_del = request.GET.get("del").split("\n")
         game_name, div_name = game.split()
         file = open(f"{game}/{game}_счёт_{tour}.txt", "w", encoding="utf-8")
         file.write(" ".join(checkbox))
@@ -2991,18 +2994,61 @@ def save_tour(request, game, tour):
 
         res = open(f"{game}/результат_{tour}_{game}.txt", "a", encoding="utf-8")
         com_file = open(f"{game}/команды_{game}.txt", "a", encoding="utf-8")
-        com_add = request.GET.get("com").split("\n")
 
         add_com_file = open(f"{game}/{game}_{int(tour)-1}_доб.txt", "w", encoding="utf-8")
 
+        # del commands
+        res = open(f"{game}/результат_{tour}_{game}.txt", "r", encoding="utf-8")
+        new_res = []
+
+        for c in res.readlines():
+            if c.split(": ")[0] not in com_del:
+                new_res.append(c)
+        res.close()
+
+        res = open(f"{game}/результат_{tour}_{game}.txt", "w", encoding="utf-8")
+
+        for c in new_res:
+            res.write(f"{c}")
+
+        res.close()
+        # end
+
+        fp = open(f"{game}/пересечение_команд_{game}.json", "r", encoding="utf-8")
+        commands_dict = json.load(fp)
+
+        commands_dict["Пустышка"] = []
+
+        # добавление команд
+        add_com_file = open(f"{game}/{game}_{tour}_доб.txt", "w", encoding="utf-8")
+
         if com_add[0] != "":
-            for c in com_add:
-                if list(c).count(" ") < 7:
-                    res.write(f"{c[:len(c) - 2]}: {c[len(c) - 1:]}\n")
-                    com_file.write(f"\n{c[:len(c) - 2]}")
-                    if c[:len(c) - 2] not in commands_dict:
-                        commands_dict[c[:len(c) - 2]] = []
-                    add_com_file.write(c[:len(c) - 2] + "\n")
+            res = open(f"{game}/результат_{tour}_{game}.txt", "a", encoding="utf-8")
+            res.write("\n")
+            com_file_list = []
+            for i in range(0, len(com_add), 2):
+                com_1 = com_add[i][:len(com_add[i]) - 2].strip()
+                count_1 = int(com_add[i][len(com_add[i]) - 2:].strip())
+                com_2 = com_add[i + 1][:len(com_add[i + 1]) - 2].strip()
+                count_2 = int(com_add[i + 1][len(com_add[i + 1]) - 2:].strip())
+                if com_1 != "Пустышка":
+                    res.write(f"{com_1}: {count_1}\n")
+                    com_file_list.append(com_1)
+                    add_com_file.write(com_1 + "\n")
+                    if com_1 not in commands_dict:
+                        commands_dict[com_1] = [com_2]
+                    else:
+                        commands_dict[com_1].append(com_2)
+                if com_2 != "Пустышка":
+                    res.write(f"{com_2}: {count_2}\n")
+                    com_file_list.append(com_2)
+                    if com_2 not in commands_dict:
+                        commands_dict[com_2] = [com_1]
+                    else:
+                        commands_dict[com_2].append(com_1)
+
+                add_com_file.write(com_2 + "\n")
+            com_file.write("\n".join(com_file_list))
 
         with open(f"{game}/пересечение_команд_{game}.json", "w", encoding="utf-8") as fp:
                 s = json.dumps(commands_dict, ensure_ascii=False)
@@ -3188,6 +3234,7 @@ def save_tour_1(request):
 
                     add_com_file.write(com_2 + "\n")
             com_file.write("\n".join(com_file_list))
+
         with open(f"{game}/пересечение_команд_{game}.json", "w", encoding="utf-8") as fp:
                 s = json.dumps(commands_dict, ensure_ascii=False)
                 fp.write(s)

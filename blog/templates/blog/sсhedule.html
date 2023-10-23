@@ -1002,6 +1002,7 @@
         let arr = ""
         const ch = document.querySelectorAll('input[name="tour_' + tour + '"]');
         com = document.getElementById('com' + tour).value;
+        del = document.getElementById('del_com' + tour).value;
         let count_1 = 0
         let count_0 = 0
         for (const f of ch) {
@@ -1018,7 +1019,7 @@
         url: '/save_tour/' + game + "/" + tour,
         type: 'GET',
         dataType: 'json',
-        data: {'data': arr, 'com': com},
+        data: {'data': arr, 'com': com, 'del': del},
         success: function(response) {
             console.log(response);
         },
