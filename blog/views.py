@@ -2980,9 +2980,10 @@ def save_tour(request, game, tour):
                 if pair[1] == i and pair[0] != "Пустышка":
                     res.write(pair[0] + ": " + str(i) + "\n")
                     k += 1
-            if k % 2 != 0 and i != 0:
-                res.write("Пустышка" + ": " + str(i) + "\n")
-            res.write("\n")
+            # TODO: Пустышка в результатах
+            # if k % 2 != 0 and i != 0:
+            #     res.write("Пустышка" + ": " + str(i) + "\n")
+            # res.write("\n")
         res.close()
 
 
@@ -3178,9 +3179,10 @@ def save_tour_1(request):
                 if pair[1] == i and pair[0] != "Пустышка":
                     res.write(pair[0] + ": " + str(i) + "\n")
                     k += 1
-            if k % 2 != 0 and i != 0:
-                res.write("Пустышка" + ": " + str(i) + "\n")
-            res.write("\n")
+            # TODO: Пустышка в результатах
+            # if k % 2 != 0 and i != 0:
+            #     res.write("Пустышка" + ": " + str(i) + "\n")
+            # res.write("\n")
 
         # del commands
         res = open(f"{game}/результат_1_{game}.txt", "r", encoding="utf-8")
