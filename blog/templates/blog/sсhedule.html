@@ -113,13 +113,13 @@
 <div class="col-md-12">
     <a class="btn btn-primary btn-sm mt-1 mb-1" id="reset_10" onclick="reset('{{ name }}', 10);">Сбросить</a>
     <a class="btn btn-primary btn-sm mt-1 mb-1" id="results_10" onclick="results('{{ name }}', 10);">Выгрузить</a>
-    {% if count_tour == 9 %}
+    {% if count_tour == 10 %}
     <a id="show10" class="btn btn-primary btn-sm mt-1 mb-1" onclick="viewdiv(show10, 10);">Добавить</a>
     <a id="del_show10" class="btn btn-primary btn-sm mt-1 mb-1" onclick="del_viewdiv(del_show10, 10);">Кикнуть</a>
     <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_10" onclick="download_shedule('{{ name }}', 10);">Расписание</a>
     <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_save_10" onclick="save_tour('{{ name }}', 10);">Сохранить</a>
     {% endif %}
-    {% if count_tour != 9 %}
+    {% if count_tour != 10 %}
     <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_10" onclick="download_tour('{{ name }}', 10);">Скачать</a>
     {% endif %}
 </div>
