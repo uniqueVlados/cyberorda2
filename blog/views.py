@@ -48,6 +48,7 @@ class UserPostListView(ListView):
 class PostDetailView(DetailView):
     model = Post
 
+
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
     fields = ['title', 'content']
@@ -55,6 +56,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)
+
 
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
@@ -70,6 +72,7 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
             return True
         return False
 
+
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Post
     success_url = '/'
@@ -79,6 +82,7 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         if self.request.user == post.author:
             return True
         return False
+
 
 def upload_rating(request):
     if request.method == 'POST':
@@ -90,7 +94,6 @@ def upload_rating(request):
             file = open(f"filter_param/{request.user.id}.txt", "r", encoding="utf-8")
             game, div, tour, sort = file.readline().replace("\n", "").split()
             file.close()
-
 
             new_filename = f"{request.user.id} {game} {div} {tour} {sort}.xlsx"
 
@@ -133,6 +136,7 @@ def upload_rating(request):
         }
     return render(request, 'blog/rating.html', context)
 
+
 def home(request):
     current_user = request.user.groups.filter(name='орда').exists()
     context = {
@@ -141,6 +145,7 @@ def home(request):
     }
     return render(request, 'blog/home.html', context)
 
+
 def my_home(request):
     current_user = request.user.groups.filter(name='орда').exists()
     context = {
@@ -148,6 +153,7 @@ def my_home(request):
         'allow': current_user,
     }
     return render(request, 'blog/home.html', context)
+
 
 def rating(request):
     current_user = request.user.groups.filter(name='орда').exists()
@@ -177,7 +183,7 @@ def rating(request):
                 if line != "" and line.find("Пустышка") == -1:
                     com_, res = line.split(": ")
                     res = int(res)
-                    commands.append([0, com_, res, int(tour) - res, int(res/int(tour) * 100)])
+                    commands.append([0, com_, res, int(tour) - res, int(res / int(tour) * 100)])
 
             if sort == "Убывание":
                 commands.sort(key=lambda x: x[-1], reverse=True)
@@ -216,6 +222,7 @@ def rating(request):
 
     return render(request, 'blog/rating.html', context)
 
+
 def reload_filter(request):
     if request.method == 'GET':
         game = request.GET.get("game")
@@ -230,53 +237,10 @@ def reload_filter(request):
         data = {"message": "ok"}
         return JsonResponse(data)
 
+
 def schedule(request, pk):
     posts = Post.objects.filter(id=pk)
-    if os.path.exists(f"{posts[0].title}/команды_{posts[0].title}.txt"):
-        com_file = open(f"{posts[0].title}/команды_{posts[0].title}.txt", "r", encoding="utf-8")
-        if len(com_file.read()) == 0:
-            com_file = open(f"{posts[0].title}/команды_{posts[0].title}.txt", "w", encoding="utf-8")
-            if str(posts[0].content.replace("\n", "")) != "нет":
-                com_file.write(str(posts[0].content.replace("\n", "")))
-            com_file.close()
-    else:
-        if str(posts[0].content.replace("\n", "")) != "нет":
-            com_file = open(f"{posts[0].title}/команды_{posts[0].title}.txt", "w", encoding="utf-8")
-            com_file.write(str(posts[0].content.replace("\n", "")))
-            com_file.close()
-        else:
-            com_file = open(f"{posts[0].title}/команды_{posts[0].title}.txt", "w", encoding="utf-8")
-            com_file.close()
 
-        
-    com_file = open(f"{posts[0].title}/команды_{posts[0].title}.txt", "r", encoding="utf-8")
-    com_file.seek(0)
-    commands_dict = {}
-    if com_file.read().lower() != "нет":
-        com_file = open(f"{posts[0].title}/команды_{posts[0].title}.txt", "r", encoding="utf-8")
-        com_file.seek(0)
-        file = open(f"{posts[0].title}/{posts[0].title}_тур1.txt", "r", encoding="utf-8")
-        if len(file.read()) == 0:
-            file = open(f"{posts[0].title}/{posts[0].title}_тур1.txt", "w", encoding="utf-8")
-            num = 1
-            title = "КОМАНДЫ" + " " * 35 + "|СЧЁТ"
-            file.write(title + "\n")
-            file.write("-" * len(title) + "\n")
-            commands = com_file.readlines()
-            for command in commands:
-                file.write(command.replace("\n", "").ljust(35) + "\n")
-                commands_dict[command.replace("\n", "").strip()] = []
-                if num % 2 == 0:
-                    file.write("-" * len(title) + "\n")
-                num += 1
-            if num % 2 == 0:
-                file.write("Пустышка".ljust(35) + "\n")
-                file.write("-" * len(title) + "\n")
-            file.close()
-    com_file.close()
-    file = open(f"{posts[0].title}/{posts[0].title}_тур1.txt", "r", encoding="utf-8")
-    file_count = open(f"{posts[0].title}/{posts[0].title}_туры.txt", "r", encoding="utf-8")
-    count_tour = file_count.read().strip()
     com_1 = []
     com2_1, com2_2 = [], []
     com3_1, com3_2, com3_3 = [], [], []
@@ -286,16 +250,12 @@ def schedule(request, pk):
     com7_1, com7_2, com7_3, com7_4, com7_5, com7_6, com7_7 = [], [], [], [], [], [], []
     com8_1, com8_2, com8_3, com8_4, com8_5, com8_6, com8_7, com8_8 = [], [], [], [], [], [], [], []
     com9_1, com9_2, com9_3, com9_4, com9_5, com9_6, com9_7, com9_8, com9_9 = [], [], [], [], [], [], [], [], []
+    com10_1, com10_2, com10_3, com10_4, com10_5, com10_6, com10_7, com10_8, com10_9, com10_10 = [], [], [], [], [], [], [], [], [], []
 
-    l = []
-    for line in file.readlines()[2:]:
-        line = line.replace("\n", "")
-        if line.count('----------') > 0:
-            com_1.append(l)
-            l = []
-        else:
-            l.append(line)
 
+    # ЧТЕНИЕ РЕЗУЛЬТАТОВ И ЗАПОЛНЕНИЕ com_d
+    file_count = open(f"{posts[0].title}/{posts[0].title}_туры.txt", "r", encoding="utf-8")
+    count_tour = file_count.read().strip()
     count_tour = int(count_tour)
     if count_tour > 1:
         file_res = open(f"{posts[0].title}/результат_{count_tour - 1}_{posts[0].title}.txt", "r", encoding="utf-8")
@@ -306,6 +266,7 @@ def schedule(request, pk):
     com_d = {}
     for i in range(0, 10):
         com_d[i] = []
+
     for line in file_res.readlines():
         if len(line.replace("\n", "")) != 0:
             com = line.split(": ")[0]
@@ -313,262 +274,358 @@ def schedule(request, pk):
             com_d[win].append(com)
     file_count.close()
     file_res.close()
+    # END
 
     match count_tour:
+        case 10:
+                file_res = open(f"{posts[0].title}/результат_9_{posts[0].title}.txt", "r", encoding="utf-8")
+                file_res.seek(0)
+                com_d = {}
+                for i in range(0, 10):
+                    com_d[i] = []
+                for line in file_res.readlines():
+                    if len(line.replace("\n", "")) != 0:
+                        com = line.split(": ")[0]
+                        win = int(line.split(": ")[1])
+                        com_d[win].append(com)
+
+                fp = open(f"{posts[0].title}/пересечение_команд_{posts[0].title}.json", "r", encoding="utf-8")
+                commands_dict = json.load(fp)
+
+                empty_com_1 = []
+                empty_com_2 = []
+                for i in range(0, len(com_d[9]) - 1, 2):
+                    if com_d[9][i + 1] not in commands_dict[com_d[9][i]]:
+                        com10_1.append([com_d[9][i], com_d[9][i + 1]])
+                    else:
+                        empty_com_1.append(com_d[9][i])
+                        empty_com_2.append(com_d[9][i + 1])
+
+                for i in range(0, len(empty_com_1)):
+                    for c in empty_com_2:
+                        if c not in empty_com_1[i]:
+                            com10_1.append((empty_com_1[i], c))
+                            empty_com_2.remove(c)
+                            break
+
+                empty_com_1 = []
+                empty_com_2 = []
+                for i in range(0, len(com_d[8]) - 1, 2):
+                    if com_d[8][i + 1] not in commands_dict[com_d[8][i]]:
+                        com10_2.append([com_d[8][i], com_d[8][i + 1]])
+                    else:
+                        empty_com_1.append(com_d[8][i])
+                        empty_com_2.append(com_d[8][i + 1])
+
+                for i in range(0, len(empty_com_1)):
+                    for c in empty_com_2:
+                        if c not in empty_com_1[i]:
+                            com10_2.append((empty_com_1[i], c))
+                            empty_com_2.remove(c)
+                            break
+
+                empty_com_1 = []
+                empty_com_2 = []
+                for i in range(0, len(com_d[7]) - 1, 2):
+                    if com_d[7][i + 1] not in commands_dict[com_d[7][i]]:
+                        com10_3.append([com_d[7][i], com_d[7][i + 1]])
+                    else:
+                        empty_com_1.append(com_d[7][i])
+                        empty_com_2.append(com_d[7][i + 1])
+
+                for i in range(0, len(empty_com_1)):
+                    for c in empty_com_2:
+                        if c not in empty_com_1[i]:
+                            com10_3.append((empty_com_1[i], c))
+                            empty_com_2.remove(c)
+                            break
+
+                empty_com_1 = []
+                empty_com_2 = []
+                for i in range(0, len(com_d[6]) - 1, 2):
+                    if com_d[6][i + 1] not in commands_dict[com_d[6][i]]:
+                        com10_4.append([com_d[6][i], com_d[6][i + 1]])
+                    else:
+                        empty_com_1.append(com_d[6][i])
+                        empty_com_2.append(com_d[6][i + 1])
+
+                for i in range(0, len(empty_com_1)):
+                    for c in empty_com_2:
+                        if c not in empty_com_1[i]:
+                            com10_4.append((empty_com_1[i], c))
+                            empty_com_2.remove(c)
+                            break
+
+                empty_com_1 = []
+                empty_com_2 = []
+                for i in range(0, len(com_d[5]) - 1, 2):
+                    if com_d[5][i + 1] not in commands_dict[com_d[5][i]]:
+                        com10_5.append([com_d[5][i], com_d[5][i + 1]])
+                    else:
+                        empty_com_1.append(com_d[5][i])
+                        empty_com_2.append(com_d[5][i + 1])
+
+                for i in range(0, len(empty_com_1)):
+                    for c in empty_com_2:
+                        if c not in empty_com_1[i]:
+                            com10_5.append((empty_com_1[i], c))
+                            empty_com_2.remove(c)
+                            break
+
+                empty_com_1 = []
+                empty_com_2 = []
+                for i in range(0, len(com_d[4]) - 1, 2):
+                    if com_d[4][i + 1] not in commands_dict[com_d[4][i]]:
+                        com10_6.append([com_d[4][i], com_d[4][i + 1]])
+                    else:
+                        empty_com_1.append(com_d[4][i])
+                        empty_com_2.append(com_d[4][i + 1])
+
+                for i in range(0, len(empty_com_1)):
+                    for c in empty_com_2:
+                        if c not in empty_com_1[i]:
+                            com10_6.append((empty_com_1[i], c))
+                            empty_com_2.remove(c)
+                            break
+
+                empty_com_1 = []
+                empty_com_2 = []
+                for i in range(0, len(com_d[3]) - 1, 2):
+                    if com_d[3][i + 1] not in commands_dict[com_d[3][i]]:
+                        com10_7.append([com_d[3][i], com_d[3][i + 1]])
+                    else:
+                        empty_com_1.append(com_d[3][i])
+                        empty_com_2.append(com_d[3][i + 1])
+
+                for i in range(0, len(empty_com_1)):
+                    for c in empty_com_2:
+                        if c not in empty_com_1[i]:
+                            com10_7.append((empty_com_1[i], c))
+                            empty_com_2.remove(c)
+                            break
+
+                empty_com_1 = []
+                empty_com_2 = []
+                for i in range(0, len(com_d[2]) - 1, 2):
+                    if com_d[2][i + 1] not in commands_dict[com_d[2][i]]:
+                        com10_8.append([com_d[2][i], com_d[2][i + 1]])
+                    else:
+                        empty_com_1.append(com_d[2][i])
+                        empty_com_2.append(com_d[2][i + 1])
+
+                for i in range(0, len(empty_com_1)):
+                    for c in empty_com_2:
+                        if c not in empty_com_1[i]:
+                            com10_8.append((empty_com_1[i], c))
+                            empty_com_2.remove(c)
+                            break
+
+                empty_com_1 = []
+                empty_com_2 = []
+                for i in range(0, len(com_d[1]) - 1, 2):
+                    if com_d[1][i + 1] not in commands_dict[com_d[1][i]]:
+                        com10_9.append([com_d[1][i], com_d[1][i + 1]])
+                    else:
+                        empty_com_1.append(com_d[1][i])
+                        empty_com_2.append(com_d[1][i + 1])
+
+                for i in range(0, len(empty_com_1)):
+                    for c in empty_com_2:
+                        if c not in empty_com_1[i]:
+                            com10_9.append((empty_com_1[i], c))
+                            empty_com_2.remove(c)
+                            break
+
+                empty_com_1 = []
+                empty_com_2 = []
+                for i in range(0, len(com_d[0]) - 1, 2):
+                    if com_d[0][i + 1] not in commands_dict[com_d[0][i]]:
+                        com10_10.append([com_d[0][i], com_d[0][i + 1]])
+                    else:
+                        empty_com_1.append(com_d[0][i])
+                        empty_com_2.append(com_d[0][i + 1])
+
+                for i in range(0, len(empty_com_1)):
+                    for c in empty_com_2:
+                        if c not in empty_com_1[i]:
+                            com10_10.append((empty_com_1[i], c))
+                            empty_com_2.remove(c)
+                            break
+
+                if len(com_d[0]) % 2 != 0:
+                    com10_10.append([com_d[0][-1], "Пустышка"])
+
+                if len(com_d[1]) % 2 != 0:
+                    com10_9.append([com_d[1][-1], "Пустышка"])
+
+                if len(com_d[2]) % 2 != 0:
+                    com10_8.append([com_d[2][-1], "Пустышка"])
+
+                if len(com_d[3]) % 2 != 0:
+                    com10_7.append([com_d[3][-1], "Пустышка"])
+
+                if len(com_d[4]) % 2 != 0:
+                    com10_6.append([com_d[4][-1], "Пустышка"])
+
+                if len(com_d[5]) % 2 != 0:
+                    com10_5.append([com_d[5][-1], "Пустышка"])
+
+                if len(com_d[6]) % 2 != 0:
+                    com10_4.append([com_d[6][-1], "Пустышка"])
+
+                if len(com_d[7]) % 2 != 0:
+                    com10_3.append([com_d[7][-1], "Пустышка"])
+
+                if len(com_d[8]) % 2 != 0:
+                    com10_2.append([com_d[8][-1], "Пустышка"])
+
+                if len(com_d[9]) % 2 != 0:
+                    com10_1.append([com_d[9][-1], "Пустышка"])
+
+                file = open(f"{posts[0].title}/{posts[0].title}_тур10.txt", "r", encoding="utf-8")
+                if len(file.read()) == 0:
+                    file = open(f"{posts[0].title}/{posts[0].title}_тур10.txt", "w", encoding="utf-8")
+                    num = 1
+                    title = "КОМАНДЫ" + " " * 35 + "|СЧЁТ"
+                    file.write(title + "\n")
+                    file.write("-" * len(title) + "\n")
+                    for com in com10_1:
+                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                        file.write("-" * len(title) + "\n")
+                    for com in com10_2:
+                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                        file.write("-" * len(title) + "\n")
+                    for com in com10_3:
+                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                        file.write("-" * len(title) + "\n")
+                    for com in com10_4:
+                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                        file.write("-" * len(title) + "\n")
+                    for com in com10_5:
+                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                        file.write("-" * len(title) + "\n")
+                    for com in com10_6:
+                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                        file.write("-" * len(title) + "\n")
+                    for com in com10_7:
+                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                        file.write("-" * len(title) + "\n")
+                    for com in com10_8:
+                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                        file.write("-" * len(title) + "\n")
+                    for com in com10_9:
+                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                        file.write("-" * len(title) + "\n")
+                    for com in com10_10:
+                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                        file.write("-" * len(title) + "\n")
+                    file.close()
+
+                file = open(f"{posts[0].title}/{posts[0].title}_тур10.txt", "r", encoding="utf-8")
+                if len(file.read()) == 0:
+                    file = open(f"{posts[0].title}/{posts[0].title}_тур10.txt", "w", encoding="utf-8")
+                    num = 1
+                    title = "КОМАНДЫ" + " " * 35 + "|СЧЁТ"
+                    file.write(title + "\n")
+                    file.write("-" * len(title) + "\n")
+                    for com in com10_1:
+                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                        file.write("-" * len(title) + "\n")
+                    for com in com10_2:
+                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                        file.write("-" * len(title) + "\n")
+                    for com in com10_3:
+                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                        file.write("-" * len(title) + "\n")
+                    for com in com10_4:
+                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                        file.write("-" * len(title) + "\n")
+                    for com in com10_5:
+                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                        file.write("-" * len(title) + "\n")
+                    for com in com10_6:
+                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                        file.write("-" * len(title) + "\n")
+                    for com in com10_7:
+                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                        file.write("-" * len(title) + "\n")
+                    for com in com10_8:
+                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                        file.write("-" * len(title) + "\n")
+                    for com in com10_9:
+                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                        file.write("-" * len(title) + "\n")
+                    for com in com10_10:
+                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                        file.write("-" * len(title) + "\n")
+                    file.close()
+
+                file_res = open(f"{posts[0].title}/результат_10_{posts[0].title}.txt", "r", encoding="utf-8")
+                file_res.seek(0)
+                com_d = {}
+                for i in range(0, 10):
+                    com_d[i] = []
+                for line in file_res.readlines():
+                    if len(line.replace("\n", "")) != 0:
+                        com = line.split(": ")[0]
+                        win = int(line.split(": ")[1])
+                        com_d[win].append(com)
+
+                fp = open(f"{posts[0].title}/пересечение_команд_{posts[0].title}.json", "r", encoding="utf-8")
+                commands_dict = json.load(fp)
+
+                with open(f"{posts[0].title}/пересечение_команд_{posts[0].title}.json", "w", encoding="utf-8") as fp:
+                    s = json.dumps(commands_dict, ensure_ascii=False)
+                    fp.write(s)
+
+                game = posts[0].title
+                tour_shedule(game, 10)
+
+                return render(request, 'blog/sсhedule.html',
+                              {'title': 'Орда', 'name': posts[0].title, 'count_tour': int(count_tour),
+                               'tour1': com_1,
+                               'tour2_1': com2_1, 'tour2_2': com2_2,
+                               'tour3_1': com3_1, 'tour3_2': com3_2, 'tour3_3': com3_3,
+                               'tour4_1': com4_1, 'tour4_2': com4_2, 'tour4_3': com4_3, 'tour4_4': com4_4,
+                               'tour5_1': com5_1, 'tour5_2': com5_2, 'tour5_3': com5_3, 'tour5_4': com5_4,
+                               'tour5_5': com5_5,
+                               'tour6_1': com6_1, 'tour6_2': com6_2, 'tour6_3': com6_3, 'tour6_4': com6_4,
+                               'tour6_5': com6_5,
+                               'tour6_6': com6_6,
+                               'tour7_1': com7_1, 'tour7_2': com7_2, 'tour7_3': com7_3, 'tour7_4': com7_4,
+                               'tour7_5': com7_5,
+                               'tour7_6': com7_6, 'tour7_7': com7_7,
+                               'tour8_1': com8_1, 'tour8_2': com8_2, 'tour8_3': com8_3, 'tour8_4': com8_4,
+                               'tour8_5': com8_5,
+                               'tour8_6': com8_6, 'tour8_7': com8_7, 'tour8_8': com8_8,
+                               'tour9_1': com9_1, 'tour9_2': com9_2, 'tour9_3': com9_3, 'tour9_4': com9_4,
+                               'tour9_5': com9_5,
+                               'tour9_6': com9_6, 'tour9_7': com9_7, 'tour9_8': com9_8, 'tour9_9': com9_9,
+                               'tour10_1': com10_1, 'tour10_2': com10_2, 'tour10_3': com10_3, 'tour10_4': com10_4,
+                               'tour10_5': com10_5,
+                               'tour10_6': com10_6, 'tour10_7': com10_7, 'tour10_8': com10_8, 'tour10_9': com10_9,
+                               'tour10_10': com10_10})
         case 9:
-            file = open(f"{posts[0].title}/{posts[0].title}_тур2.txt", "r", encoding="utf-8")
-
-            com_2 = []
-            for line in file.readlines():
-                if line.count("-") < 3 and line.count("КОМАНДЫ") == 0:
-                    com_2.append(line)
-
-            for i in range(0, len(com_2) // 2 - 1, 2):
-                com2_1.append([com_2[i], com_2[i + 1]])
-
-            for i in range(len(com_2) // 2, len(com_2) - 1, 2):
-                com2_2.append([com_2[i], com_2[i + 1]])
-            file.close()
-            file_res = open(f"{posts[0].title}/результат_2_{posts[0].title}.txt", "r", encoding="utf-8")
-            file_res.seek(0)
-            com_d = {}
-            for i in range(0, 10):
-                com_d[i] = []
-            for line in file_res.readlines():
-                if len(line.replace("\n", "")) != 0:
-                    com = line.split(": ")[0]
-                    win = int(line.split(": ")[1])
-                    com_d[win].append(com)
-            file_res.close()
-            file_count = open(f"{posts[0].title}/{posts[0].title}_счёт_3.txt", "r", encoding="utf-8")
-            count_list = file_count.read().split()
-            file_count.close()
-            p = 0
-
-            for i in range(0, len(com_d[2]) - 1, 2):
-                com3_1.append([com_d[2][i] + " " + count_list[p], com_d[2][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[1]) - 1, 2):
-                com3_2.append([com_d[1][i] + " " + count_list[p], com_d[1][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[0]) - 1, 2):
-                com3_3.append([com_d[0][i] + " " + count_list[p], com_d[0][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            file_res = open(f"{posts[0].title}/результат_3_{posts[0].title}.txt", "r", encoding="utf-8")
-            file_res.seek(0)
-            com_d = {}
-            for i in range(0, 10):
-                com_d[i] = []
-            for line in file_res.readlines():
-                if len(line.replace("\n", "")) != 0:
-                    com = line.split(": ")[0]
-                    win = int(line.split(": ")[1])
-                    com_d[win].append(com)
-
-            file_res.close()
-            file_count = open(f"{posts[0].title}/{posts[0].title}_счёт_4.txt", "r", encoding="utf-8")
-            count_list = file_count.read().split()
-            p = 0
-
-            for i in range(0, len(com_d[3]) - 1, 2):
-                com4_1.append([com_d[3][i] + " " + count_list[p], com_d[3][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[2]) - 1, 2):
-                com4_2.append([com_d[2][i] + " " + count_list[p], com_d[2][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[1]) - 1, 2):
-                com4_3.append([com_d[1][i] + " " + count_list[p], com_d[1][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[0]) - 1, 2):
-                com4_4.append([com_d[0][i] + " " + count_list[p], com_d[0][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            file_count.close()
-            file_res = open(f"{posts[0].title}/результат_4_{posts[0].title}.txt", "r", encoding="utf-8")
-            file_res.seek(0)
-            com_d = {}
-            for i in range(0, 10):
-                com_d[i] = []
-            for line in file_res.readlines():
-                if len(line.replace("\n", "")) != 0:
-                    com = line.split(": ")[0]
-                    win = int(line.split(": ")[1])
-                    com_d[win].append(com)
-
-            file_res.close()
-            file_res = open(f"{posts[0].title}/результат_4_{posts[0].title}.txt", "r", encoding="utf-8")
-            file_res.seek(0)
-            com_d = {}
-            for i in range(0, 10):
-                com_d[i] = []
-            for line in file_res.readlines():
-                if len(line.replace("\n", "")) != 0:
-                    com = line.split(": ")[0]
-                    win = int(line.split(": ")[1])
-                    com_d[win].append(com)
-
-            file_count = open(f"{posts[0].title}/{posts[0].title}_счёт_5.txt", "r", encoding="utf-8")
-            count_list = file_count.read().split()
-            p = 0
-
-            for i in range(0, len(com_d[4]) - 1, 2):
-                com5_1.append([com_d[4][i] + " " + count_list[p], com_d[4][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[3]) - 1, 2):
-                com5_2.append([com_d[3][i] + " " + count_list[p], com_d[3][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[2]) - 1, 2):
-                com5_3.append([com_d[2][i] + " " + count_list[p], com_d[2][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[1]) - 1, 2):
-                com5_4.append([com_d[1][i] + " " + count_list[p], com_d[1][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[0]) - 1, 2):
-                com5_5.append([com_d[0][i] + " " + count_list[p], com_d[0][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            file_res = open(f"{posts[0].title}/результат_5_{posts[0].title}.txt", "r", encoding="utf-8")
-            file_res.seek(0)
-            com_d = {}
-            for i in range(0, 10):
-                com_d[i] = []
-            for line in file_res.readlines():
-                if len(line.replace("\n", "")) != 0:
-                    com = line.split(": ")[0]
-                    win = int(line.split(": ")[1])
-                    com_d[win].append(com)
-
-            file_count = open(f"{posts[0].title}/{posts[0].title}_счёт_6.txt", "r", encoding="utf-8")
-            count_list = file_count.read().split()
-            p = 0
-
-            for i in range(0, len(com_d[4]) - 1, 2):
-                com6_1.append([com_d[4][i] + " " + count_list[p], com_d[4][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[3]) - 1, 2):
-                com6_2.append([com_d[3][i] + " " + count_list[p], com_d[3][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[2]) - 1, 2):
-                com6_3.append([com_d[2][i] + " " + count_list[p], com_d[2][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[1]) - 1, 2):
-                com6_4.append([com_d[1][i] + " " + count_list[p], com_d[1][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[0]) - 1, 2):
-                com6_5.append([com_d[0][i] + " " + count_list[p], com_d[0][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            p -= 1
-            for i in range(0, len(com_d[0]) - 1, 2):
-                com6_6.append([com_d[0][i] + " " + count_list[p], com_d[0][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            file_res = open(f"{posts[0].title}/результат_6_{posts[0].title}.txt", "r", encoding="utf-8")
-            file_res.seek(0)
-            com_d = {}
-            for i in range(0, 10):
-                com_d[i] = []
-            for line in file_res.readlines():
-                if len(line.replace("\n", "")) != 0:
-                    com = line.split(": ")[0]
-                    win = int(line.split(": ")[1])
-                    com_d[win].append(com)
-
-            file_count = open(f"{posts[0].title}/{posts[0].title}_счёт_7.txt", "r", encoding="utf-8")
-            count_list = file_count.read().split()
-            p = 0
-
-            for i in range(0, len(com_d[4]) - 1, 2):
-                com7_1.append([com_d[4][i] + " " + count_list[p], com_d[4][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[3]) - 1, 2):
-                com7_2.append([com_d[3][i] + " " + count_list[p], com_d[3][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[2]) - 1, 2):
-                com7_3.append([com_d[2][i] + " " + count_list[p], com_d[2][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[1]) - 1, 2):
-                com7_4.append([com_d[1][i] + " " + count_list[p], com_d[1][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[0]) - 1, 2):
-                com7_5.append([com_d[0][i] + " " + count_list[p], com_d[0][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[0]) - 1, 2):
-                com7_6.append([com_d[0][i] + " " + count_list[p], com_d[0][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            p -= 1
-            for i in range(0, len(com_d[0]) - 1, 2):
-                com7_7.append([com_d[0][i] + " " + count_list[p], com_d[0][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            file_res = open(f"{posts[0].title}/результат_7_{posts[0].title}.txt", "r", encoding="utf-8")
-            file_res.seek(0)
-            com_d = {}
-            for i in range(0, 10):
-                com_d[i] = []
-            for line in file_res.readlines():
-                if len(line.replace("\n", "")) != 0:
-                    com = line.split(": ")[0]
-                    win = int(line.split(": ")[1])
-                    com_d[win].append(com)
-
-            file_count = open(f"{posts[0].title}/{posts[0].title}_счёт_8.txt", "r", encoding="utf-8")
-            count_list = file_count.read().split()
-            p = 0
-
-            for i in range(0, len(com_d[7]) - 1, 2):
-                com8_1.append([com_d[7][i] + " " + count_list[p], com_d[7][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[6]) - 1, 2):
-                com8_2.append([com_d[6][i] + " " + count_list[p], com_d[6][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[5]) - 1, 2):
-                com8_3.append([com_d[5][i] + " " + count_list[p], com_d[5][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[4]) - 1, 2):
-                com8_4.append([com_d[4][i] + " " + count_list[p], com_d[4][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[3]) - 1, 2):
-                com8_5.append([com_d[3][i] + " " + count_list[p], com_d[3][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[2]) - 1, 2):
-                com8_6.append([com_d[2][i] + " " + count_list[p], com_d[2][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[1]) - 1, 2):
-                com8_7.append([com_d[1][i] + " " + count_list[p], com_d[1][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            p -= 1
-            for i in range(0, len(com_d[0]) - 1, 2):
-                com8_8.append([com_d[0][i] + " " + count_list[p], com_d[0][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
             file_res = open(f"{posts[0].title}/результат_8_{posts[0].title}.txt", "r", encoding="utf-8")
             file_res.seek(0)
             com_d = {}
@@ -799,7 +856,6 @@ def schedule(request, pk):
                     file.write("-" * len(title) + "\n")
                 file.close()
 
-
             file = open(f"{posts[0].title}/{posts[0].title}_тур9.txt", "r", encoding="utf-8")
             if len(file.read()) == 0:
                 file = open(f"{posts[0].title}/{posts[0].title}_тур9.txt", "w", encoding="utf-8")
@@ -872,220 +928,21 @@ def schedule(request, pk):
                            'tour2_1': com2_1, 'tour2_2': com2_2,
                            'tour3_1': com3_1, 'tour3_2': com3_2, 'tour3_3': com3_3,
                            'tour4_1': com4_1, 'tour4_2': com4_2, 'tour4_3': com4_3, 'tour4_4': com4_4,
-                           'tour5_1': com5_1, 'tour5_2': com5_2, 'tour5_3': com5_3, 'tour5_4': com5_4, 'tour5_5': com5_5,
-                           'tour6_1': com6_1, 'tour6_2': com6_2, 'tour6_3': com6_3, 'tour6_4': com6_4, 'tour6_5': com6_5,
+                           'tour5_1': com5_1, 'tour5_2': com5_2, 'tour5_3': com5_3, 'tour5_4': com5_4,
+                           'tour5_5': com5_5,
+                           'tour6_1': com6_1, 'tour6_2': com6_2, 'tour6_3': com6_3, 'tour6_4': com6_4,
+                           'tour6_5': com6_5,
                            'tour6_6': com6_6,
-                           'tour7_1': com7_1, 'tour7_2': com7_2, 'tour7_3': com7_3, 'tour7_4': com7_4, 'tour7_5': com7_5,
+                           'tour7_1': com7_1, 'tour7_2': com7_2, 'tour7_3': com7_3, 'tour7_4': com7_4,
+                           'tour7_5': com7_5,
                            'tour7_6': com7_6, 'tour7_7': com7_7,
-                           'tour8_1': com8_1, 'tour8_2': com8_2, 'tour8_3': com8_3, 'tour8_4': com8_4, 'tour8_5': com8_5,'tour8_6': com8_6, 'tour8_7': com8_7, 'tour8_8': com8_8,
-                           'tour9_1': com9_1, 'tour9_2': com9_2, 'tour9_3': com9_3, 'tour9_4': com9_4, 'tour9_5': com9_5, 'tour9_6': com9_6, 'tour9_7': com9_7, 'tour9_8': com9_8, 'tour9_9': com9_9})
+                           'tour8_1': com8_1, 'tour8_2': com8_2, 'tour8_3': com8_3, 'tour8_4': com8_4,
+                           'tour8_5': com8_5, 'tour8_6': com8_6, 'tour8_7': com8_7, 'tour8_8': com8_8,
+                           'tour9_1': com9_1, 'tour9_2': com9_2, 'tour9_3': com9_3, 'tour9_4': com9_4,
+                           'tour9_5': com9_5, 'tour9_6': com9_6, 'tour9_7': com9_7, 'tour9_8': com9_8,
+                           'tour9_9': com9_9})
 
         case 8:
-            file = open(f"{posts[0].title}/{posts[0].title}_тур2.txt", "r", encoding="utf-8")
-
-            com_2 = []
-            for line in file.readlines():
-                if line.count("-") < 3 and line.count("КОМАНДЫ") == 0:
-                    com_2.append(line)
-
-            for i in range(0, len(com_2) // 2 - 1, 2):
-                com2_1.append([com_2[i], com_2[i + 1]])
-
-            for i in range(len(com_2) // 2, len(com_2) - 1, 2):
-                com2_2.append([com_2[i], com_2[i + 1]])
-            file.close()
-            file_res = open(f"{posts[0].title}/результат_2_{posts[0].title}.txt", "r", encoding="utf-8")
-            file_res.seek(0)
-            com_d = {}
-            for i in range(0, 10):
-                com_d[i] = []
-            for line in file_res.readlines():
-                if len(line.replace("\n", "")) != 0:
-                    com = line.split(": ")[0]
-                    win = int(line.split(": ")[1])
-                    com_d[win].append(com)
-            file_res.close()
-            file_count = open(f"{posts[0].title}/{posts[0].title}_счёт_3.txt", "r", encoding="utf-8")
-            count_list = file_count.read().split()
-            file_count.close()
-            p = 0
-
-            for i in range(0, len(com_d[2]) - 1, 2):
-                com3_1.append([com_d[2][i] + " " + count_list[p], com_d[2][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[1]) - 1, 2):
-                com3_2.append([com_d[1][i] + " " + count_list[p], com_d[1][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[0]) - 1, 2):
-                com3_3.append([com_d[0][i] + " " + count_list[p], com_d[0][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            file_res = open(f"{posts[0].title}/результат_3_{posts[0].title}.txt", "r", encoding="utf-8")
-            file_res.seek(0)
-            com_d = {}
-            for i in range(0, 10):
-                com_d[i] = []
-            for line in file_res.readlines():
-                if len(line.replace("\n", "")) != 0:
-                    com = line.split(": ")[0]
-                    win = int(line.split(": ")[1])
-                    com_d[win].append(com)
-
-            file_res.close()
-            file_count = open(f"{posts[0].title}/{posts[0].title}_счёт_4.txt", "r", encoding="utf-8")
-            count_list = file_count.read().split()
-            p = 0
-
-            for i in range(0, len(com_d[3]) - 1, 2):
-                com4_1.append([com_d[3][i] + " " + count_list[p], com_d[3][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[2]) - 1, 2):
-                com4_2.append([com_d[2][i] + " " + count_list[p], com_d[2][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[1]) - 1, 2):
-                com4_3.append([com_d[1][i] + " " + count_list[p], com_d[1][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[0]) - 1, 2):
-                com4_4.append([com_d[0][i] + " " + count_list[p], com_d[0][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            file_count.close()
-            file_res = open(f"{posts[0].title}/результат_4_{posts[0].title}.txt", "r", encoding="utf-8")
-            file_res.seek(0)
-            com_d = {}
-            for i in range(0, 10):
-                com_d[i] = []
-            for line in file_res.readlines():
-                if len(line.replace("\n", "")) != 0:
-                    com = line.split(": ")[0]
-                    win = int(line.split(": ")[1])
-                    com_d[win].append(com)
-
-            file_res.close()
-            file_res = open(f"{posts[0].title}/результат_4_{posts[0].title}.txt", "r", encoding="utf-8")
-            file_res.seek(0)
-            com_d = {}
-            for i in range(0, 10):
-                com_d[i] = []
-            for line in file_res.readlines():
-                if len(line.replace("\n", "")) != 0:
-                    com = line.split(": ")[0]
-                    win = int(line.split(": ")[1])
-                    com_d[win].append(com)
-
-            file_count = open(f"{posts[0].title}/{posts[0].title}_счёт_5.txt", "r", encoding="utf-8")
-            count_list = file_count.read().split()
-            p = 0
-
-            for i in range(0, len(com_d[4]) - 1, 2):
-                com5_1.append([com_d[4][i] + " " + count_list[p], com_d[4][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[3]) - 1, 2):
-                com5_2.append([com_d[3][i] + " " + count_list[p], com_d[3][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[2]) - 1, 2):
-                com5_3.append([com_d[2][i] + " " + count_list[p], com_d[2][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[1]) - 1, 2):
-                com5_4.append([com_d[1][i] + " " + count_list[p], com_d[1][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[0]) - 1, 2):
-                com5_5.append([com_d[0][i] + " " + count_list[p], com_d[0][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            file_res = open(f"{posts[0].title}/результат_5_{posts[0].title}.txt", "r", encoding="utf-8")
-            file_res.seek(0)
-            com_d = {}
-            for i in range(0, 10):
-                com_d[i] = []
-            for line in file_res.readlines():
-                if len(line.replace("\n", "")) != 0:
-                    com = line.split(": ")[0]
-                    win = int(line.split(": ")[1])
-                    com_d[win].append(com)
-
-            file_count = open(f"{posts[0].title}/{posts[0].title}_счёт_6.txt", "r", encoding="utf-8")
-            count_list = file_count.read().split()
-            p = 0
-
-            for i in range(0, len(com_d[4]) - 1, 2):
-                com6_1.append([com_d[4][i] + " " + count_list[p], com_d[4][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[3]) - 1, 2):
-                com6_2.append([com_d[3][i] + " " + count_list[p], com_d[3][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[2]) - 1, 2):
-                com6_3.append([com_d[2][i] + " " + count_list[p], com_d[2][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[1]) - 1, 2):
-                com6_4.append([com_d[1][i] + " " + count_list[p], com_d[1][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[0]) - 1, 2):
-                com6_5.append([com_d[0][i] + " " + count_list[p], com_d[0][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            p -= 1
-            for i in range(0, len(com_d[0]) - 1, 2):
-                com6_6.append([com_d[0][i] + " " + count_list[p], com_d[0][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            file_res = open(f"{posts[0].title}/результат_6_{posts[0].title}.txt", "r", encoding="utf-8")
-            file_res.seek(0)
-            com_d = {}
-            for i in range(0, 10):
-                com_d[i] = []
-            for line in file_res.readlines():
-                if len(line.replace("\n", "")) != 0:
-                    com = line.split(": ")[0]
-                    win = int(line.split(": ")[1])
-                    com_d[win].append(com)
-
-            file_count = open(f"{posts[0].title}/{posts[0].title}_счёт_7.txt", "r", encoding="utf-8")
-            count_list = file_count.read().split()
-            p = 0
-
-            for i in range(0, len(com_d[6]) - 1, 2):
-                com7_1.append([com_d[6][i] + " " + count_list[p], com_d[6][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[5]) - 1, 2):
-                com7_2.append([com_d[5][i] + " " + count_list[p], com_d[5][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[4]) - 1, 2):
-                com7_3.append([com_d[4][i] + " " + count_list[p], com_d[4][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[3]) - 1, 2):
-                com7_4.append([com_d[3][i] + " " + count_list[p], com_d[3][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[2]) - 1, 2):
-                com7_5.append([com_d[2][i] + " " + count_list[p], com_d[2][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[1]) - 1, 2):
-                com7_6.append([com_d[1][i] + " " + count_list[p], com_d[1][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            p -= 1
-            for i in range(0, len(com_d[0]) - 1, 2):
-                com7_7.append([com_d[0][i] + " " + count_list[p], com_d[0][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
             file_res = open(f"{posts[0].title}/результат_7_{posts[0].title}.txt", "r", encoding="utf-8")
             file_res.seek(0)
             com_d = {}
@@ -1096,8 +953,6 @@ def schedule(request, pk):
                     com = line.split(": ")[0]
                     win = int(line.split(": ")[1])
                     com_d[win].append(com)
-
-
 
             fp = open(f"{posts[0].title}/пересечение_команд_{posts[0].title}.json", "r", encoding="utf-8")
             commands_dict = json.load(fp)
@@ -1149,7 +1004,6 @@ def schedule(request, pk):
                         com8_3.append((empty_com_1[i], c))
                         empty_com_2.remove(c)
                         break
-
 
             empty_com_1 = []
             empty_com_2 = []
@@ -1306,182 +1160,22 @@ def schedule(request, pk):
             game = posts[0].title
             tour_shedule(game, 8)
 
-
             return render(request, 'blog/sсhedule.html',
                           {'title': 'Орда', 'name': posts[0].title, 'count_tour': int(count_tour),
                            'tour1': com_1,
                            'tour2_1': com2_1, 'tour2_2': com2_2,
                            'tour3_1': com3_1, 'tour3_2': com3_2, 'tour3_3': com3_3,
                            'tour4_1': com4_1, 'tour4_2': com4_2, 'tour4_3': com4_3, 'tour4_4': com4_4,
-                           'tour5_1': com5_1, 'tour5_2': com5_2, 'tour5_3': com5_3, 'tour5_4': com5_4, 'tour5_5': com5_5,
-                           'tour6_1': com6_1, 'tour6_2': com6_2, 'tour6_3': com6_3, 'tour6_4': com6_4, 'tour6_5': com6_5, 'tour6_6': com6_6,
-                           'tour7_1': com7_1, 'tour7_2': com7_2, 'tour7_3': com7_3, 'tour7_4': com7_4, 'tour7_5': com7_5,'tour7_6': com7_6, 'tour7_7': com7_7,
-                           'tour8_1': com8_1, 'tour8_2': com8_2, 'tour8_3': com8_3, 'tour8_4': com8_4, 'tour8_5': com8_5,'tour8_6': com8_6, 'tour8_7': com8_7, 'tour8_8': com8_8})
-
+                           'tour5_1': com5_1, 'tour5_2': com5_2, 'tour5_3': com5_3, 'tour5_4': com5_4,
+                           'tour5_5': com5_5,
+                           'tour6_1': com6_1, 'tour6_2': com6_2, 'tour6_3': com6_3, 'tour6_4': com6_4,
+                           'tour6_5': com6_5, 'tour6_6': com6_6,
+                           'tour7_1': com7_1, 'tour7_2': com7_2, 'tour7_3': com7_3, 'tour7_4': com7_4,
+                           'tour7_5': com7_5, 'tour7_6': com7_6, 'tour7_7': com7_7,
+                           'tour8_1': com8_1, 'tour8_2': com8_2, 'tour8_3': com8_3, 'tour8_4': com8_4,
+                           'tour8_5': com8_5, 'tour8_6': com8_6, 'tour8_7': com8_7, 'tour8_8': com8_8})
 
         case 7:
-            file = open(f"{posts[0].title}/{posts[0].title}_тур2.txt", "r", encoding="utf-8")
-
-            com_2 = []
-            for line in file.readlines():
-                if line.count("-") < 3 and line.count("КОМАНДЫ") == 0:
-                    com_2.append(line)
-
-            for i in range(0, len(com_2) // 2 - 1, 2):
-                com2_1.append([com_2[i], com_2[i + 1]])
-
-            for i in range(len(com_2) // 2, len(com_2) - 1, 2):
-                com2_2.append([com_2[i], com_2[i + 1]])
-            file.close()
-            file_res = open(f"{posts[0].title}/результат_2_{posts[0].title}.txt", "r", encoding="utf-8")
-            file_res.seek(0)
-            com_d = {}
-            for i in range(0, 10):
-                com_d[i] = []
-            for line in file_res.readlines():
-                if len(line.replace("\n", "")) != 0:
-                    com = line.split(": ")[0]
-                    win = int(line.split(": ")[1])
-                    com_d[win].append(com)
-            file_res.close()
-            file_count = open(f"{posts[0].title}/{posts[0].title}_счёт_3.txt", "r", encoding="utf-8")
-            count_list = file_count.read().split()
-            file_count.close()
-            p = 0
-
-            for i in range(0, len(com_d[2]) - 1, 2):
-                com3_1.append([com_d[2][i] + " " + count_list[p], com_d[2][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[1]) - 1, 2):
-                com3_2.append([com_d[1][i] + " " + count_list[p], com_d[1][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[0]) - 1, 2):
-                com3_3.append([com_d[0][i] + " " + count_list[p], com_d[0][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            file_res = open(f"{posts[0].title}/результат_3_{posts[0].title}.txt", "r", encoding="utf-8")
-            file_res.seek(0)
-            com_d = {}
-            for i in range(0, 10):
-                com_d[i] = []
-            for line in file_res.readlines():
-                if len(line.replace("\n", "")) != 0:
-                    com = line.split(": ")[0]
-                    win = int(line.split(": ")[1])
-                    com_d[win].append(com)
-
-            file_res.close()
-            file_count = open(f"{posts[0].title}/{posts[0].title}_счёт_4.txt", "r", encoding="utf-8")
-            count_list = file_count.read().split()
-            p = 0
-
-            for i in range(0, len(com_d[3]) - 1, 2):
-                com4_1.append([com_d[3][i] + " " + count_list[p], com_d[3][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[2]) - 1, 2):
-                com4_2.append([com_d[2][i] + " " + count_list[p], com_d[2][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[1]) - 1, 2):
-                com4_3.append([com_d[1][i] + " " + count_list[p], com_d[1][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[0]) - 1, 2):
-                com4_4.append([com_d[0][i] + " " + count_list[p], com_d[0][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            file_count.close()
-            file_res = open(f"{posts[0].title}/результат_4_{posts[0].title}.txt", "r", encoding="utf-8")
-            file_res.seek(0)
-            com_d = {}
-            for i in range(0, 10):
-                com_d[i] = []
-            for line in file_res.readlines():
-                if len(line.replace("\n", "")) != 0:
-                    com = line.split(": ")[0]
-                    win = int(line.split(": ")[1])
-                    com_d[win].append(com)
-
-            file_res.close()
-            file_res = open(f"{posts[0].title}/результат_4_{posts[0].title}.txt", "r", encoding="utf-8")
-            file_res.seek(0)
-            com_d = {}
-            for i in range(0, 10):
-                com_d[i] = []
-            for line in file_res.readlines():
-                if len(line.replace("\n", "")) != 0:
-                    com = line.split(": ")[0]
-                    win = int(line.split(": ")[1])
-                    com_d[win].append(com)
-
-            file_count = open(f"{posts[0].title}/{posts[0].title}_счёт_5.txt", "r", encoding="utf-8")
-            count_list = file_count.read().split()
-            p = 0
-
-            for i in range(0, len(com_d[4]) - 1, 2):
-                com5_1.append([com_d[4][i] + " " + count_list[p], com_d[4][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[3]) - 1, 2):
-                com5_2.append([com_d[3][i] + " " + count_list[p], com_d[3][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[2]) - 1, 2):
-                com5_3.append([com_d[2][i] + " " + count_list[p], com_d[2][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[1]) - 1, 2):
-                com5_4.append([com_d[1][i] + " " + count_list[p], com_d[1][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[0]) - 1, 2):
-                com5_5.append([com_d[0][i] + " " + count_list[p], com_d[0][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            file_res = open(f"{posts[0].title}/результат_5_{posts[0].title}.txt", "r", encoding="utf-8")
-            file_res.seek(0)
-            com_d = {}
-            for i in range(0, 10):
-                com_d[i] = []
-            for line in file_res.readlines():
-                if len(line.replace("\n", "")) != 0:
-                    com = line.split(": ")[0]
-                    win = int(line.split(": ")[1])
-                    com_d[win].append(com)
-
-
-            file_count = open(f"{posts[0].title}/{posts[0].title}_счёт_6.txt", "r", encoding="utf-8")
-            count_list = file_count.read().split()
-            p = 0
-
-            for i in range(0, len(com_d[4]) - 1, 2):
-                com6_1.append([com_d[4][i] + " " + count_list[p], com_d[4][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[3]) - 1, 2):
-                com6_2.append([com_d[3][i] + " " + count_list[p], com_d[3][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[2]) - 1, 2):
-                com6_3.append([com_d[2][i] + " " + count_list[p], com_d[2][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[1]) - 1, 2):
-                com6_4.append([com_d[1][i] + " " + count_list[p], com_d[1][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[0]) - 1, 2):
-                com6_5.append([com_d[0][i] + " " + count_list[p], com_d[0][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            p -= 1
-            for i in range(0, len(com_d[0]) - 1, 2):
-                com6_6.append([com_d[0][i] + " " + count_list[p], com_d[0][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
             file_res = open(f"{posts[0].title}/результат_6_{posts[0].title}.txt", "r", encoding="utf-8")
             file_res.seek(0)
             com_d = {}
@@ -1495,7 +1189,6 @@ def schedule(request, pk):
 
             fp = open(f"{posts[0].title}/пересечение_команд_{posts[0].title}.json", "r", encoding="utf-8")
             commands_dict = json.load(fp)
-
 
             empty_com_1 = []
             empty_com_2 = []
@@ -1544,7 +1237,6 @@ def schedule(request, pk):
                         com7_3.append((empty_com_1[i], c))
                         empty_com_2.remove(c)
                         break
-
 
             empty_com_1 = []
             empty_com_2 = []
@@ -1678,132 +1370,19 @@ def schedule(request, pk):
             game = posts[0].title
             tour_shedule(game, 7)
 
-            return render(request, 'blog/sсhedule.html', {'title': 'Орда', 'name': posts[0].title, 'count_tour': int(count_tour),
-                       'tour1': com_1,
-                       'tour2_1': com2_1, 'tour2_2': com2_2,
-                       'tour3_1': com3_1, 'tour3_2': com3_2, 'tour3_3': com3_3,
-                       'tour4_1': com4_1, 'tour4_2': com4_2, 'tour4_3': com4_3, 'tour4_4': com4_4,
-                       'tour5_1': com5_1, 'tour5_2': com5_2, 'tour5_3': com5_3, 'tour5_4': com5_4, 'tour5_5': com5_5,
-                       'tour6_1': com6_1, 'tour6_2': com6_2, 'tour6_3': com6_3, 'tour6_4': com6_4, 'tour6_5': com6_5, 'tour6_6': com6_6,
-                       'tour7_1': com7_1, 'tour7_2': com7_2, 'tour7_3': com7_3, 'tour7_4': com7_4, 'tour7_5': com7_5, 'tour7_6': com7_6, 'tour7_7': com7_7})
+            return render(request, 'blog/sсhedule.html',
+                          {'title': 'Орда', 'name': posts[0].title, 'count_tour': int(count_tour),
+                           'tour1': com_1,
+                           'tour2_1': com2_1, 'tour2_2': com2_2,
+                           'tour3_1': com3_1, 'tour3_2': com3_2, 'tour3_3': com3_3,
+                           'tour4_1': com4_1, 'tour4_2': com4_2, 'tour4_3': com4_3, 'tour4_4': com4_4,
+                           'tour5_1': com5_1, 'tour5_2': com5_2, 'tour5_3': com5_3, 'tour5_4': com5_4,
+                           'tour5_5': com5_5,
+                           'tour6_1': com6_1, 'tour6_2': com6_2, 'tour6_3': com6_3, 'tour6_4': com6_4,
+                           'tour6_5': com6_5, 'tour6_6': com6_6,
+                           'tour7_1': com7_1, 'tour7_2': com7_2, 'tour7_3': com7_3, 'tour7_4': com7_4,
+                           'tour7_5': com7_5, 'tour7_6': com7_6, 'tour7_7': com7_7})
         case 6:
-            file = open(f"{posts[0].title}/{posts[0].title}_тур2.txt", "r", encoding="utf-8")
-
-            com_2 = []
-            for line in file.readlines():
-                if line.count("-") < 3 and line.count("КОМАНДЫ") == 0:
-                    com_2.append(line)
-
-            for i in range(0, len(com_2) // 2 - 1, 2):
-                com2_1.append([com_2[i], com_2[i + 1]])
-
-            for i in range(len(com_2) // 2, len(com_2) - 1, 2):
-                com2_2.append([com_2[i], com_2[i + 1]])
-
-            file_res = open(f"{posts[0].title}/результат_2_{posts[0].title}.txt", "r", encoding="utf-8")
-            file_res.seek(0)
-            com_d = {}
-            for i in range(0, 10):
-                com_d[i] = []
-            for line in file_res.readlines():
-                if len(line.replace("\n", "")) != 0:
-                    com = line.split(": ")[0]
-                    win = int(line.split(": ")[1])
-                    com_d[win].append(com)
-
-            file_count = open(f"{posts[0].title}/{posts[0].title}_счёт_3.txt", "r", encoding="utf-8")
-            count_list = file_count.read().split()
-            p = 0
-
-            for i in range(0, len(com_d[2]) - 1, 2):
-                com3_1.append([com_d[2][i] + " " + count_list[p], com_d[2][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[1]) - 1, 2):
-                com3_2.append([com_d[1][i] + " " + count_list[p], com_d[1][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[0]) - 1, 2):
-                com3_3.append([com_d[0][i] + " " + count_list[p], com_d[0][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            file_res = open(f"{posts[0].title}/результат_3_{posts[0].title}.txt", "r", encoding="utf-8")
-            file_res.seek(0)
-            com_d = {}
-            for i in range(0, 10):
-                com_d[i] = []
-            for line in file_res.readlines():
-                if len(line.replace("\n", "")) != 0:
-                    com = line.split(": ")[0]
-                    win = int(line.split(": ")[1])
-                    com_d[win].append(com)
-
-            file_count = open(f"{posts[0].title}/{posts[0].title}_счёт_4.txt", "r", encoding="utf-8")
-            count_list = file_count.read().split()
-            p = 0
-
-            for i in range(0, len(com_d[3]) - 1, 2):
-                com4_1.append([com_d[3][i] + " " + count_list[p], com_d[3][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[2]) - 1, 2):
-                com4_2.append([com_d[2][i] + " " + count_list[p], com_d[2][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[1]) - 1, 2):
-                com4_3.append([com_d[1][i] + " " + count_list[p], com_d[1][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[0]) - 1, 2):
-                com4_4.append([com_d[0][i] + " " + count_list[p], com_d[0][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            file_res = open(f"{posts[0].title}/результат_4_{posts[0].title}.txt", "r", encoding="utf-8")
-            file_res.seek(0)
-            com_d = {}
-            for i in range(0, 10):
-                com_d[i] = []
-            for line in file_res.readlines():
-                if len(line.replace("\n", "")) != 0:
-                    com = line.split(": ")[0]
-                    win = int(line.split(": ")[1])
-                    com_d[win].append(com)
-
-            file_count = open(f"{posts[0].title}/{posts[0].title}_счёт_5.txt", "r", encoding="utf-8")
-            count_list = file_count.read().split()
-            p = 0
-
-            if len(com_d[4]) % 2 != 0:
-                com_d[4].append("Пустышка")
-            for i in range(0, len(com_d[4]) - 1, 2):
-                com5_1.append([com_d[4][i] + " " + count_list[p], com_d[4][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            if len(com_d[3]) % 2 != 0:
-                com_d[3].append("Пустышка")
-            for i in range(0, len(com_d[3]) - 1, 2):
-                com5_2.append([com_d[3][i] + " " + count_list[p], com_d[3][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            if len(com_d[2]) % 2 != 0:
-                com_d[2].append("Пустышка")
-            for i in range(0, len(com_d[2]) - 1, 2):
-                com5_3.append([com_d[2][i] + " " + count_list[p], com_d[2][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            if len(com_d[1]) % 2 != 0:
-                com_d[1].append("Пустышка")
-            for i in range(0, len(com_d[1]) - 1, 2):
-                com5_4.append([com_d[1][i] + " " + count_list[p], com_d[1][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            if len(com_d[0]) % 2 != 0:
-                com_d[0].append("Пустышка")
-            for i in range(0, len(com_d[0]) - 1, 2):
-                com5_5.append([com_d[0][i] + " " + count_list[p], com_d[0][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-
             file_res = open(f"{posts[0].title}/результат_5_{posts[0].title}.txt", "r", encoding="utf-8")
             file_res.seek(0)
             com_d = {}
@@ -1814,8 +1393,6 @@ def schedule(request, pk):
                     com = line.split(": ")[0]
                     win = int(line.split(": ")[1])
                     com_d[win].append(com)
-
-
 
             fp = open(f"{posts[0].title}/пересечение_команд_{posts[0].title}.json", "r", encoding="utf-8")
             commands_dict = json.load(fp)
@@ -1983,81 +1560,11 @@ def schedule(request, pk):
                            'tour2_1': com2_1, 'tour2_2': com2_2,
                            'tour3_1': com3_1, 'tour3_2': com3_2, 'tour3_3': com3_3,
                            'tour4_1': com4_1, 'tour4_2': com4_2, 'tour4_3': com4_3, 'tour4_4': com4_4,
-                           'tour5_1': com5_1, 'tour5_2': com5_2, 'tour5_3': com5_3, 'tour5_4': com5_4, 'tour5_5': com5_5,
-                           'tour6_1': com6_1, 'tour6_2': com6_2, 'tour6_3': com6_3, 'tour6_4': com6_4, 'tour6_5': com6_5, 'tour6_6': com6_6})
+                           'tour5_1': com5_1, 'tour5_2': com5_2, 'tour5_3': com5_3, 'tour5_4': com5_4,
+                           'tour5_5': com5_5,
+                           'tour6_1': com6_1, 'tour6_2': com6_2, 'tour6_3': com6_3, 'tour6_4': com6_4,
+                           'tour6_5': com6_5, 'tour6_6': com6_6})
         case 5:
-            file = open(f"{posts[0].title}/{posts[0].title}_тур2.txt", "r", encoding="utf-8")
-
-            com_2 = []
-            for line in file.readlines():
-                if line.count("-") < 3 and line.count("КОМАНДЫ") == 0:
-                    com_2.append(line)
-
-            for i in range(0, len(com_2) // 2 - 1, 2):
-                com2_1.append([com_2[i], com_2[i + 1]])
-
-            for i in range(len(com_2) // 2, len(com_2) - 1, 2):
-                com2_2.append([com_2[i], com_2[i + 1]])
-
-            file_res = open(f"{posts[0].title}/результат_2_{posts[0].title}.txt", "r", encoding="utf-8")
-            file_res.seek(0)
-            com_d = {}
-            for i in range(0, 10):
-                com_d[i] = []
-            for line in file_res.readlines():
-                if len(line.replace("\n", "")) != 0:
-                    com = line.split(": ")[0]
-                    win = int(line.split(": ")[1])
-                    com_d[win].append(com)
-
-            file_count = open(f"{posts[0].title}/{posts[0].title}_счёт_3.txt", "r", encoding="utf-8")
-            count_list = file_count.read().split()
-            p = 0
-
-            for i in range(0, len(com_d[2]) - 1, 2):
-                com3_1.append([com_d[2][i] + " " + count_list[p], com_d[2][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[1]) - 1, 2):
-                com3_2.append([com_d[1][i] + " " + count_list[p], com_d[1][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[0]) - 1, 2):
-                com3_3.append([com_d[0][i] + " " + count_list[p], com_d[0][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            file_res = open(f"{posts[0].title}/результат_3_{posts[0].title}.txt", "r", encoding="utf-8")
-            file_res.seek(0)
-            com_d = {}
-            for i in range(0, 10):
-                com_d[i] = []
-            for line in file_res.readlines():
-                if len(line.replace("\n", "")) != 0:
-                    com = line.split(": ")[0]
-                    win = int(line.split(": ")[1])
-                    com_d[win].append(com)
-
-            file_count = open(f"{posts[0].title}/{posts[0].title}_счёт_4.txt", "r", encoding="utf-8")
-            count_list = file_count.read().split()
-            p = 0
-
-            for i in range(0, len(com_d[3]) - 1, 2):
-                com4_1.append([com_d[3][i] + " " + count_list[p], com_d[3][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[2]) - 1, 2):
-                com4_2.append([com_d[2][i] + " " + count_list[p], com_d[2][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[1]) - 1, 2):
-                com4_3.append([com_d[1][i] + " " + count_list[p], com_d[1][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-            for i in range(0, len(com_d[0]) - 1, 2):
-                com4_4.append([com_d[0][i] + " " + count_list[p], com_d[0][i + 1] + " " + count_list[p + 1]])
-                p += 2
-
-
             file_res = open(f"{posts[0].title}/результат_4_{posts[0].title}.txt", "r", encoding="utf-8")
             file_res.seek(0)
             com_d = {}
@@ -2212,54 +1719,9 @@ def schedule(request, pk):
                            'tour2_1': com2_1, 'tour2_2': com2_2,
                            'tour3_1': com3_1, 'tour3_2': com3_2, 'tour3_3': com3_3,
                            'tour4_1': com4_1, 'tour4_2': com4_2, 'tour4_3': com4_3, 'tour4_4': com4_4,
-                           'tour5_1': com5_1, 'tour5_2': com5_2, 'tour5_3': com5_3, 'tour5_4': com5_4, 'tour5_5': com5_5})
+                           'tour5_1': com5_1, 'tour5_2': com5_2, 'tour5_3': com5_3, 'tour5_4': com5_4,
+                           'tour5_5': com5_5})
         case 4:
-            file = open(f"{posts[0].title}/{posts[0].title}_тур2.txt", "r", encoding="utf-8")
-
-            com_2 = []
-            for line in file.readlines():
-                if line.count("-") < 3 and line.count("КОМАНДЫ") == 0:
-                    com_2.append(line)
-
-            for i in range(0, len(com_2) // 2 - 1, 2):
-                com2_1.append([com_2[i], com_2[i + 1]])
-
-            for i in range(len(com_2) // 2, len(com_2) - 1, 2):
-                com2_2.append([com_2[i], com_2[i + 1]])
-
-            file_res = open(f"{posts[0].title}/результат_2_{posts[0].title}.txt", "r", encoding="utf-8")
-            file_res.seek(0)
-            com_d = {}
-            for i in range(0, 10):
-                com_d[i] = []
-            for line in file_res.readlines():
-                if len(line.replace("\n", "")) != 0:
-                    com = line.split(": ")[0]
-                    win = int(line.split(": ")[1])
-                    com_d[win].append(com)
-
-            file_count = open(f"{posts[0].title}/{posts[0].title}_счёт_3.txt", "r", encoding="utf-8")
-            count_list = file_count.read().split()
-            p = 0
-
-            if len(com_d[2]) % 2 != 0:
-                com_d[2].append("Пустышка")
-            for i in range(0, len(com_d[2]) - 1, 2):
-                com3_1.append([com_d[2][i] + " " + count_list[p], com_d[2][i + 1] + " " + count_list[p+1]])
-                p += 2
-
-            if len(com_d[1]) % 2 != 0:
-                com_d[1].append("Пустышка")
-            for i in range(0, len(com_d[1]) - 1, 2):
-                com3_2.append([com_d[1][i] + " " + count_list[p], com_d[1][i + 1] + " " + count_list[p+1]])
-                p += 2
-
-            if len(com_d[0]) % 2 != 0:
-                com_d[0].append("Пустышка")
-            for i in range(0, len(com_d[0]) - 1, 2):
-                com3_3.append([com_d[0][i] + " " + count_list[p], com_d[0][i + 1] + " " + count_list[p+1]])
-                p += 2
-
             file_res = open(f"{posts[0].title}/результат_3_{posts[0].title}.txt", "r", encoding="utf-8")
             file_res.seek(0)
             com_d = {}
@@ -2350,11 +1812,7 @@ def schedule(request, pk):
             if len(com_d[3]) % 2 != 0:
                 com4_1.append([com_d[3][-1], "Пустышка"])
 
-
-            # file = open(f"{posts[0].title}/{posts[0].title}_тур4.txt", "r", encoding="utf-8")
-            # if len(file.read()) == 0:
             file = open(f"{posts[0].title}/{posts[0].title}_тур4.txt", "w", encoding="utf-8")
-            num = 1
             title = "КОМАНДЫ" + " " * 35 + "|СЧЁТ"
             file.write(title + "\n")
             file.write("-" * len(title) + "\n")
@@ -2381,28 +1839,44 @@ def schedule(request, pk):
             commands_dict = json.load(fp)
 
             for i in range(0, len(com4_1)):
-                if com4_1[i][0][:45].replace("\n", "").strip() not in commands_dict[com4_1[i][1][:45].replace("\n", "").strip()]:
-                    commands_dict[com4_1[i][1][:45].replace("\n", "").strip()].append(com4_1[i][0][:45].replace("\n", "").strip())
-                if com4_1[i][1][:45].replace("\n", "").strip() not in commands_dict[com4_1[i][0][:45].replace("\n", "").strip()]:
-                    commands_dict[com4_1[i][0][:45].replace("\n", "").strip()].append(com4_1[i][1][:45].replace("\n", "").strip())
+                if com4_1[i][0][:45].replace("\n", "").strip() not in commands_dict[
+                    com4_1[i][1][:45].replace("\n", "").strip()]:
+                    commands_dict[com4_1[i][1][:45].replace("\n", "").strip()].append(
+                        com4_1[i][0][:45].replace("\n", "").strip())
+                if com4_1[i][1][:45].replace("\n", "").strip() not in commands_dict[
+                    com4_1[i][0][:45].replace("\n", "").strip()]:
+                    commands_dict[com4_1[i][0][:45].replace("\n", "").strip()].append(
+                        com4_1[i][1][:45].replace("\n", "").strip())
 
             for i in range(0, len(com4_2)):
-                if com4_2[i][0][:45].replace("\n", "").strip() not in commands_dict[com4_2[i][1][:45].replace("\n", "").strip()]:
-                    commands_dict[com4_2[i][1][:45].replace("\n", "").strip()].append(com4_2[i][0][:45].replace("\n", "").strip())
-                if com4_2[i][1][:45].replace("\n", "").strip() not in commands_dict[com4_2[i][0][:45].replace("\n", "").strip()]:
-                    commands_dict[com4_2[i][0][:45].replace("\n", "").strip()].append(com4_2[i][1][:45].replace("\n", "").strip())
+                if com4_2[i][0][:45].replace("\n", "").strip() not in commands_dict[
+                    com4_2[i][1][:45].replace("\n", "").strip()]:
+                    commands_dict[com4_2[i][1][:45].replace("\n", "").strip()].append(
+                        com4_2[i][0][:45].replace("\n", "").strip())
+                if com4_2[i][1][:45].replace("\n", "").strip() not in commands_dict[
+                    com4_2[i][0][:45].replace("\n", "").strip()]:
+                    commands_dict[com4_2[i][0][:45].replace("\n", "").strip()].append(
+                        com4_2[i][1][:45].replace("\n", "").strip())
 
             for i in range(0, len(com4_3)):
-                if com4_3[i][0][:45].replace("\n", "").strip() not in commands_dict[com4_3[i][1][:45].replace("\n", "").strip()]:
-                    commands_dict[com4_3[i][1][:45].replace("\n", "").strip()].append(com4_3[i][0][:45].replace("\n", "").strip())
-                if com4_3[i][1][:45].replace("\n", "").strip() not in commands_dict[com4_3[i][0][:45].replace("\n", "").strip()]:
-                    commands_dict[com4_3[i][0][:45].replace("\n", "").strip()].append( com4_3[i][1][:45].replace("\n", "").strip())
+                if com4_3[i][0][:45].replace("\n", "").strip() not in commands_dict[
+                    com4_3[i][1][:45].replace("\n", "").strip()]:
+                    commands_dict[com4_3[i][1][:45].replace("\n", "").strip()].append(
+                        com4_3[i][0][:45].replace("\n", "").strip())
+                if com4_3[i][1][:45].replace("\n", "").strip() not in commands_dict[
+                    com4_3[i][0][:45].replace("\n", "").strip()]:
+                    commands_dict[com4_3[i][0][:45].replace("\n", "").strip()].append(
+                        com4_3[i][1][:45].replace("\n", "").strip())
 
             for i in range(0, len(com4_4)):
-                if com4_4[i][0][:45].replace("\n", "").strip() not in commands_dict[com4_4[i][1][:45].replace("\n", "").strip()]:
-                    commands_dict[com4_4[i][1][:45].replace("\n", "").strip()].append(com4_4[i][0][:45].replace("\n", "").strip())
-                if com4_4[i][1][:45].replace("\n", "").strip() not in commands_dict[com4_4[i][0][:45].replace("\n", "").strip()]:
-                    commands_dict[com4_4[i][0][:45].replace("\n", "").strip()].append( com4_4[i][1][:45].replace("\n", "").strip())
+                if com4_4[i][0][:45].replace("\n", "").strip() not in commands_dict[
+                    com4_4[i][1][:45].replace("\n", "").strip()]:
+                    commands_dict[com4_4[i][1][:45].replace("\n", "").strip()].append(
+                        com4_4[i][0][:45].replace("\n", "").strip())
+                if com4_4[i][1][:45].replace("\n", "").strip() not in commands_dict[
+                    com4_4[i][0][:45].replace("\n", "").strip()]:
+                    commands_dict[com4_4[i][0][:45].replace("\n", "").strip()].append(
+                        com4_4[i][1][:45].replace("\n", "").strip())
 
             with open(f"{posts[0].title}/пересечение_команд_{posts[0].title}.json", "w", encoding="utf-8") as fp:
                 s = json.dumps(commands_dict, ensure_ascii=False)
@@ -2411,7 +1885,6 @@ def schedule(request, pk):
             game = posts[0].title
             tour_shedule(game, 4)
 
-
             return render(request, 'blog/sсhedule.html',
                           {'title': 'Орда', 'name': posts[0].title, 'count_tour': int(count_tour),
                            'tour1': com_1,
@@ -2419,32 +1892,6 @@ def schedule(request, pk):
                            'tour3_1': com3_1, 'tour3_2': com3_2, 'tour3_3': com3_3,
                            'tour4_1': com4_1, 'tour4_2': com4_2, 'tour4_3': com4_3, 'tour4_4': com4_4})
         case 3:
-            file_res = open(f"{posts[0].title}/результат_1_{posts[0].title}.txt", "r", encoding="utf-8")
-            file_res.seek(0)
-            com_d = {}
-            for i in range(0, 10):
-                com_d[i] = []
-            for line in file_res.readlines():
-                if len(line.replace("\n", "")) != 0:
-                    com = line.split(": ")[0]
-                    win = int(line.split(": ")[1])
-                    com_d[win].append(com)
-
-
-            count_file = open(f"{posts[0].title}/{posts[0].title}_счёт_2.txt", "r", encoding="utf-8")
-            count_list = count_file.read().split()
-            j = 0
-            com2_1 = []
-            for i in range(0, len(com_d[1]) - 1, 2):
-                com2_1.append([com_d[1][i] + " " + count_list[j], com_d[1][i+1] + " " + count_list[j+1]])
-                j += 2
-
-            com2_2 = []
-            for i in range(0, len(com_d[0]) - 1, 2):
-                com2_2.append([com_d[0][i] + " " + count_list[j], com_d[0][i+1] + " " + count_list[j+1]])
-                j += 2
-
-
             file_res = open(f"{posts[0].title}/результат_{count_tour - 1}_{posts[0].title}.txt", "r", encoding="utf-8")
             file_res.seek(0)
             com_d = {}
@@ -2455,7 +1902,6 @@ def schedule(request, pk):
                     com = line.split(": ")[0]
                     win = int(line.split(": ")[1])
                     com_d[win].append(com)
-
 
             fp = open(f"{posts[0].title}/пересечение_команд_{posts[0].title}.json", "r", encoding="utf-8")
             commands_dict = json.load(fp)
@@ -2519,7 +1965,6 @@ def schedule(request, pk):
             if len(com_d[2]) % 2 != 0:
                 com3_1.append([com_d[2][-1], "Пустышка"])
 
-
             file = open(f"{posts[0].title}/{posts[0].title}_тур3.txt", "w", encoding="utf-8")
             num = 1
             title = "КОМАНДЫ" + " " * 35 + "|СЧЁТ"
@@ -2545,22 +1990,34 @@ def schedule(request, pk):
             commands_dict["Пустышка"] = []
 
             for i in range(0, len(com3_1)):
-                if com3_1[i][0][:45].replace("\n", "").strip() not in commands_dict[com3_1[i][1][:45].replace("\n", "").strip()]:
-                    commands_dict[com3_1[i][1][:45].replace("\n", "").strip()].append(com3_1[i][0][:45].replace("\n", "").strip())
-                if com3_1[i][1][:45].replace("\n", "").strip() not in commands_dict[com3_1[i][0][:45].replace("\n", "").strip()]:
-                    commands_dict[com3_1[i][0][:45].replace("\n", "").strip()].append(com3_1[i][1][:45].replace("\n", "").strip())
+                if com3_1[i][0][:45].replace("\n", "").strip() not in commands_dict[
+                    com3_1[i][1][:45].replace("\n", "").strip()]:
+                    commands_dict[com3_1[i][1][:45].replace("\n", "").strip()].append(
+                        com3_1[i][0][:45].replace("\n", "").strip())
+                if com3_1[i][1][:45].replace("\n", "").strip() not in commands_dict[
+                    com3_1[i][0][:45].replace("\n", "").strip()]:
+                    commands_dict[com3_1[i][0][:45].replace("\n", "").strip()].append(
+                        com3_1[i][1][:45].replace("\n", "").strip())
 
             for i in range(0, len(com3_2)):
-                if com3_2[i][0][:45].replace("\n", "").strip() not in commands_dict[com3_2[i][1][:45].replace("\n", "").strip()]:
-                    commands_dict[com3_2[i][1][:45].replace("\n", "").strip()].append(com3_2[i][0][:45].replace("\n", "").strip())
-                if com3_2[i][1][:45].replace("\n", "").strip() not in commands_dict[com3_2[i][0][:45].replace("\n", "").strip()]:
-                    commands_dict[com3_2[i][0][:45].replace("\n", "").strip()].append(com3_2[i][1][:45].replace("\n", "").strip())
+                if com3_2[i][0][:45].replace("\n", "").strip() not in commands_dict[
+                    com3_2[i][1][:45].replace("\n", "").strip()]:
+                    commands_dict[com3_2[i][1][:45].replace("\n", "").strip()].append(
+                        com3_2[i][0][:45].replace("\n", "").strip())
+                if com3_2[i][1][:45].replace("\n", "").strip() not in commands_dict[
+                    com3_2[i][0][:45].replace("\n", "").strip()]:
+                    commands_dict[com3_2[i][0][:45].replace("\n", "").strip()].append(
+                        com3_2[i][1][:45].replace("\n", "").strip())
 
             for i in range(0, len(com3_3)):
-                if com3_3[i][0][:45].replace("\n", "").strip() not in commands_dict[com3_3[i][1][:45].replace("\n", "").strip()]:
-                    commands_dict[com3_3[i][1][:45].replace("\n", "").strip()].append(com3_3[i][0][:45].replace("\n", "").strip())
-                if com3_3[i][1][:45].replace("\n", "").strip() not in commands_dict[com3_3[i][0][:45].replace("\n", "").strip()]:
-                    commands_dict[com3_3[i][0][:45].replace("\n", "").strip()].append( com3_3[i][1][:45].replace("\n", "").strip())
+                if com3_3[i][0][:45].replace("\n", "").strip() not in commands_dict[
+                    com3_3[i][1][:45].replace("\n", "").strip()]:
+                    commands_dict[com3_3[i][1][:45].replace("\n", "").strip()].append(
+                        com3_3[i][0][:45].replace("\n", "").strip())
+                if com3_3[i][1][:45].replace("\n", "").strip() not in commands_dict[
+                    com3_3[i][0][:45].replace("\n", "").strip()]:
+                    commands_dict[com3_3[i][0][:45].replace("\n", "").strip()].append(
+                        com3_3[i][1][:45].replace("\n", "").strip())
 
             with open(f"{posts[0].title}/пересечение_команд_{posts[0].title}.json", "w", encoding="utf-8") as fp:
                 s = json.dumps(commands_dict, ensure_ascii=False)
@@ -2575,7 +2032,6 @@ def schedule(request, pk):
                            'tour2_1': com2_1, 'tour2_2': com2_2,
                            'tour3_1': com3_1, 'tour3_2': com3_2, 'tour3_3': com3_3})
         case 2:
-
             fp = open(f"{posts[0].title}/пересечение_команд_{posts[0].title}.json", "r", encoding="utf-8")
             commands_dict = json.load(fp)
 
@@ -2584,7 +2040,7 @@ def schedule(request, pk):
             empty_com_1 = []
             empty_com_2 = []
             for i in range(0, len(com_d[1]) - 1, 2):
-                if com_d[1][i+1] not in commands_dict[com_d[1][i]]:
+                if com_d[1][i + 1] not in commands_dict[com_d[1][i]]:
                     com2_1.append([com_d[1][i], com_d[1][i + 1]])
                 else:
                     empty_com_1.append(com_d[1][i])
@@ -2608,7 +2064,6 @@ def schedule(request, pk):
                     empty_com_1.append(com_d[0][i])
                     empty_com_2.append(com_d[0][i + 1])
 
-
             for i in range(0, len(empty_com_1)):
                 for c in empty_com_2:
                     if c not in empty_com_1[i]:
@@ -2616,13 +2071,11 @@ def schedule(request, pk):
                         empty_com_2.remove(c)
                         break
 
-
             if len(com_d[0]) % 2 != 0:
                 com2_2.append([com_d[0][-1], "Пустышка"])
 
             if len(com_d[1]) % 2 != 0:
                 com2_1.append([com_d[1][-1], "Пустышка"])
-
 
             file = open(f"{posts[0].title}/{posts[0].title}_тур2.txt", "w", encoding="utf-8")
             num = 1
@@ -2639,24 +2092,30 @@ def schedule(request, pk):
                 file.write(com[1].replace("\n", "").ljust(37) + "\n")
                 file.write("-" * len(title) + "\n")
 
-
             fp = open(f"{posts[0].title}/пересечение_команд_{posts[0].title}.json", "r", encoding="utf-8")
             commands_dict = json.load(fp)
             commands_dict["Пустышка"] = []
             fp.close()
 
             for i in range(0, len(com2_1)):
-                if com2_1[i][0][:45].replace("\n", "").strip() not in commands_dict[com2_1[i][1][:45].replace("\n", "").strip()]:
-                    commands_dict[com2_1[i][1][:45].replace("\n", "").strip()].append(com2_1[i][0][:45].replace("\n", "").strip())
-                if com2_1[i][1][:45].replace("\n", "").strip() not in commands_dict[com2_1[i][0][:45].replace("\n", "").strip()]:
-                    commands_dict[com2_1[i][0][:45].replace("\n", "").strip()].append(com2_1[i][1][:45].replace("\n", "").strip())
+                if com2_1[i][0][:45].replace("\n", "").strip() not in commands_dict[
+                    com2_1[i][1][:45].replace("\n", "").strip()]:
+                    commands_dict[com2_1[i][1][:45].replace("\n", "").strip()].append(
+                        com2_1[i][0][:45].replace("\n", "").strip())
+                if com2_1[i][1][:45].replace("\n", "").strip() not in commands_dict[
+                    com2_1[i][0][:45].replace("\n", "").strip()]:
+                    commands_dict[com2_1[i][0][:45].replace("\n", "").strip()].append(
+                        com2_1[i][1][:45].replace("\n", "").strip())
 
             for i in range(0, len(com2_2)):
-                if com2_2[i][0][:45].replace("\n", "").strip() not in commands_dict[com2_2[i][1][:45].replace("\n", "").strip()]:
-                    commands_dict[com2_2[i][1][:45].replace("\n", "").strip()].append(com2_2[i][0][:45].replace("\n", "").strip())
-                if com2_2[i][1][:45].replace("\n", "").strip() not in commands_dict[com2_2[i][0][:45].replace("\n", "").strip()]:
-                    commands_dict[com2_2[i][0][:45].replace("\n", "").strip()].append(com2_2[i][1][:45].replace("\n", "").strip())
-
+                if com2_2[i][0][:45].replace("\n", "").strip() not in commands_dict[
+                    com2_2[i][1][:45].replace("\n", "").strip()]:
+                    commands_dict[com2_2[i][1][:45].replace("\n", "").strip()].append(
+                        com2_2[i][0][:45].replace("\n", "").strip())
+                if com2_2[i][1][:45].replace("\n", "").strip() not in commands_dict[
+                    com2_2[i][0][:45].replace("\n", "").strip()]:
+                    commands_dict[com2_2[i][0][:45].replace("\n", "").strip()].append(
+                        com2_2[i][1][:45].replace("\n", "").strip())
 
             with open(f"{posts[0].title}/пересечение_команд_{posts[0].title}.json", "w", encoding="utf-8") as fp:
                 s = json.dumps(commands_dict, ensure_ascii=False)
@@ -2670,12 +2129,65 @@ def schedule(request, pk):
                            'tour1': com_1,
                            'tour2_1': com2_1, 'tour2_2': com2_2})
         case 1:
+
+            if os.path.exists(f"{posts[0].title}/команды_{posts[0].title}.txt"):
+                com_file = open(f"{posts[0].title}/команды_{posts[0].title}.txt", "r", encoding="utf-8")
+                if len(com_file.read()) == 0:
+                    com_file = open(f"{posts[0].title}/команды_{posts[0].title}.txt", "w", encoding="utf-8")
+                    if str(posts[0].content.replace("\n", "")) != "нет":
+                        com_file.write(str(posts[0].content.replace("\n", "")))
+                    com_file.close()
+            else:
+                if str(posts[0].content.replace("\n", "")) != "нет":
+                    com_file = open(f"{posts[0].title}/команды_{posts[0].title}.txt", "w", encoding="utf-8")
+                    com_file.write(str(posts[0].content.replace("\n", "")))
+                    com_file.close()
+                else:
+                    com_file = open(f"{posts[0].title}/команды_{posts[0].title}.txt", "w", encoding="utf-8")
+                    com_file.close()
+
+            com_file = open(f"{posts[0].title}/команды_{posts[0].title}.txt", "r", encoding="utf-8")
+            com_file.seek(0)
+            commands_dict = {}
+            if com_file.read().lower() != "нет":
+                com_file = open(f"{posts[0].title}/команды_{posts[0].title}.txt", "r", encoding="utf-8")
+                com_file.seek(0)
+                file = open(f"{posts[0].title}/{posts[0].title}_тур1.txt", "r", encoding="utf-8")
+                if len(file.read()) == 0:
+                    file = open(f"{posts[0].title}/{posts[0].title}_тур1.txt", "w", encoding="utf-8")
+                    num = 1
+                    title = "КОМАНДЫ" + " " * 35 + "|СЧЁТ"
+                    file.write(title + "\n")
+                    file.write("-" * len(title) + "\n")
+                    commands = com_file.readlines()
+                    for command in commands:
+                        file.write(command.replace("\n", "").ljust(35) + "\n")
+                        commands_dict[command.replace("\n", "").strip()] = []
+                        if num % 2 == 0:
+                            file.write("-" * len(title) + "\n")
+                        num += 1
+                    if num % 2 == 0:
+                        file.write("Пустышка".ljust(35) + "\n")
+                        file.write("-" * len(title) + "\n")
+                    file.close()
+            com_file.close()
+
+            file = open(f"{posts[0].title}/{posts[0].title}_тур1.txt", "r", encoding="utf-8")
+
+            l = []
+            for line in file.readlines()[2:]:
+                line = line.replace("\n", "")
+                if line.count('----------') > 0:
+                    com_1.append(l)
+                    l = []
+                else:
+                    l.append(line)
+
             if os.path.exists(f"{posts[0].title}/пересечение_команд_{posts[0].title}.json"):
                 fp = open(f"{posts[0].title}/пересечение_команд_{posts[0].title}.json", "r", encoding="utf-8")
                 commands_dict = json.load(fp)
 
             commands_dict["Пустышка"] = []
-
 
             for i in range(0, len(com_1)):
                 commands_dict[com_1[i][0][:45].strip()] = [com_1[i][1][:45].strip()]
@@ -2691,9 +2203,7 @@ def schedule(request, pk):
             return render(request, 'blog/sсhedule.html',
                           {'title': 'Орда', 'name': posts[0].title, 'count_tour': int(count_tour),
                            'tour1': com_1})
-    file_res.close()
-    file_count.close()
-    file.close()
+
 
 def new_files(request):
     if request.method == 'GET':
@@ -2718,6 +2228,7 @@ def new_files(request):
         data = {"message": "ok"}
         return JsonResponse(data)
 
+
 def del_dir_of_game(request):
     if request.method == 'GET':
         name = request.GET.get("name")
@@ -2725,6 +2236,7 @@ def del_dir_of_game(request):
         shutil.rmtree(path)
         data = {"message": "ok"}
         return JsonResponse(data)
+
 
 def results(request, game, tour):
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -2743,13 +2255,12 @@ def results(request, game, tour):
         if com.count("-") < 7:
             i += 1
             if i % 2 != 0:
-                worksheet.write(f'A{com1}', com[:len(com)-2].strip())
+                worksheet.write(f'A{com1}', com[:len(com) - 2].strip())
                 com1 += 1
             else:
-                worksheet.write(f'B{com2}', com[:len(com)-2].strip())
+                worksheet.write(f'B{com2}', com[:len(com) - 2].strip())
                 com2 += 1
     workbook.close()
-
 
     filepath = BASE_DIR + "/" + game + "/" + filename
     path = open(filepath, 'rb')
@@ -2760,6 +2271,7 @@ def results(request, game, tour):
     response['Content-Disposition'] = "attachment; filename=%s" % filename
 
     return response
+
 
 def download_shedule(request, game, tour):
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -2787,7 +2299,6 @@ def download_shedule(request, game, tour):
             count_photo += 1
             c -= 5
 
-
         with ZipFile(BASE_DIR + "/" + game + "/" + filename, "w") as myzip:
             for i in range(1, count_photo + 1):
                 myzip.write(f"{game}/tour_shedule_{tour}_{i}.png")
@@ -2802,6 +2313,7 @@ def download_shedule(request, game, tour):
 
     return response
 
+
 def download(request, game, tour):
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     filename = f'shedule_{tour}.zip'
@@ -2813,7 +2325,6 @@ def download(request, game, tour):
     while c > 0:
         count_photo += 1
         c -= 5
-
 
     with ZipFile(BASE_DIR + "/" + game + "/" + filename, "w") as myzip:
         for i in range(1, count_photo + 1):
@@ -2829,11 +2340,11 @@ def download(request, game, tour):
 
     return response
 
+
 def save_rating(request):
     file = open(f"filter_param/{request.user.id}.txt", "r", encoding="utf-8")
     game, div, tour, sort = file.readline().replace("\n", "").split()
     file.close()
-
 
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     filename = f'рейтинг_тур{tour}.xlsx'
@@ -2848,16 +2359,16 @@ def save_rating(request):
 
     return response
 
+
 def reset(request, game, tour):
     if request.method == 'GET':
-        print(tour)
 
         file_count = open(f"{game}/{game}_туры.txt", "w", encoding="utf-8")
         file_count.write(tour)
         file_count.close()
 
         add_com_list = []
-        for i in range(int(tour), 8):
+        for i in range(int(tour), 13):
             if os.path.exists(f"{game}/{game}_{i}_доб.txt"):
                 add_com_list += [c.replace("\n", "") for c in
                                  open(f"{game}/{game}_{i}_доб.txt", "r", encoding="utf-8").readlines()]
@@ -2877,7 +2388,6 @@ def reset(request, game, tour):
 
         f = open(f"{game}/{game}_тур{int(tour) + 1}.txt", "w", encoding="utf-8")
 
-
         fp = open(f"{game}/пересечение_команд_{game}.json", "r", encoding="utf-8")
         commands_dict = json.load(fp)
 
@@ -2885,11 +2395,9 @@ def reset(request, game, tour):
             if key != "Пустышка" and len(commands_dict[key]) != 0:
                 commands_dict[key] = [commands_dict[key][0]]
 
-
         with open(f"{game}/пересечение_команд_{game}.json", "w", encoding="utf-8") as fp:
             s = json.dumps(commands_dict, ensure_ascii=False)
             fp.write(s)
-
 
         # clear files
 
@@ -2906,6 +2414,7 @@ def reset(request, game, tour):
 
         data = {"message": "ok"}
         return JsonResponse(data)
+
 
 def download_rating(request):
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -2925,6 +2434,7 @@ def download_rating(request):
     response['Content-Disposition'] = "attachment; filename=%s" % filename
 
     return response
+
 
 def save_tour(request, game, tour):
     if request.method == 'GET':
@@ -2951,14 +2461,14 @@ def save_tour(request, game, tour):
 
         file.close()
 
-        file = open(f"{game}/{game}_тур{int(tour)-1}.txt", "w", encoding="utf-8")
+        file = open(f"{game}/{game}_тур{int(tour) - 1}.txt", "w", encoding="utf-8")
         for el in file_list:
             file.write(el)
         file.close()
 
         # init dict with commands
 
-        file_res = open(f"{game}/результат_{int(tour)-1}_{game}.txt", "r", encoding="utf-8")
+        file_res = open(f"{game}/результат_{int(tour) - 1}_{game}.txt", "r", encoding="utf-8")
         com_dict = {}
         for line in file_res.readlines():
             if line.count(": ") > 0:
@@ -2986,8 +2496,6 @@ def save_tour(request, game, tour):
             # res.write("\n")
         res.close()
 
-
-
         fp = open(f"{game}/пересечение_команд_{game}.json", "r", encoding="utf-8")
         commands_dict = json.load(fp)
 
@@ -2996,7 +2504,7 @@ def save_tour(request, game, tour):
         res = open(f"{game}/результат_{tour}_{game}.txt", "a", encoding="utf-8")
         com_file = open(f"{game}/команды_{game}.txt", "a", encoding="utf-8")
 
-        add_com_file = open(f"{game}/{game}_{int(tour)-1}_доб.txt", "w", encoding="utf-8")
+        add_com_file = open(f"{game}/{game}_{int(tour) - 1}_доб.txt", "w", encoding="utf-8")
 
         # del commands
         res = open(f"{game}/результат_{tour}_{game}.txt", "r", encoding="utf-8")
@@ -3052,13 +2560,12 @@ def save_tour(request, game, tour):
             com_file.write("\n".join(com_file_list))
 
         with open(f"{game}/пересечение_команд_{game}.json", "w", encoding="utf-8") as fp:
-                s = json.dumps(commands_dict, ensure_ascii=False)
-                fp.write(s)
-
+            s = json.dumps(commands_dict, ensure_ascii=False)
+            fp.write(s)
 
         # new tour
         file_count = open(f"{game}/{game}_туры.txt", "w", encoding="utf-8")
-        file_count.write(str(int(tour)+1))
+        file_count.write(str(int(tour) + 1))
         file_count.close()
 
         # generate shedule (photo)
@@ -3115,9 +2622,9 @@ def save_tour(request, game, tour):
             height = 415
         # ------ end ------
 
-
         data = {"message": "ok"}
         return JsonResponse(data)
+
 
 def save_tour_1(request):
     if request.method == 'GET':
@@ -3133,13 +2640,13 @@ def save_tour_1(request):
         file.write(" ".join(checkbox))
         file.close()
 
-
         # получение пар 1ого тура
         file = open(f"{game}/{game}_тур1.txt", "r", encoding="utf-8")
         file_list = []
         i = 0
         for line in file.readlines():
-            if line.count("КОМАНДЫ") or line.count("---------------") or line.count(" ") > 40 or line.strip() in com_del:
+            if line.count("КОМАНДЫ") or line.count("---------------") or line.count(
+                    " ") > 40 or line.strip() in com_del:
                 file_list.append(line)
             else:
                 new_line = line.replace("\n", "")
@@ -3214,32 +2721,32 @@ def save_tour_1(request):
             res.write("\n")
             com_file_list = []
             for i in range(0, len(com_add), 2):
-                    com_1 = com_add[i][:len(com_add[i])-2].strip()
-                    count_1 = int(com_add[i][len(com_add[i])-2:].strip())
-                    com_2 = com_add[i+1][:len(com_add[i+1]) - 2].strip()
-                    count_2 = int(com_add[i+1][len(com_add[i+1]) - 2:].strip())
-                    if com_1 != "Пустышка":
-                        res.write(f"{com_1}: {count_1}\n")
-                        com_file_list.append(com_1)
-                        add_com_file.write(com_1 + "\n")
-                        if com_1 not in commands_dict:
-                            commands_dict[com_1] = [com_2]
-                        else:
-                            commands_dict[com_1].append(com_2)
-                    if com_2 != "Пустышка":
-                        res.write(f"{com_2}: {count_2}\n")
-                        com_file_list.append(com_2)
-                        if com_2 not in commands_dict:
-                            commands_dict[com_2] = [com_1]
-                        else:
-                            commands_dict[com_2].append(com_1)
+                com_1 = com_add[i][:len(com_add[i]) - 2].strip()
+                count_1 = int(com_add[i][len(com_add[i]) - 2:].strip())
+                com_2 = com_add[i + 1][:len(com_add[i + 1]) - 2].strip()
+                count_2 = int(com_add[i + 1][len(com_add[i + 1]) - 2:].strip())
+                if com_1 != "Пустышка":
+                    res.write(f"{com_1}: {count_1}\n")
+                    com_file_list.append(com_1)
+                    add_com_file.write(com_1 + "\n")
+                    if com_1 not in commands_dict:
+                        commands_dict[com_1] = [com_2]
+                    else:
+                        commands_dict[com_1].append(com_2)
+                if com_2 != "Пустышка":
+                    res.write(f"{com_2}: {count_2}\n")
+                    com_file_list.append(com_2)
+                    if com_2 not in commands_dict:
+                        commands_dict[com_2] = [com_1]
+                    else:
+                        commands_dict[com_2].append(com_1)
 
-                    add_com_file.write(com_2 + "\n")
+                add_com_file.write(com_2 + "\n")
             com_file.write("\n".join(com_file_list))
 
         with open(f"{game}/пересечение_команд_{game}.json", "w", encoding="utf-8") as fp:
-                s = json.dumps(commands_dict, ensure_ascii=False)
-                fp.write(s)
+            s = json.dumps(commands_dict, ensure_ascii=False)
+            fp.write(s)
 
         res.close()
         # new tour
@@ -3247,7 +2754,7 @@ def save_tour_1(request):
         file_count.write("2")
         file_count.close()
 
-         # generate shedule (photo)
+        # generate shedule (photo)
         font_ = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 40)
         font_c = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 35)
 
@@ -3267,7 +2774,6 @@ def save_tour_1(request):
                 else:
                     file_list.append(line.replace("\n", "").strip())
 
-            shuffle(file_list)
 
             file = open(f"{game}/{game}_тур1.txt", "w", encoding="utf-8")
             num = 1
@@ -3341,7 +2847,6 @@ def save_tour_1(request):
 
             height = 415
 
-
             file = open(f"{game}/{game}_тур1.txt", "r", encoding="utf-8")
             c = ((len(file.readlines()) - 2) // 3)
             count_photo = 0
@@ -3381,17 +2886,15 @@ def save_tour_1(request):
                 height = 415
             # ------ end ------
 
-
-
-
         data = {"message": "ok"}
         return JsonResponse(data)
+
 
 def tour_shedule(game, tour):
     font_ = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 40)
     font_c = ImageFont.truetype("fonts/BebasNeueProExpandedExtraBoldIt.ttf", 35)
     game_name = game.split()[0]
-    div_name =  game.split()[1]
+    div_name = game.split()[1]
 
     if game.split()[1] in ["МСКЛ", "Восток", "Запад"]:
         base_img = Image.open('shedule/back1.png')
@@ -3464,10 +2967,8 @@ def tour_shedule(game, tour):
                 drawer.text((1180, height), team_2, font=font_c, fill='white')
                 height += 90.5
             base_img_copy.save(f'{game}/tour_shedule_{tour}_{i}.png', quality=100)
-            height = 63
 
     else:
-
         base_img = Image.open('shedule/shedule.png')
         div = Image.open(f'shedule/{div_name}.png').resize((250, 278))
         Image.Image.paste(base_img, div, (1570, 76), mask=div)
