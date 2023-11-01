@@ -251,6 +251,7 @@ def schedule(request, pk):
     com8_1, com8_2, com8_3, com8_4, com8_5, com8_6, com8_7, com8_8 = [], [], [], [], [], [], [], []
     com9_1, com9_2, com9_3, com9_4, com9_5, com9_6, com9_7, com9_8, com9_9 = [], [], [], [], [], [], [], [], []
     com10_1, com10_2, com10_3, com10_4, com10_5, com10_6, com10_7, com10_8, com10_9, com10_10 = [], [], [], [], [], [], [], [], [], []
+    com11_1, com11_2, com11_3, com11_4, com11_5, com11_6, com11_7, com11_8, com11_9, com11_10, com11_11 = [], [], [], [], [], [], [], [], [], [], []
 
 
     # ЧТЕНИЕ РЕЗУЛЬТАТОВ И ЗАПОЛНЕНИЕ com_d
@@ -264,7 +265,7 @@ def schedule(request, pk):
 
     file_res.seek(0)
     com_d = {}
-    for i in range(0, 10):
+    for i in range(0, 13):
         com_d[i] = []
 
     for line in file_res.readlines():
@@ -277,359 +278,641 @@ def schedule(request, pk):
     # END
 
     match count_tour:
+        case 11:
+            file_res = open(f"{posts[0].title}/результат_10_{posts[0].title}.txt", "r", encoding="utf-8")
+            file_res.seek(0)
+            com_d = {}
+            for i in range(0, 13):
+                com_d[i] = []
+            for line in file_res.readlines():
+                if len(line.replace("\n", "")) != 0:
+                    com = line.split(": ")[0]
+                    win = int(line.split(": ")[1])
+                    com_d[win].append(com)
+
+            fp = open(f"{posts[0].title}/пересечение_команд_{posts[0].title}.json", "r", encoding="utf-8")
+            commands_dict = json.load(fp)
+
+            empty_com_1 = []
+            empty_com_2 = []
+            for i in range(0, len(com_d[10]) - 1, 2):
+                if com_d[10][i + 1] not in commands_dict[com_d[10][i]]:
+                    com11_1.append([com_d[10][i], com_d[10][i + 1]])
+                else:
+                    empty_com_1.append(com_d[10][i])
+                    empty_com_2.append(com_d[10][i + 1])
+
+            for i in range(0, len(empty_com_1)):
+                for c in empty_com_2:
+                    if c not in empty_com_1[i]:
+                        com11_1.append((empty_com_1[i], c))
+                        empty_com_2.remove(c)
+                        break
+
+            empty_com_1 = []
+            empty_com_2 = []
+            for i in range(0, len(com_d[9]) - 1, 2):
+                if com_d[9][i + 1] not in commands_dict[com_d[9][i]]:
+                    com11_2.append([com_d[9][i], com_d[9][i + 1]])
+                else:
+                    empty_com_1.append(com_d[9][i])
+                    empty_com_2.append(com_d[9][i + 1])
+
+            for i in range(0, len(empty_com_1)):
+                for c in empty_com_2:
+                    if c not in empty_com_1[i]:
+                        com11_2.append((empty_com_1[i], c))
+                        empty_com_2.remove(c)
+                        break
+
+            empty_com_1 = []
+            empty_com_2 = []
+            for i in range(0, len(com_d[8]) - 1, 2):
+                if com_d[8][i + 1] not in commands_dict[com_d[8][i]]:
+                    com11_3.append([com_d[8][i], com_d[8][i + 1]])
+                else:
+                    empty_com_1.append(com_d[8][i])
+                    empty_com_2.append(com_d[8][i + 1])
+
+            for i in range(0, len(empty_com_1)):
+                for c in empty_com_2:
+                    if c not in empty_com_1[i]:
+                        com11_3.append((empty_com_1[i], c))
+                        empty_com_2.remove(c)
+                        break
+
+            empty_com_1 = []
+            empty_com_2 = []
+            for i in range(0, len(com_d[7]) - 1, 2):
+                if com_d[7][i + 1] not in commands_dict[com_d[7][i]]:
+                    com11_4.append([com_d[7][i], com_d[7][i + 1]])
+                else:
+                    empty_com_1.append(com_d[7][i])
+                    empty_com_2.append(com_d[7][i + 1])
+
+            for i in range(0, len(empty_com_1)):
+                for c in empty_com_2:
+                    if c not in empty_com_1[i]:
+                        com11_4.append((empty_com_1[i], c))
+                        empty_com_2.remove(c)
+                        break
+
+            empty_com_1 = []
+            empty_com_2 = []
+            for i in range(0, len(com_d[6]) - 1, 2):
+                if com_d[6][i + 1] not in commands_dict[com_d[6][i]]:
+                    com11_5.append([com_d[6][i], com_d[6][i + 1]])
+                else:
+                    empty_com_1.append(com_d[6][i])
+                    empty_com_2.append(com_d[6][i + 1])
+
+            for i in range(0, len(empty_com_1)):
+                for c in empty_com_2:
+                    if c not in empty_com_1[i]:
+                        com11_5.append((empty_com_1[i], c))
+                        empty_com_2.remove(c)
+                        break
+
+            empty_com_1 = []
+            empty_com_2 = []
+            for i in range(0, len(com_d[5]) - 1, 2):
+                if com_d[5][i + 1] not in commands_dict[com_d[5][i]]:
+                    com11_6.append([com_d[5][i], com_d[5][i + 1]])
+                else:
+                    empty_com_1.append(com_d[5][i])
+                    empty_com_2.append(com_d[5][i + 1])
+
+            for i in range(0, len(empty_com_1)):
+                for c in empty_com_2:
+                    if c not in empty_com_1[i]:
+                        com11_6.append((empty_com_1[i], c))
+                        empty_com_2.remove(c)
+                        break
+
+            empty_com_1 = []
+            empty_com_2 = []
+            for i in range(0, len(com_d[4]) - 1, 2):
+                if com_d[4][i + 1] not in commands_dict[com_d[4][i]]:
+                    com11_7.append([com_d[4][i], com_d[4][i + 1]])
+                else:
+                    empty_com_1.append(com_d[4][i])
+                    empty_com_2.append(com_d[4][i + 1])
+
+            for i in range(0, len(empty_com_1)):
+                for c in empty_com_2:
+                    if c not in empty_com_1[i]:
+                        com11_7.append((empty_com_1[i], c))
+                        empty_com_2.remove(c)
+                        break
+
+            empty_com_1 = []
+            empty_com_2 = []
+            for i in range(0, len(com_d[3]) - 1, 2):
+                if com_d[3][i + 1] not in commands_dict[com_d[3][i]]:
+                    com11_8.append([com_d[3][i], com_d[3][i + 1]])
+                else:
+                    empty_com_1.append(com_d[3][i])
+                    empty_com_2.append(com_d[3][i + 1])
+
+            for i in range(0, len(empty_com_1)):
+                for c in empty_com_2:
+                    if c not in empty_com_1[i]:
+                        com11_8.append((empty_com_1[i], c))
+                        empty_com_2.remove(c)
+                        break
+
+            empty_com_1 = []
+            empty_com_2 = []
+            for i in range(0, len(com_d[2]) - 1, 2):
+                if com_d[2][i + 1] not in commands_dict[com_d[2][i]]:
+                    com11_9.append([com_d[2][i], com_d[2][i + 1]])
+                else:
+                    empty_com_1.append(com_d[2][i])
+                    empty_com_2.append(com_d[2][i + 1])
+
+            for i in range(0, len(empty_com_1)):
+                for c in empty_com_2:
+                    if c not in empty_com_1[i]:
+                        com11_9.append((empty_com_1[i], c))
+                        empty_com_2.remove(c)
+                        break
+
+            empty_com_1 = []
+            empty_com_2 = []
+            for i in range(0, len(com_d[1]) - 1, 2):
+                if com_d[1][i + 1] not in commands_dict[com_d[1][i]]:
+                    com11_10.append([com_d[1][i], com_d[1][i + 1]])
+                else:
+                    empty_com_1.append(com_d[1][i])
+                    empty_com_2.append(com_d[1][i + 1])
+
+            for i in range(0, len(empty_com_1)):
+                for c in empty_com_2:
+                    if c not in empty_com_1[i]:
+                        com11_10.append((empty_com_1[i], c))
+                        empty_com_2.remove(c)
+                        break
+
+            empty_com_1 = []
+            empty_com_2 = []
+            for i in range(0, len(com_d[0]) - 1, 2):
+                if com_d[0][i + 1] not in commands_dict[com_d[0][i]]:
+                    com11_11.append([com_d[0][i], com_d[0][i + 1]])
+                else:
+                    empty_com_1.append(com_d[0][i])
+                    empty_com_2.append(com_d[0][i + 1])
+
+            for i in range(0, len(empty_com_1)):
+                for c in empty_com_2:
+                    if c not in empty_com_1[i]:
+                        com11_11.append((empty_com_1[i], c))
+                        empty_com_2.remove(c)
+                        break
+
+            if len(com_d[0]) % 2 != 0:
+                com11_11.append([com_d[0][-1], "Пустышка"])
+
+            if len(com_d[1]) % 2 != 0:
+                com11_10.append([com_d[1][-1], "Пустышка"])
+
+            if len(com_d[2]) % 2 != 0:
+                com11_9.append([com_d[2][-1], "Пустышка"])
+
+            if len(com_d[3]) % 2 != 0:
+                com11_8.append([com_d[3][-1], "Пустышка"])
+
+            if len(com_d[4]) % 2 != 0:
+                com11_7.append([com_d[4][-1], "Пустышка"])
+
+            if len(com_d[5]) % 2 != 0:
+                com11_6.append([com_d[5][-1], "Пустышка"])
+
+            if len(com_d[6]) % 2 != 0:
+                com11_5.append([com_d[6][-1], "Пустышка"])
+
+            if len(com_d[7]) % 2 != 0:
+                com11_4.append([com_d[7][-1], "Пустышка"])
+
+            if len(com_d[8]) % 2 != 0:
+                com11_3.append([com_d[8][-1], "Пустышка"])
+
+            if len(com_d[9]) % 2 != 0:
+                com11_2.append([com_d[9][-1], "Пустышка"])
+
+            if len(com_d[10]) % 2 != 0:
+                com11_1.append([com_d[10][-1], "Пустышка"])
+
+            file = open(f"{posts[0].title}/{posts[0].title}_тур11.txt", "r", encoding="utf-8")
+            if len(file.read()) == 0:
+                file = open(f"{posts[0].title}/{posts[0].title}_тур11.txt", "w", encoding="utf-8")
+                num = 1
+                title = "КОМАНДЫ" + " " * 35 + "|СЧЁТ"
+                file.write(title + "\n")
+                file.write("-" * len(title) + "\n")
+                for com in com11_1:
+                    file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                    file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                    file.write("-" * len(title) + "\n")
+                for com in com11_2:
+                    file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                    file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                    file.write("-" * len(title) + "\n")
+                for com in com11_3:
+                    file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                    file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                    file.write("-" * len(title) + "\n")
+                for com in com11_4:
+                    file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                    file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                    file.write("-" * len(title) + "\n")
+                for com in com11_5:
+                    file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                    file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                    file.write("-" * len(title) + "\n")
+                for com in com11_6:
+                    file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                    file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                    file.write("-" * len(title) + "\n")
+                for com in com11_7:
+                    file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                    file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                    file.write("-" * len(title) + "\n")
+                for com in com11_8:
+                    file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                    file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                    file.write("-" * len(title) + "\n")
+                for com in com11_9:
+                    file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                    file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                    file.write("-" * len(title) + "\n")
+                for com in com11_10:
+                    file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                    file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                    file.write("-" * len(title) + "\n")
+                for com in com11_11:
+                    file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                    file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                    file.write("-" * len(title) + "\n")
+                file.close()
+
+
+            file_res = open(f"{posts[0].title}/результат_11_{posts[0].title}.txt", "r", encoding="utf-8")
+            file_res.seek(0)
+            com_d = {}
+            for i in range(0, 13):
+                com_d[i] = []
+            for line in file_res.readlines():
+                if len(line.replace("\n", "")) != 0:
+                    com = line.split(": ")[0]
+                    win = int(line.split(": ")[1])
+                    com_d[win].append(com)
+
+            fp = open(f"{posts[0].title}/пересечение_команд_{posts[0].title}.json", "r", encoding="utf-8")
+            commands_dict = json.load(fp)
+
+            with open(f"{posts[0].title}/пересечение_команд_{posts[0].title}.json", "w", encoding="utf-8") as fp:
+                s = json.dumps(commands_dict, ensure_ascii=False)
+                fp.write(s)
+
+            game = posts[0].title
+            tour_shedule(game, 11)
+
+            return render(request, 'blog/sсhedule.html',
+                          {'title': 'Орда', 'name': posts[0].title, 'count_tour': int(count_tour),
+                           'tour1': com_1,
+                           'tour2_1': com2_1, 'tour2_2': com2_2,
+                           'tour3_1': com3_1, 'tour3_2': com3_2, 'tour3_3': com3_3,
+                           'tour4_1': com4_1, 'tour4_2': com4_2, 'tour4_3': com4_3, 'tour4_4': com4_4,
+                           'tour5_1': com5_1, 'tour5_2': com5_2, 'tour5_3': com5_3, 'tour5_4': com5_4,
+                           'tour5_5': com5_5,
+                           'tour6_1': com6_1, 'tour6_2': com6_2, 'tour6_3': com6_3, 'tour6_4': com6_4,
+                           'tour6_5': com6_5,
+                           'tour6_6': com6_6,
+                           'tour7_1': com7_1, 'tour7_2': com7_2, 'tour7_3': com7_3, 'tour7_4': com7_4,
+                           'tour7_5': com7_5,
+                           'tour7_6': com7_6, 'tour7_7': com7_7,
+                           'tour8_1': com8_1, 'tour8_2': com8_2, 'tour8_3': com8_3, 'tour8_4': com8_4,
+                           'tour8_5': com8_5,
+                           'tour8_6': com8_6, 'tour8_7': com8_7, 'tour8_8': com8_8,
+                           'tour9_1': com9_1, 'tour9_2': com9_2, 'tour9_3': com9_3, 'tour9_4': com9_4,
+                           'tour9_5': com9_5,
+                           'tour9_6': com9_6, 'tour9_7': com9_7, 'tour9_8': com9_8, 'tour9_9': com9_9,
+                           'tour10_1': com10_1, 'tour10_2': com10_2, 'tour10_3': com10_3, 'tour10_4': com10_4,
+                           'tour10_5': com10_5,
+                           'tour10_6': com10_6, 'tour10_7': com10_7, 'tour10_8': com10_8, 'tour10_9': com10_9,
+                           'tour10_10': com10_10,
+                           'tour11_1': com11_1, 'tour11_2': com11_2, 'tour11_3': com11_3, 'tour11_4': com11_4,
+                           'tour11_5': com11_5,
+                           'tour11_6': com11_6, 'tour11_7': com11_7, 'tour11_8': com11_8, 'tour11_9': com11_9,
+                           'tour11_10': com11_10, 'tour11_11': com11_11,
+                           })
+
         case 10:
-                file_res = open(f"{posts[0].title}/результат_9_{posts[0].title}.txt", "r", encoding="utf-8")
-                file_res.seek(0)
-                com_d = {}
-                for i in range(0, 10):
-                    com_d[i] = []
-                for line in file_res.readlines():
-                    if len(line.replace("\n", "")) != 0:
-                        com = line.split(": ")[0]
-                        win = int(line.split(": ")[1])
-                        com_d[win].append(com)
+            file_res = open(f"{posts[0].title}/результат_9_{posts[0].title}.txt", "r", encoding="utf-8")
+            file_res.seek(0)
+            com_d = {}
+            for i in range(0, 10):
+                com_d[i] = []
+            for line in file_res.readlines():
+                if len(line.replace("\n", "")) != 0:
+                    com = line.split(": ")[0]
+                    win = int(line.split(": ")[1])
+                    com_d[win].append(com)
 
-                fp = open(f"{posts[0].title}/пересечение_команд_{posts[0].title}.json", "r", encoding="utf-8")
-                commands_dict = json.load(fp)
+            fp = open(f"{posts[0].title}/пересечение_команд_{posts[0].title}.json", "r", encoding="utf-8")
+            commands_dict = json.load(fp)
 
-                empty_com_1 = []
-                empty_com_2 = []
-                for i in range(0, len(com_d[9]) - 1, 2):
-                    if com_d[9][i + 1] not in commands_dict[com_d[9][i]]:
-                        com10_1.append([com_d[9][i], com_d[9][i + 1]])
-                    else:
-                        empty_com_1.append(com_d[9][i])
-                        empty_com_2.append(com_d[9][i + 1])
+            empty_com_1 = []
+            empty_com_2 = []
+            for i in range(0, len(com_d[9]) - 1, 2):
+                if com_d[9][i + 1] not in commands_dict[com_d[9][i]]:
+                    com10_1.append([com_d[9][i], com_d[9][i + 1]])
+                else:
+                    empty_com_1.append(com_d[9][i])
+                    empty_com_2.append(com_d[9][i + 1])
 
-                for i in range(0, len(empty_com_1)):
-                    for c in empty_com_2:
-                        if c not in empty_com_1[i]:
-                            com10_1.append((empty_com_1[i], c))
-                            empty_com_2.remove(c)
-                            break
+            for i in range(0, len(empty_com_1)):
+                for c in empty_com_2:
+                    if c not in empty_com_1[i]:
+                        com10_1.append((empty_com_1[i], c))
+                        empty_com_2.remove(c)
+                        break
 
-                empty_com_1 = []
-                empty_com_2 = []
-                for i in range(0, len(com_d[8]) - 1, 2):
-                    if com_d[8][i + 1] not in commands_dict[com_d[8][i]]:
-                        com10_2.append([com_d[8][i], com_d[8][i + 1]])
-                    else:
-                        empty_com_1.append(com_d[8][i])
-                        empty_com_2.append(com_d[8][i + 1])
+            empty_com_1 = []
+            empty_com_2 = []
+            for i in range(0, len(com_d[8]) - 1, 2):
+                if com_d[8][i + 1] not in commands_dict[com_d[8][i]]:
+                    com10_2.append([com_d[8][i], com_d[8][i + 1]])
+                else:
+                    empty_com_1.append(com_d[8][i])
+                    empty_com_2.append(com_d[8][i + 1])
 
-                for i in range(0, len(empty_com_1)):
-                    for c in empty_com_2:
-                        if c not in empty_com_1[i]:
-                            com10_2.append((empty_com_1[i], c))
-                            empty_com_2.remove(c)
-                            break
+            for i in range(0, len(empty_com_1)):
+                for c in empty_com_2:
+                    if c not in empty_com_1[i]:
+                        com10_2.append((empty_com_1[i], c))
+                        empty_com_2.remove(c)
+                        break
 
-                empty_com_1 = []
-                empty_com_2 = []
-                for i in range(0, len(com_d[7]) - 1, 2):
-                    if com_d[7][i + 1] not in commands_dict[com_d[7][i]]:
-                        com10_3.append([com_d[7][i], com_d[7][i + 1]])
-                    else:
-                        empty_com_1.append(com_d[7][i])
-                        empty_com_2.append(com_d[7][i + 1])
+            empty_com_1 = []
+            empty_com_2 = []
+            for i in range(0, len(com_d[7]) - 1, 2):
+                if com_d[7][i + 1] not in commands_dict[com_d[7][i]]:
+                    com10_3.append([com_d[7][i], com_d[7][i + 1]])
+                else:
+                    empty_com_1.append(com_d[7][i])
+                    empty_com_2.append(com_d[7][i + 1])
 
-                for i in range(0, len(empty_com_1)):
-                    for c in empty_com_2:
-                        if c not in empty_com_1[i]:
-                            com10_3.append((empty_com_1[i], c))
-                            empty_com_2.remove(c)
-                            break
+            for i in range(0, len(empty_com_1)):
+                for c in empty_com_2:
+                    if c not in empty_com_1[i]:
+                        com10_3.append((empty_com_1[i], c))
+                        empty_com_2.remove(c)
+                        break
 
-                empty_com_1 = []
-                empty_com_2 = []
-                for i in range(0, len(com_d[6]) - 1, 2):
-                    if com_d[6][i + 1] not in commands_dict[com_d[6][i]]:
-                        com10_4.append([com_d[6][i], com_d[6][i + 1]])
-                    else:
-                        empty_com_1.append(com_d[6][i])
-                        empty_com_2.append(com_d[6][i + 1])
+            empty_com_1 = []
+            empty_com_2 = []
+            for i in range(0, len(com_d[6]) - 1, 2):
+                if com_d[6][i + 1] not in commands_dict[com_d[6][i]]:
+                    com10_4.append([com_d[6][i], com_d[6][i + 1]])
+                else:
+                    empty_com_1.append(com_d[6][i])
+                    empty_com_2.append(com_d[6][i + 1])
 
-                for i in range(0, len(empty_com_1)):
-                    for c in empty_com_2:
-                        if c not in empty_com_1[i]:
-                            com10_4.append((empty_com_1[i], c))
-                            empty_com_2.remove(c)
-                            break
+            for i in range(0, len(empty_com_1)):
+                for c in empty_com_2:
+                    if c not in empty_com_1[i]:
+                        com10_4.append((empty_com_1[i], c))
+                        empty_com_2.remove(c)
+                        break
 
-                empty_com_1 = []
-                empty_com_2 = []
-                for i in range(0, len(com_d[5]) - 1, 2):
-                    if com_d[5][i + 1] not in commands_dict[com_d[5][i]]:
-                        com10_5.append([com_d[5][i], com_d[5][i + 1]])
-                    else:
-                        empty_com_1.append(com_d[5][i])
-                        empty_com_2.append(com_d[5][i + 1])
+            empty_com_1 = []
+            empty_com_2 = []
+            for i in range(0, len(com_d[5]) - 1, 2):
+                if com_d[5][i + 1] not in commands_dict[com_d[5][i]]:
+                    com10_5.append([com_d[5][i], com_d[5][i + 1]])
+                else:
+                    empty_com_1.append(com_d[5][i])
+                    empty_com_2.append(com_d[5][i + 1])
 
-                for i in range(0, len(empty_com_1)):
-                    for c in empty_com_2:
-                        if c not in empty_com_1[i]:
-                            com10_5.append((empty_com_1[i], c))
-                            empty_com_2.remove(c)
-                            break
+            for i in range(0, len(empty_com_1)):
+                for c in empty_com_2:
+                    if c not in empty_com_1[i]:
+                        com10_5.append((empty_com_1[i], c))
+                        empty_com_2.remove(c)
+                        break
 
-                empty_com_1 = []
-                empty_com_2 = []
-                for i in range(0, len(com_d[4]) - 1, 2):
-                    if com_d[4][i + 1] not in commands_dict[com_d[4][i]]:
-                        com10_6.append([com_d[4][i], com_d[4][i + 1]])
-                    else:
-                        empty_com_1.append(com_d[4][i])
-                        empty_com_2.append(com_d[4][i + 1])
+            empty_com_1 = []
+            empty_com_2 = []
+            for i in range(0, len(com_d[4]) - 1, 2):
+                if com_d[4][i + 1] not in commands_dict[com_d[4][i]]:
+                    com10_6.append([com_d[4][i], com_d[4][i + 1]])
+                else:
+                    empty_com_1.append(com_d[4][i])
+                    empty_com_2.append(com_d[4][i + 1])
 
-                for i in range(0, len(empty_com_1)):
-                    for c in empty_com_2:
-                        if c not in empty_com_1[i]:
-                            com10_6.append((empty_com_1[i], c))
-                            empty_com_2.remove(c)
-                            break
+            for i in range(0, len(empty_com_1)):
+                for c in empty_com_2:
+                    if c not in empty_com_1[i]:
+                        com10_6.append((empty_com_1[i], c))
+                        empty_com_2.remove(c)
+                        break
 
-                empty_com_1 = []
-                empty_com_2 = []
-                for i in range(0, len(com_d[3]) - 1, 2):
-                    if com_d[3][i + 1] not in commands_dict[com_d[3][i]]:
-                        com10_7.append([com_d[3][i], com_d[3][i + 1]])
-                    else:
-                        empty_com_1.append(com_d[3][i])
-                        empty_com_2.append(com_d[3][i + 1])
+            empty_com_1 = []
+            empty_com_2 = []
+            for i in range(0, len(com_d[3]) - 1, 2):
+                if com_d[3][i + 1] not in commands_dict[com_d[3][i]]:
+                    com10_7.append([com_d[3][i], com_d[3][i + 1]])
+                else:
+                    empty_com_1.append(com_d[3][i])
+                    empty_com_2.append(com_d[3][i + 1])
 
-                for i in range(0, len(empty_com_1)):
-                    for c in empty_com_2:
-                        if c not in empty_com_1[i]:
-                            com10_7.append((empty_com_1[i], c))
-                            empty_com_2.remove(c)
-                            break
+            for i in range(0, len(empty_com_1)):
+                for c in empty_com_2:
+                    if c not in empty_com_1[i]:
+                        com10_7.append((empty_com_1[i], c))
+                        empty_com_2.remove(c)
+                        break
 
-                empty_com_1 = []
-                empty_com_2 = []
-                for i in range(0, len(com_d[2]) - 1, 2):
-                    if com_d[2][i + 1] not in commands_dict[com_d[2][i]]:
-                        com10_8.append([com_d[2][i], com_d[2][i + 1]])
-                    else:
-                        empty_com_1.append(com_d[2][i])
-                        empty_com_2.append(com_d[2][i + 1])
+            empty_com_1 = []
+            empty_com_2 = []
+            for i in range(0, len(com_d[2]) - 1, 2):
+                if com_d[2][i + 1] not in commands_dict[com_d[2][i]]:
+                    com10_8.append([com_d[2][i], com_d[2][i + 1]])
+                else:
+                    empty_com_1.append(com_d[2][i])
+                    empty_com_2.append(com_d[2][i + 1])
 
-                for i in range(0, len(empty_com_1)):
-                    for c in empty_com_2:
-                        if c not in empty_com_1[i]:
-                            com10_8.append((empty_com_1[i], c))
-                            empty_com_2.remove(c)
-                            break
+            for i in range(0, len(empty_com_1)):
+                for c in empty_com_2:
+                    if c not in empty_com_1[i]:
+                        com10_8.append((empty_com_1[i], c))
+                        empty_com_2.remove(c)
+                        break
 
-                empty_com_1 = []
-                empty_com_2 = []
-                for i in range(0, len(com_d[1]) - 1, 2):
-                    if com_d[1][i + 1] not in commands_dict[com_d[1][i]]:
-                        com10_9.append([com_d[1][i], com_d[1][i + 1]])
-                    else:
-                        empty_com_1.append(com_d[1][i])
-                        empty_com_2.append(com_d[1][i + 1])
+            empty_com_1 = []
+            empty_com_2 = []
+            for i in range(0, len(com_d[1]) - 1, 2):
+                if com_d[1][i + 1] not in commands_dict[com_d[1][i]]:
+                    com10_9.append([com_d[1][i], com_d[1][i + 1]])
+                else:
+                    empty_com_1.append(com_d[1][i])
+                    empty_com_2.append(com_d[1][i + 1])
 
-                for i in range(0, len(empty_com_1)):
-                    for c in empty_com_2:
-                        if c not in empty_com_1[i]:
-                            com10_9.append((empty_com_1[i], c))
-                            empty_com_2.remove(c)
-                            break
+            for i in range(0, len(empty_com_1)):
+                for c in empty_com_2:
+                    if c not in empty_com_1[i]:
+                        com10_9.append((empty_com_1[i], c))
+                        empty_com_2.remove(c)
+                        break
 
-                empty_com_1 = []
-                empty_com_2 = []
-                for i in range(0, len(com_d[0]) - 1, 2):
-                    if com_d[0][i + 1] not in commands_dict[com_d[0][i]]:
-                        com10_10.append([com_d[0][i], com_d[0][i + 1]])
-                    else:
-                        empty_com_1.append(com_d[0][i])
-                        empty_com_2.append(com_d[0][i + 1])
+            empty_com_1 = []
+            empty_com_2 = []
+            for i in range(0, len(com_d[0]) - 1, 2):
+                if com_d[0][i + 1] not in commands_dict[com_d[0][i]]:
+                    com10_10.append([com_d[0][i], com_d[0][i + 1]])
+                else:
+                    empty_com_1.append(com_d[0][i])
+                    empty_com_2.append(com_d[0][i + 1])
 
-                for i in range(0, len(empty_com_1)):
-                    for c in empty_com_2:
-                        if c not in empty_com_1[i]:
-                            com10_10.append((empty_com_1[i], c))
-                            empty_com_2.remove(c)
-                            break
+            for i in range(0, len(empty_com_1)):
+                for c in empty_com_2:
+                    if c not in empty_com_1[i]:
+                        com10_10.append((empty_com_1[i], c))
+                        empty_com_2.remove(c)
+                        break
 
-                if len(com_d[0]) % 2 != 0:
-                    com10_10.append([com_d[0][-1], "Пустышка"])
+            if len(com_d[0]) % 2 != 0:
+                com10_10.append([com_d[0][-1], "Пустышка"])
 
-                if len(com_d[1]) % 2 != 0:
-                    com10_9.append([com_d[1][-1], "Пустышка"])
+            if len(com_d[1]) % 2 != 0:
+                com10_9.append([com_d[1][-1], "Пустышка"])
 
-                if len(com_d[2]) % 2 != 0:
-                    com10_8.append([com_d[2][-1], "Пустышка"])
+            if len(com_d[2]) % 2 != 0:
+                com10_8.append([com_d[2][-1], "Пустышка"])
 
-                if len(com_d[3]) % 2 != 0:
-                    com10_7.append([com_d[3][-1], "Пустышка"])
+            if len(com_d[3]) % 2 != 0:
+                com10_7.append([com_d[3][-1], "Пустышка"])
 
-                if len(com_d[4]) % 2 != 0:
-                    com10_6.append([com_d[4][-1], "Пустышка"])
+            if len(com_d[4]) % 2 != 0:
+                com10_6.append([com_d[4][-1], "Пустышка"])
 
-                if len(com_d[5]) % 2 != 0:
-                    com10_5.append([com_d[5][-1], "Пустышка"])
+            if len(com_d[5]) % 2 != 0:
+                com10_5.append([com_d[5][-1], "Пустышка"])
 
-                if len(com_d[6]) % 2 != 0:
-                    com10_4.append([com_d[6][-1], "Пустышка"])
+            if len(com_d[6]) % 2 != 0:
+                com10_4.append([com_d[6][-1], "Пустышка"])
 
-                if len(com_d[7]) % 2 != 0:
-                    com10_3.append([com_d[7][-1], "Пустышка"])
+            if len(com_d[7]) % 2 != 0:
+                com10_3.append([com_d[7][-1], "Пустышка"])
 
-                if len(com_d[8]) % 2 != 0:
-                    com10_2.append([com_d[8][-1], "Пустышка"])
+            if len(com_d[8]) % 2 != 0:
+                com10_2.append([com_d[8][-1], "Пустышка"])
 
-                if len(com_d[9]) % 2 != 0:
-                    com10_1.append([com_d[9][-1], "Пустышка"])
+            if len(com_d[9]) % 2 != 0:
+                com10_1.append([com_d[9][-1], "Пустышка"])
 
-                file = open(f"{posts[0].title}/{posts[0].title}_тур10.txt", "r", encoding="utf-8")
-                if len(file.read()) == 0:
-                    file = open(f"{posts[0].title}/{posts[0].title}_тур10.txt", "w", encoding="utf-8")
-                    num = 1
-                    title = "КОМАНДЫ" + " " * 35 + "|СЧЁТ"
-                    file.write(title + "\n")
+            file = open(f"{posts[0].title}/{posts[0].title}_тур10.txt", "r", encoding="utf-8")
+            if len(file.read()) == 0:
+                file = open(f"{posts[0].title}/{posts[0].title}_тур10.txt", "w", encoding="utf-8")
+                num = 1
+                title = "КОМАНДЫ" + " " * 35 + "|СЧЁТ"
+                file.write(title + "\n")
+                file.write("-" * len(title) + "\n")
+                for com in com10_1:
+                    file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                    file.write(com[1].replace("\n", "").ljust(37) + "\n")
                     file.write("-" * len(title) + "\n")
-                    for com in com10_1:
-                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
-                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
-                        file.write("-" * len(title) + "\n")
-                    for com in com10_2:
-                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
-                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
-                        file.write("-" * len(title) + "\n")
-                    for com in com10_3:
-                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
-                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
-                        file.write("-" * len(title) + "\n")
-                    for com in com10_4:
-                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
-                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
-                        file.write("-" * len(title) + "\n")
-                    for com in com10_5:
-                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
-                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
-                        file.write("-" * len(title) + "\n")
-                    for com in com10_6:
-                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
-                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
-                        file.write("-" * len(title) + "\n")
-                    for com in com10_7:
-                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
-                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
-                        file.write("-" * len(title) + "\n")
-                    for com in com10_8:
-                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
-                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
-                        file.write("-" * len(title) + "\n")
-                    for com in com10_9:
-                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
-                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
-                        file.write("-" * len(title) + "\n")
-                    for com in com10_10:
-                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
-                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
-                        file.write("-" * len(title) + "\n")
-                    file.close()
-
-                file = open(f"{posts[0].title}/{posts[0].title}_тур10.txt", "r", encoding="utf-8")
-                if len(file.read()) == 0:
-                    file = open(f"{posts[0].title}/{posts[0].title}_тур10.txt", "w", encoding="utf-8")
-                    num = 1
-                    title = "КОМАНДЫ" + " " * 35 + "|СЧЁТ"
-                    file.write(title + "\n")
+                for com in com10_2:
+                    file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                    file.write(com[1].replace("\n", "").ljust(37) + "\n")
                     file.write("-" * len(title) + "\n")
-                    for com in com10_1:
-                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
-                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
-                        file.write("-" * len(title) + "\n")
-                    for com in com10_2:
-                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
-                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
-                        file.write("-" * len(title) + "\n")
-                    for com in com10_3:
-                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
-                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
-                        file.write("-" * len(title) + "\n")
-                    for com in com10_4:
-                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
-                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
-                        file.write("-" * len(title) + "\n")
-                    for com in com10_5:
-                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
-                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
-                        file.write("-" * len(title) + "\n")
-                    for com in com10_6:
-                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
-                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
-                        file.write("-" * len(title) + "\n")
-                    for com in com10_7:
-                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
-                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
-                        file.write("-" * len(title) + "\n")
-                    for com in com10_8:
-                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
-                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
-                        file.write("-" * len(title) + "\n")
-                    for com in com10_9:
-                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
-                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
-                        file.write("-" * len(title) + "\n")
-                    for com in com10_10:
-                        file.write(com[0].replace("\n", "").ljust(37) + "\n")
-                        file.write(com[1].replace("\n", "").ljust(37) + "\n")
-                        file.write("-" * len(title) + "\n")
-                    file.close()
+                for com in com10_3:
+                    file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                    file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                    file.write("-" * len(title) + "\n")
+                for com in com10_4:
+                    file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                    file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                    file.write("-" * len(title) + "\n")
+                for com in com10_5:
+                    file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                    file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                    file.write("-" * len(title) + "\n")
+                for com in com10_6:
+                    file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                    file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                    file.write("-" * len(title) + "\n")
+                for com in com10_7:
+                    file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                    file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                    file.write("-" * len(title) + "\n")
+                for com in com10_8:
+                    file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                    file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                    file.write("-" * len(title) + "\n")
+                for com in com10_9:
+                    file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                    file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                    file.write("-" * len(title) + "\n")
+                for com in com10_10:
+                    file.write(com[0].replace("\n", "").ljust(37) + "\n")
+                    file.write(com[1].replace("\n", "").ljust(37) + "\n")
+                    file.write("-" * len(title) + "\n")
+                file.close()
 
-                file_res = open(f"{posts[0].title}/результат_10_{posts[0].title}.txt", "r", encoding="utf-8")
-                file_res.seek(0)
-                com_d = {}
-                for i in range(0, 10):
-                    com_d[i] = []
-                for line in file_res.readlines():
-                    if len(line.replace("\n", "")) != 0:
-                        com = line.split(": ")[0]
-                        win = int(line.split(": ")[1])
-                        com_d[win].append(com)
 
-                fp = open(f"{posts[0].title}/пересечение_команд_{posts[0].title}.json", "r", encoding="utf-8")
-                commands_dict = json.load(fp)
+            file_res = open(f"{posts[0].title}/результат_10_{posts[0].title}.txt", "r", encoding="utf-8")
+            file_res.seek(0)
+            com_d = {}
+            for i in range(0, 10):
+                com_d[i] = []
+            for line in file_res.readlines():
+                if len(line.replace("\n", "")) != 0:
+                    com = line.split(": ")[0]
+                    win = int(line.split(": ")[1])
+                    com_d[win].append(com)
 
-                with open(f"{posts[0].title}/пересечение_команд_{posts[0].title}.json", "w", encoding="utf-8") as fp:
-                    s = json.dumps(commands_dict, ensure_ascii=False)
-                    fp.write(s)
+            fp = open(f"{posts[0].title}/пересечение_команд_{posts[0].title}.json", "r", encoding="utf-8")
+            commands_dict = json.load(fp)
 
-                game = posts[0].title
-                tour_shedule(game, 10)
+            with open(f"{posts[0].title}/пересечение_команд_{posts[0].title}.json", "w", encoding="utf-8") as fp:
+                s = json.dumps(commands_dict, ensure_ascii=False)
+                fp.write(s)
 
-                return render(request, 'blog/sсhedule.html',
-                              {'title': 'Орда', 'name': posts[0].title, 'count_tour': int(count_tour),
-                               'tour1': com_1,
-                               'tour2_1': com2_1, 'tour2_2': com2_2,
-                               'tour3_1': com3_1, 'tour3_2': com3_2, 'tour3_3': com3_3,
-                               'tour4_1': com4_1, 'tour4_2': com4_2, 'tour4_3': com4_3, 'tour4_4': com4_4,
-                               'tour5_1': com5_1, 'tour5_2': com5_2, 'tour5_3': com5_3, 'tour5_4': com5_4,
-                               'tour5_5': com5_5,
-                               'tour6_1': com6_1, 'tour6_2': com6_2, 'tour6_3': com6_3, 'tour6_4': com6_4,
-                               'tour6_5': com6_5,
-                               'tour6_6': com6_6,
-                               'tour7_1': com7_1, 'tour7_2': com7_2, 'tour7_3': com7_3, 'tour7_4': com7_4,
-                               'tour7_5': com7_5,
-                               'tour7_6': com7_6, 'tour7_7': com7_7,
-                               'tour8_1': com8_1, 'tour8_2': com8_2, 'tour8_3': com8_3, 'tour8_4': com8_4,
-                               'tour8_5': com8_5,
-                               'tour8_6': com8_6, 'tour8_7': com8_7, 'tour8_8': com8_8,
-                               'tour9_1': com9_1, 'tour9_2': com9_2, 'tour9_3': com9_3, 'tour9_4': com9_4,
-                               'tour9_5': com9_5,
-                               'tour9_6': com9_6, 'tour9_7': com9_7, 'tour9_8': com9_8, 'tour9_9': com9_9,
-                               'tour10_1': com10_1, 'tour10_2': com10_2, 'tour10_3': com10_3, 'tour10_4': com10_4,
-                               'tour10_5': com10_5,
-                               'tour10_6': com10_6, 'tour10_7': com10_7, 'tour10_8': com10_8, 'tour10_9': com10_9,
-                               'tour10_10': com10_10})
+            game = posts[0].title
+            tour_shedule(game, 10)
+
+            return render(request, 'blog/sсhedule.html',
+                          {'title': 'Орда', 'name': posts[0].title, 'count_tour': int(count_tour),
+                           'tour1': com_1,
+                           'tour2_1': com2_1, 'tour2_2': com2_2,
+                           'tour3_1': com3_1, 'tour3_2': com3_2, 'tour3_3': com3_3,
+                           'tour4_1': com4_1, 'tour4_2': com4_2, 'tour4_3': com4_3, 'tour4_4': com4_4,
+                           'tour5_1': com5_1, 'tour5_2': com5_2, 'tour5_3': com5_3, 'tour5_4': com5_4,
+                           'tour5_5': com5_5,
+                           'tour6_1': com6_1, 'tour6_2': com6_2, 'tour6_3': com6_3, 'tour6_4': com6_4,
+                           'tour6_5': com6_5,
+                           'tour6_6': com6_6,
+                           'tour7_1': com7_1, 'tour7_2': com7_2, 'tour7_3': com7_3, 'tour7_4': com7_4,
+                           'tour7_5': com7_5,
+                           'tour7_6': com7_6, 'tour7_7': com7_7,
+                           'tour8_1': com8_1, 'tour8_2': com8_2, 'tour8_3': com8_3, 'tour8_4': com8_4,
+                           'tour8_5': com8_5,
+                           'tour8_6': com8_6, 'tour8_7': com8_7, 'tour8_8': com8_8,
+                           'tour9_1': com9_1, 'tour9_2': com9_2, 'tour9_3': com9_3, 'tour9_4': com9_4,
+                           'tour9_5': com9_5,
+                           'tour9_6': com9_6, 'tour9_7': com9_7, 'tour9_8': com9_8, 'tour9_9': com9_9,
+                           'tour10_1': com10_1, 'tour10_2': com10_2, 'tour10_3': com10_3, 'tour10_4': com10_4,
+                           'tour10_5': com10_5,
+                           'tour10_6': com10_6, 'tour10_7': com10_7, 'tour10_8': com10_8, 'tour10_9': com10_9,
+                           'tour10_10': com10_10})
+
         case 9:
             file_res = open(f"{posts[0].title}/результат_8_{posts[0].title}.txt", "r", encoding="utf-8")
             file_res.seek(0)
             com_d = {}
-            for i in range(0, 10):
+            for i in range(0, 13):
                 com_d[i] = []
             for line in file_res.readlines():
                 if len(line.replace("\n", "")) != 0:
@@ -811,50 +1094,6 @@ def schedule(request, pk):
             if len(com_d[8]) % 2 != 0:
                 com9_1.append([com_d[8][-1], "Пустышка"])
 
-            file = open(f"{posts[0].title}/{posts[0].title}_тур9.txt", "r", encoding="utf-8")
-            if len(file.read()) == 0:
-                file = open(f"{posts[0].title}/{posts[0].title}_тур9.txt", "w", encoding="utf-8")
-                num = 1
-                title = "КОМАНДЫ" + " " * 35 + "|СЧЁТ"
-                file.write(title + "\n")
-                file.write("-" * len(title) + "\n")
-                for com in com9_1:
-                    file.write(com[0].replace("\n", "").ljust(37) + "\n")
-                    file.write(com[1].replace("\n", "").ljust(37) + "\n")
-                    file.write("-" * len(title) + "\n")
-                for com in com9_2:
-                    file.write(com[0].replace("\n", "").ljust(37) + "\n")
-                    file.write(com[1].replace("\n", "").ljust(37) + "\n")
-                    file.write("-" * len(title) + "\n")
-                for com in com9_3:
-                    file.write(com[0].replace("\n", "").ljust(37) + "\n")
-                    file.write(com[1].replace("\n", "").ljust(37) + "\n")
-                    file.write("-" * len(title) + "\n")
-                for com in com9_4:
-                    file.write(com[0].replace("\n", "").ljust(37) + "\n")
-                    file.write(com[1].replace("\n", "").ljust(37) + "\n")
-                    file.write("-" * len(title) + "\n")
-                for com in com9_5:
-                    file.write(com[0].replace("\n", "").ljust(37) + "\n")
-                    file.write(com[1].replace("\n", "").ljust(37) + "\n")
-                    file.write("-" * len(title) + "\n")
-                for com in com9_6:
-                    file.write(com[0].replace("\n", "").ljust(37) + "\n")
-                    file.write(com[1].replace("\n", "").ljust(37) + "\n")
-                    file.write("-" * len(title) + "\n")
-                for com in com9_7:
-                    file.write(com[0].replace("\n", "").ljust(37) + "\n")
-                    file.write(com[1].replace("\n", "").ljust(37) + "\n")
-                    file.write("-" * len(title) + "\n")
-                for com in com9_8:
-                    file.write(com[0].replace("\n", "").ljust(37) + "\n")
-                    file.write(com[1].replace("\n", "").ljust(37) + "\n")
-                    file.write("-" * len(title) + "\n")
-                for com in com9_9:
-                    file.write(com[0].replace("\n", "").ljust(37) + "\n")
-                    file.write(com[1].replace("\n", "").ljust(37) + "\n")
-                    file.write("-" * len(title) + "\n")
-                file.close()
 
             file = open(f"{posts[0].title}/{posts[0].title}_тур9.txt", "r", encoding="utf-8")
             if len(file.read()) == 0:
@@ -904,7 +1143,7 @@ def schedule(request, pk):
             file_res = open(f"{posts[0].title}/результат_9_{posts[0].title}.txt", "r", encoding="utf-8")
             file_res.seek(0)
             com_d = {}
-            for i in range(0, 10):
+            for i in range(0, 13):
                 com_d[i] = []
             for line in file_res.readlines():
                 if len(line.replace("\n", "")) != 0:
@@ -946,7 +1185,7 @@ def schedule(request, pk):
             file_res = open(f"{posts[0].title}/результат_7_{posts[0].title}.txt", "r", encoding="utf-8")
             file_res.seek(0)
             com_d = {}
-            for i in range(0, 10):
+            for i in range(0, 13):
                 com_d[i] = []
             for line in file_res.readlines():
                 if len(line.replace("\n", "")) != 0:
@@ -1179,7 +1418,7 @@ def schedule(request, pk):
             file_res = open(f"{posts[0].title}/результат_6_{posts[0].title}.txt", "r", encoding="utf-8")
             file_res.seek(0)
             com_d = {}
-            for i in range(0, 10):
+            for i in range(0, 13):
                 com_d[i] = []
             for line in file_res.readlines():
                 if len(line.replace("\n", "")) != 0:
@@ -1386,7 +1625,7 @@ def schedule(request, pk):
             file_res = open(f"{posts[0].title}/результат_5_{posts[0].title}.txt", "r", encoding="utf-8")
             file_res.seek(0)
             com_d = {}
-            for i in range(0, 10):
+            for i in range(0, 13):
                 com_d[i] = []
             for line in file_res.readlines():
                 if len(line.replace("\n", "")) != 0:
@@ -1568,7 +1807,7 @@ def schedule(request, pk):
             file_res = open(f"{posts[0].title}/результат_4_{posts[0].title}.txt", "r", encoding="utf-8")
             file_res.seek(0)
             com_d = {}
-            for i in range(0, 10):
+            for i in range(0, 13):
                 com_d[i] = []
             for line in file_res.readlines():
                 if len(line.replace("\n", "")) != 0:
@@ -1725,7 +1964,7 @@ def schedule(request, pk):
             file_res = open(f"{posts[0].title}/результат_3_{posts[0].title}.txt", "r", encoding="utf-8")
             file_res.seek(0)
             com_d = {}
-            for i in range(0, 10):
+            for i in range(0, 13):
                 com_d[i] = []
             for line in file_res.readlines():
                 if len(line.replace("\n", "")) != 0:
@@ -1895,7 +2134,7 @@ def schedule(request, pk):
             file_res = open(f"{posts[0].title}/результат_{count_tour - 1}_{posts[0].title}.txt", "r", encoding="utf-8")
             file_res.seek(0)
             com_d = {}
-            for i in range(0, 10):
+            for i in range(0, 13):
                 com_d[i] = []
             for line in file_res.readlines():
                 if len(line.replace("\n", "")) != 0:
@@ -2484,7 +2723,7 @@ def save_tour(request, game, tour):
 
         # save results from 3 tour
         res = open(f"{game}/результат_{tour}_{game}.txt", "w", encoding="utf-8")
-        for i in range(0, 10):
+        for i in range(0, 13):
             k = 0
             for pair in com_dict.items():
                 if pair[1] == i and pair[0] != "Пустышка":
@@ -2680,7 +2919,7 @@ def save_tour_1(request):
         # save results from 1 tour
         res = open(f"{game}/результат_1_{game}.txt", "w", encoding="utf-8")
         com_file = open(f"{game}/команды_{game}.txt", "a", encoding="utf-8")
-        for i in range(0, 10):
+        for i in range(0, 13):
             k = 0
             for pair in com_dict.items():
                 if pair[1] == i and pair[0] != "Пустышка":
