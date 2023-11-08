@@ -5,6 +5,167 @@
 <h1 id="game">{{ name }}</h1>
 
 
+{% if count_tour > 11 %}
+<span class="tour red">12 ТУР</span><br>
+<div class="row c">
+
+    <div class="block col-md-4" style="font-size: 10px; letter-spacing: 0.1px;">
+        <span class="count"><br>11 - 0</span><br><br>
+        {% for com in tour12_1 %}
+        <input type="checkbox" id="ch1" name="tour_11">
+        {{ com.0 }} <span class="red">VS</span> {{ com.1 }}
+        <input type="checkbox" name="tour_12">
+        <br>
+        {% endfor %}
+    </div>
+
+    <div class="block col-md-4" style="font-size: 10px; letter-spacing: 0.1px;">
+        <span class="count"><br>10 - 1</span><br><br>
+        {% for com in tour12_2 %}
+        <input type="checkbox" id="ch1" name="tour_12">
+        {{ com.0 }} <span class="red">VS</span> {{ com.1 }}
+        <input type="checkbox" name="tour_12">
+        <br>
+        {% endfor %}
+    </div>
+
+    <div class="block col-md-4" style="font-size: 10px; letter-spacing: 0.1px;">
+        <span class="count"><br>9 - 2</span><br><br>
+        {% for com in tour12_3 %}
+        <input type="checkbox" id="ch1" name="tour_12">
+        {{ com.0 }} <span class="red">VS</span> {{ com.1 }}
+        <input type="checkbox" name="tour_12">
+        <br>
+        {% endfor %}
+    </div>
+
+    <div class="block col-md-4" style="font-size: 10px; letter-spacing: 0.1px;">
+        <span class="count"><br>8 - 3</span><br><br>
+        {% for com in tour12_4 %}
+        <input type="checkbox" id="ch1" name="tour_12">
+        {{ com.0 }} <span class="red">VS</span> {{ com.1 }}
+        <input type="checkbox" name="tour_12">
+        <br>
+        {% endfor %}
+    </div>
+
+    <div class="block col-md-4" style="font-size: 10px; letter-spacing: 0.1px;">
+        <span class="count"><br>7 - 4</span><br><br>
+        {% for com in tour12_5 %}
+        <input type="checkbox" id="ch1" name="tour_12">
+        {{ com.0 }} <span class="red">VS</span> {{ com.1 }}
+        <input type="checkbox" name="tour_12">
+        <br>
+        {% endfor %}
+    </div>
+
+    <div class="block col-md-4" style="font-size: 10px; letter-spacing: 0.1px;">
+        <span class="count"><br>6 - 5</span><br><br>
+        {% for com in tour12_6 %}
+        <input type="checkbox" id="ch1" name="tour_12">
+        {{ com.0 }} <span class="red">VS</span> {{ com.1 }}
+        <input type="checkbox" name="tour_12">
+        <br>
+        {% endfor %}
+    </div>
+
+    <div class="block col-md-4" style="font-size: 10px; letter-spacing: 0.1px;">
+        <span class="count"><br>5 - 6</span><br><br>
+        {% for com in tour12_7 %}
+        <input type="checkbox" id="ch1" name="tour_12">
+        {{ com.0 }} <span class="red">VS</span> {{ com.1 }}
+        <input type="checkbox" name="tour_12">
+        <br>
+        {% endfor %}
+    </div>
+
+    <div class="block col-md-4" style="font-size: 10px; letter-spacing: 0.1px;">
+        <span class="count"><br>4 - 7</span><br><br>
+        {% for com in tour12_8 %}
+        <input type="checkbox" id="ch1" name="tour_12">
+        {{ com.0 }} <span class="red">VS</span> {{ com.1 }}
+        <input type="checkbox" name="tour_12">
+        <br>
+        {% endfor %}
+    </div>
+
+    <div class="block col-md-4" style="font-size: 10px; letter-spacing: 0.1px;">
+        <span class="count"><br>3 - 8</span><br><br>
+        {% for com in tour12_9 %}
+        <input type="checkbox" id="ch1" name="tour_12">
+        {{ com.0 }} <span class="red">VS</span> {{ com.1 }}
+        <input type="checkbox" name="tour_12">
+        <br>
+        {% endfor %}
+    </div>
+
+    <div class="block col-md-4" style="font-size: 10px; letter-spacing: 0.1px;">
+        <span class="count"><br>2 - 9</span><br><br>
+        {% for com in tour12_10 %}
+        <input type="checkbox" id="ch1" name="tour_12">
+        {{ com.0 }} <span class="red">VS</span> {{ com.1 }}
+        <input type="checkbox" name="tour_12">
+        <br>
+        {% endfor %}
+    </div>
+
+    <div class="block col-md-4" style="font-size: 10px; letter-spacing: 0.1px;">
+        <span class="count"><br>1 - 10</span><br><br>
+        {% for com in tour12_11 %}
+        <input type="checkbox" id="ch1" name="tour_12">
+        {{ com.0 }} <span class="red">VS</span> {{ com.1 }}
+        <input type="checkbox" name="tour_12">
+        <br>
+        {% endfor %}
+    </div>
+
+    <div class="block col-md-4" style="font-size: 10px; letter-spacing: 0.1px;">
+        <span class="count"><br>0 - 11</span><br><br>
+        {% for com in tour12_12 %}
+        <input type="checkbox" id="ch1" name="tour_12">
+        {{ com.0 }} <span class="red">VS</span> {{ com.1 }}
+        <input type="checkbox" name="tour_12">
+        <br>
+        {% endfor %}
+    </div>
+
+</div>
+<div class="col-md-12">
+    <a class="btn btn-primary btn-sm mt-1 mb-1" id="reset_12" onclick="reset('{{ name }}', 12);">Сбросить</a>
+    <a class="btn btn-primary btn-sm mt-1 mb-1" id="results_12" onclick="results('{{ name }}', 12);">Выгрузить</a>
+    {% if count_tour == 12 %}
+    <a id="show12" class="btn btn-primary btn-sm mt-1 mb-1" onclick="viewdiv(show12, 12);">Добавить</a>
+    <a id="del_show12" class="btn btn-primary btn-sm mt-1 mb-1" onclick="del_viewdiv(del_show12, 12);">Кикнуть</a>
+    <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_12" onclick="download_shedule('{{ name }}', 12);">Расписание</a>
+    <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_save_12" onclick="save_tour('{{ name }}', 12);">Сохранить</a>
+    {% endif %}
+    {% if count_tour != 12 %}
+    <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_12" onclick="download_tour('{{ name }}', 12);">Скачать</a>
+    {% endif %}
+</div>
+
+
+<form name="add10" id="add_com11" class="col-md-12" style="display:none;" method="post">
+    <p class="black" id="p11">Команды для нового тура<Br>
+        <textarea id="com11" name="commands10" cols="40" rows="3"></textarea></p>
+</form>
+
+<form name="del_add11" id="del_add_com11" style="display:none;" method="post">
+    <p class="black" id="p1">Команды для удаления<Br>
+        <textarea id="del_com11" name="del_commands11" cols="40" rows="3"></textarea></p>
+</form>
+
+<br>
+<div class="row c">
+    <div class="col-md-12">
+        <img src="{% static 'blog/down.png' %}">
+    </div>
+</div>
+
+{% endif %}
+
+
+
 {% if count_tour > 10 %}
 <span class="tour red">11 ТУР</span><br>
 <div class="row c">
@@ -124,7 +285,7 @@
     <a class="btn btn-primary btn-sm mt-1 mb-1" id="reset_11" onclick="reset('{{ name }}', 11);">Сбросить</a>
     <a class="btn btn-primary btn-sm mt-1 mb-1" id="results_11" onclick="results('{{ name }}', 11);">Выгрузить</a>
     {% if count_tour == 11 %}
-    <a id="show11" class="btn btn-primary btn-sm mt-1 mb-1" onclick="viewdiv(show10, 11);">Добавить</a>
+    <a id="show11" class="btn btn-primary btn-sm mt-1 mb-1" onclick="viewdiv(show11, 11);">Добавить</a>
     <a id="del_show11" class="btn btn-primary btn-sm mt-1 mb-1" onclick="del_viewdiv(del_show11, 11);">Кикнуть</a>
     <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_11" onclick="download_shedule('{{ name }}', 11);">Расписание</a>
     <a class="btn btn-primary btn-sm mt-1 mb-1" id="tour_save_11" onclick="save_tour('{{ name }}', 11);">Сохранить</a>
